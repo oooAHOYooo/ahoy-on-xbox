@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Source Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run validation checks
+        run: python3 scripts/validate.py
+
+  build-uwp:
+    name: Build UWP (Windows & Xbox)
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore AhoyXbox/AhoyXbox.csproj
+
+      - name: Build Debug x64
+        run: msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Debug /p:Platform=x64 /p:AppxPackageSigningEnabled=false
+
+      - name: Build Release x64
+        run: msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false /p:AppxBundle=Never

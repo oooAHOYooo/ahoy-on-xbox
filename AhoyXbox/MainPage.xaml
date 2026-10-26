@@ -1,0 +1,26 @@
+<Page x:Class="AhoyXbox.MainPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="#10141D" XYFocusKeyboardNavigation="Enabled">
+  <Grid Margin="48,28">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,18"><TextBlock Text="ahoy" FontSize="40" FontWeight="Bold" Foreground="#C7FF6B"/><TextBlock Text="INDEPENDENT CULTURE. ALWAYS ON." FontSize="16" VerticalAlignment="Center" Margin="28,0,0,0"/></StackPanel>
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="280"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid Margin="0,0,24,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <TextBlock Text="CHANNELS" FontSize="18" Margin="0,0,0,12"/>
+        <ListView x:Name="Channels" Grid.Row="1" SelectionChanged="ChannelChanged" IsItemClickEnabled="False">
+          <ListView.ItemTemplate><DataTemplate><StackPanel Margin="12,14"><TextBlock Text="{Binding Name}" FontSize="22"/><TextBlock Text="{Binding CountLabel}" FontSize="14" Foreground="#B4BECF"/></StackPanel></DataTemplate></ListView.ItemTemplate>
+        </ListView>
+      </Grid>
+      <Grid Grid.Column="1"><Grid.RowDefinitions><RowDefinition Height="3*"/><RowDefinition Height="Auto"/><RowDefinition Height="2*"/></Grid.RowDefinitions>
+        <MediaPlayerElement x:Name="Player" AreTransportControlsEnabled="True" MinHeight="180" />
+        <StackPanel Grid.Row="1" Margin="0,16,0,14">
+          <TextBlock x:Name="NowPlaying" Text="Pick something to watch" FontSize="26" TextWrapping="Wrap"/>
+          <TextBlock x:Name="Status" Text="Curated queues • A to play • B to leave fullscreen" FontSize="16" Foreground="#B4BECF" TextWrapping="Wrap"/>
+        </StackPanel>
+        <ListView x:Name="Programs" Grid.Row="2" IsItemClickEnabled="True" ItemClick="PlayClicked" SelectionMode="Single">
+          <ListView.ItemTemplate><DataTemplate><StackPanel Margin="12,10"><TextBlock Text="{Binding Title}" FontSize="21" TextWrapping="Wrap"/><TextBlock Text="{Binding Host}" FontSize="15" Foreground="#B4BECF"/></StackPanel></DataTemplate></ListView.ItemTemplate>
+        </ListView>
+      </Grid>
+    </Grid>
+    <TextBlock Grid.Row="2" Text="D-pad to browse   /   A to select   /   Playback controls for pause, seek and fullscreen" Foreground="#B4BECF" FontSize="14" Margin="0,18,0,0"/>
+  </Grid>
+</Page>
