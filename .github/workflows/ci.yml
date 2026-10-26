@@ -45,6 +45,20 @@ jobs:
       - name: Build Release x64
         run: msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false /p:AppxBundle=Never
 
+      - name: Build Store Upload Package
+        run: msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms="x64" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /p:AppxPackageDir="AppPackages\\" /p:AppxPackageSigningEnabled=false /p:GenerateAppxPackageOnBuild=true
+
+      - name: Upload Store Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: AHOY-TV-StoreUpload-Package
+          path: |
+            AhoyXbox/AppPackages/**/*.msixupload
+            AhoyXbox/AppPackages/**/*.appxupload
+            AhoyXbox/AppPackages/**/*.appxbundle
+            AhoyXbox/AppPackages/**/*.msixbundle
+          if-no-files-found: warn
+
       - name: Upload Debug Build Artifacts
         uses: actions/upload-artifact@v4
         if: always()
