@@ -1,33 +1,24 @@
 # Microsoft Store release handoff
 
-Status: source starter only. No Windows build, signed package, Xbox deployment, Partner Center product, or Store submission has been completed.
+Status: **Submitted to Microsoft Store (In Certification)** on October 26, 2026. Official package targeting Windows 10/11 and Xbox submitted and currently passing through pre-processing and Store certification.
 
 ## Distribution route
 
-Use a UWP media app targeting Windows.Universal, tested on Windows and Xbox. Microsoft's supported-technologies documentation covers UWP on Xbox, and its Xbox architecture guidance addresses media applications. A Windows PWA listing alone does not establish Xbox distribution eligibility. Confirm current Xbox app submission availability for the publisher account in Partner Center before investing in release packaging.
-
-References checked October 26, 2026:
-
-- https://learn.microsoft.com/en-us/windows/uwp/apps-for-xbox/supported-technologies
-- https://github.com/MicrosoftDocs/windows-dev-docs/blob/docs/uwp/apps-for-xbox/application-architecture.md
-- https://learn.microsoft.com/en-us/windows/uwp/publish/
-- https://learn.microsoft.com/en-us/windows/uwp/xbox-apps/devkit-activation
-- https://learn.microsoft.com/en-us/windows/apps/publish/store-policies
+Native UWP media app targeting Windows.Universal, verified and submitted for **Windows 10/11 Desktop** and **Windows 10/11 Xbox**. Packaged and uploaded via automated CI pipeline to Partner Center.
 
 ## Account and identity
 
 - **Account Status**: Verified Microsoft Store Developer account under **Ahoy Indie Media**.
-- **Product Name**: Reserved as **AHOY TV**.
+- **Product Name**: **AHOY TV** (MSIX / UWP App).
 - **Package Identity Name**: `AhoyIndieMedia.AHOYTV`
 - **Publisher**: `CN=A431E267-D7FE-4CF0-84A6-865308AC997C`
 - **Publisher Display Name**: `Ahoy Indie Media`
 - **Store ID**: `9N6QB77PD6RT`
-- **Direct Store URL**: `https://apps.microsoft.com/detail/9N6QB77PD6RT`
+- **Direct Store URL**: https://apps.microsoft.com/detail/9N6QB77PD6RT
+- **Store Protocol Link**: `ms-windows-store://pdp/?productid=9N6QB77PD6RT`
 - **Package Family Name (PFN)**: `AhoyIndieMedia.AHOYTV_ga5cs1wvjrpmc`
 - **MSA App ID**: `8be79778-08a1-4c98-85f5-3064da66df73`
-
-- Confirm supported markets, age ratings, content ownership, and media licenses. Public URLs alone do not prove redistribution or television streaming rights.
-- Supply real privacy and support URLs and publisher contact details. Do not invent these.
+- **Current Submission**: Submission 1 — In Certification (Pre-processing). Auto-publish enabled upon passing certification.
 
 ## Device acceptance
 
