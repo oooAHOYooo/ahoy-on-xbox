@@ -36,6 +36,16 @@ python3 scripts/validate.py
 
 These checks validate source structure, catalog consistency, and image dimensions. They do not compile C#, validate Store certification, or prove playback on Windows/Xbox.
 
+## CI and Cross-Machine Workflow
+
+- Repository: `https://github.com/oooAHOYooo/ahoy-on-xbox`
+- Automated GitHub Actions CI runs on `windows-2022` hosted runners upon push or pull request to `main`.
+- The CI pipeline runs `scripts/validate.py`, compiles Debug x64 and Release x64 (.NET Native), and attaches the compiled Debug build artifacts to each workflow run.
+- Any development machine (Windows, Mac, or Linux) can contribute by cloning this repository:
+  ```sh
+  git clone https://github.com/oooAHOYooo/ahoy-on-xbox.git
+  ```
+
 ## Next product milestones
 
 1. Compile and exercise this native app on Windows and Xbox; fix device findings.
