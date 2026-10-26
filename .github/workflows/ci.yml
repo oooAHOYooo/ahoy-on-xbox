@@ -44,3 +44,11 @@ jobs:
 
       - name: Build Release x64
         run: msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false /p:AppxBundle=Never
+
+      - name: Upload Debug Build Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: AhoyXbox-Debug-x64
+          path: AhoyXbox/bin/x64/Debug/
+          if-no-files-found: warn
