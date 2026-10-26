@@ -16,9 +16,16 @@ References checked October 26, 2026:
 
 ## Account and identity
 
-- Enroll or use the existing Microsoft developer / Partner Center account.
-- Reserve the intended Ahoy product name and confirm Xbox device-family submission eligibility.
-- Associate the Visual Studio project with the Store product. Replace development Name, Publisher, and publisher display name with assigned values.
+- **Account Status**: Verified Microsoft Store Developer account under **Ahoy Indie Media**.
+- **Product Name**: Reserved as **AHOY TV**.
+- **Package Identity Name**: `AhoyIndieMedia.AHOYTV`
+- **Publisher**: `CN=A431E267-D7FE-4CF0-84A6-865308AC997C`
+- **Publisher Display Name**: `Ahoy Indie Media`
+- **Store ID**: `9N6QB77PD6RT`
+- **Direct Store URL**: `https://apps.microsoft.com/detail/9N6QB77PD6RT`
+- **Package Family Name (PFN)**: `AhoyIndieMedia.AHOYTV_ga5cs1wvjrpmc`
+- **MSA App ID**: `8be79778-08a1-4c98-85f5-3064da66df73`
+
 - Confirm supported markets, age ratings, content ownership, and media licenses. Public URLs alone do not prove redistribution or television streaming rights.
 - Supply real privacy and support URLs and publisher contact details. Do not invent these.
 
