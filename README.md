@@ -46,6 +46,11 @@ These checks validate source structure, catalog consistency, and image dimension
   git clone https://github.com/oooAHOYooo/ahoy-on-xbox.git
   ```
 
+## Raspberry Pi 4 & Kiosk Over-The-Air (OTA) Control
+
+To eliminate flashing SD cards every time you update channels or UI, see the complete OTA architecture and remote control guide:
+- [Ahoy Pi Instant UI Control & OTA Fleet Handoff](docs/AHOY-PI-OTA-HANDOFF.md)
+
 ## Next product milestones
 
 1. Compile and exercise this native app on Windows and Xbox; fix device findings.
