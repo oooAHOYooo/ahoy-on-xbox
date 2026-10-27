@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ahoy TV — Liquid Glass (4 Channels)</title>
+  <style>
+    :root {
+      --ahoy-lime: #C7FF6B;
+      --ahoy-cyan: #6ddcff;
+      --ahoy-blue: #00a2ff;
+      --ahoy-violet: #9b8cff;
+      --glass-surface: rgba(18, 24, 38, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-highlight: rgba(255, 255, 255, 0.22);
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* LOCKED 100vh / 100vw TV OS CANVAS */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      background: #06080E;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      padding: 20px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* AMBIENT COSMIC LIQUID MESH */
+    .ambient-mesh {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .blob-cyan {
+      position: absolute;
+      top: -15%;
+      left: 20%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(0, 162, 255, 0.14) 0%, transparent 65%);
+      filter: blur(90px);
+    }
+    .blob-violet {
+      position: absolute;
+      bottom: -15%;
+      right: 15%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(155, 140, 255, 0.12) 0%, transparent 65%);
+      filter: blur(90px);
+    }
+
+    /* TOP BRAND & LIVE AIRPLAY BAR (Row 0) */
+    .top-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-ahoy {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--ahoy-lime);
+      letter-spacing: -1px;
+    }
+    .brand-tv {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-top: 8px;
+    }
+
+    /* LIQUID GLASS PILLS */
+    .liquid-pill {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 8px 25px rgba(0, 0, 0, 0.4);
+      border-radius: 9999px;
+    }
+
+    .live-pill {
+      margin-left: 18px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #FF3B30;
+      box-shadow: 0 0 10px #FF3B30;
+    }
+    .live-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+    }
+
+    .airplay-banner {
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+    .header-channel {
+      font-weight: 700;
+      color: var(--ahoy-cyan);
+    }
+    .header-divider {
+      color: rgba(255, 255, 255, 0.2);
+    }
+    .header-nowplaying {
+      color: #FFFFFF;
+      font-weight: 500;
+      max-width: 520px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .save-indicator-badge {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.5px;
+    }
+    .save-indicator-badge.saved {
+      color: var(--ahoy-lime);
+      border-color: rgba(199, 255, 107, 0.5);
+    }
+
+    /* MAIN CONTENT STAGE (Row 1): Top 46% Player, Bottom 54% EPG Guide */
+    .main-stage {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: grid;
+      grid-template-rows: 46fr 54fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    /* TOP HALF: LIVE VIDEO PLAYER VIEWPORT WITH LIQUID GLASS BEZEL */
+    .player-container {
+      background: #000000;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 20px 50px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #media-element {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000000;
+    }
+    #audio-element {
+      display: none;
+    }
+
+    /* LIQUID GLASS PLAYER BOTTOM OVERLAY */
+    .player-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 24, 0.82);
+      backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
+      border-top: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 var(--glass-highlight);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 5;
+    }
+    .nowplaying-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 720px;
+    }
+    .on-air-tag {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ahoy-lime);
+      margin-left: 10px;
+      letter-spacing: 0.5px;
+    }
+    .player-status {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 3px;
+    }
+    .btn-fullscreen {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: #FFFFFF;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-apple);
+    }
+    .btn-fullscreen.focused {
+      background: #FFFFFF;
+      color: #000000;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    }
+
+    /* BOTTOM HALF: DUAL-COLUMN LIVE EPG GUIDE */
+    .epg-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 16px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .column-box {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 0 6px;
+    }
+    .col-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .col-hint {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .list-view {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 6px;
+    }
+    .list-view::-webkit-scrollbar {
+      width: 5px;
+    }
+    .list-view::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .list-view::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    /* LIQUID GLASS CHANNEL CARD (4 CHANNELS) */
+    .channel-card {
+      background: var(--glass-surface);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 10px 25px rgba(0, 0, 0, 0.45);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-apple);
+      flex-shrink: 0;
+    }
+    .channel-card.active {
+      background: rgba(26, 36, 56, 0.85);
+      border-color: rgba(109, 220, 255, 0.4);
+    }
+    .channel-card.focused {
+      border-color: var(--ahoy-cyan) !important;
+      background: rgba(109, 220, 255, 0.18) !important;
+      transform: scale(1.02);
+      box-shadow: 
+        0 0 0 2.5px var(--ahoy-cyan),
+        0 14px 35px rgba(109, 220, 255, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+      z-index: 20;
+    }
+    .ch-num {
+      font-size: 16px;
+      font-weight: 850;
+      color: var(--ahoy-cyan);
+      width: 44px;
+      flex-shrink: 0;
+    }
+    .ch-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+    .ch-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ch-tagline {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* LIQUID GLASS PROGRAM CARD */
+    .program-card {
+      background: var(--glass-surface);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 10px 25px rgba(0, 0, 0, 0.45);
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-apple);
+      flex-shrink: 0;
+    }
+    .program-card.playing {
+      background: rgba(26, 42, 32, 0.85);
+      border-color: rgba(199, 255, 107, 0.5);
+    }
+    .program-card.focused {
+      border-color: var(--ahoy-lime) !important;
+      background: rgba(199, 255, 107, 0.16) !important;
+      transform: scale(1.015);
+      box-shadow: 
+        0 0 0 2.5px var(--ahoy-lime),
+        0 14px 35px rgba(199, 255, 107, 0.35),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+      z-index: 20;
+    }
+    .prog-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 820px;
+    }
+    .prog-host {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 3px;
+    }
+    .prog-badge {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--ahoy-lime);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+
+    /* BOTTOM CONTROLLER KEY HINTS (Row 2) */
+    .bottom-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 32px;
+      margin-top: 12px;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .controller-hints {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .key-btn {
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-right: 5px;
+    }
+    .key-desc {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .brand-tagline {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cosmic Ambient Glow -->
+  <div class="ambient-mesh">
+    <div class="blob-cyan"></div>
+    <div class="blob-violet"></div>
+  </div>
+
+  <!-- TOP BAR (Row 0) -->
+  <header class="top-bar">
+    <div class="brand-wrap">
+      <span class="brand-ahoy">ahoy</span>
+      <span class="brand-tv">tv</span>
+      <div class="liquid-pill live-pill">
+        <span class="live-dot"></span>
+        <span class="live-label">LIVE</span>
+      </div>
+    </div>
+
+    <div class="liquid-pill airplay-banner">
+      <span class="header-channel" id="header-channel">CH 101 • AHOY MIX</span>
+      <span class="header-divider">|</span>
+      <span class="header-nowplaying" id="header-nowplaying">Connecting to live broadcast...</span>
+    </div>
+
+    <div class="liquid-pill save-indicator-badge" id="save-indicator">[X] SAVE TO LIBRARY</div>
+  </header>
+
+  <!-- MAIN STAGE (Row 1) -->
+  <main class="main-stage">
+
+    <!-- TOP HALF: LIVE VIDEO PLAYER -->
+    <div class="player-container" id="player-container">
+      <video id="media-element" playsinline autoplay muted loop></video>
+      <audio id="audio-element"></audio>
+
+      <!-- Liquid Glass Bottom Overlay -->
+      <div class="player-overlay">
+        <div style="display: flex; flex-direction: column; min-width: 0;">
+          <div style="display: flex; align-items: center;">
+            <span class="nowplaying-title" id="nowplaying-title">Live Stream</span>
+            <span class="on-air-tag" id="live-tag">● ON AIR</span>
+          </div>
+          <div class="player-status" id="player-status">Continuous independent broadcast · Next program queues automatically</div>
+        </div>
+        <button class="btn-fullscreen" id="btn-fullscreen" onclick="toggleFullscreen()">Fullscreen [A]</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM HALF: DUAL-COLUMN LIVE EPG GUIDE -->
+    <div class="epg-grid">
+
+      <!-- LEFT COLUMN: 4 LIVE CHANNELS -->
+      <div class="column-box">
+        <div class="col-header">
+          <span class="col-title">4 Live Channels</span>
+        </div>
+        <div class="list-view" id="channel-list"></div>
+      </div>
+
+      <!-- RIGHT COLUMN: PROGRAM SCHEDULE -->
+      <div class="column-box">
+        <div class="col-header">
+          <span class="col-title" id="guide-header">PROGRAM SCHEDULE • ON NOW &amp; UP NEXT</span>
+          <span class="col-hint">Press A to watch specific show</span>
+        </div>
+        <div class="list-view" id="program-list"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- BOTTOM BAR (Row 2) -->
+  <footer class="bottom-bar">
+    <div class="controller-hints">
+      <div><span class="key-btn">D-PAD</span><span class="key-desc">Surf Channels</span></div>
+      <div><span class="key-btn">[A]</span><span class="key-desc">Select / Fullscreen</span></div>
+      <div><span class="key-btn">[B]</span><span class="key-desc">Guide / Back</span></div>
+      <div><span class="key-btn">[X]</span><span class="key-desc">Bookmark / Save</span></div>
+    </div>
+    <div class="brand-tagline">AHOY INDIE MEDIA • ALWAYS ON</div>
+  </footer>
+
+  <script>
+    const CHANNELS = [{"number": "101", "name": "AHOY MIX", "tagline": "24/7 Continuous Indie Broadcast", "videos": [{"id": "wintergreen-sessions-H6iranjvsNI", "title": "Whatnot - Sand - Live @ Wintergreen Sessions", "description": "Whatnot performs their Roblox minigame hit, \"Sand.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4", "duration": "5:24", "file_size": "126523475", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "H6iranjvsNI", "original_url": "https://www.youtube.com/watch?v=H6iranjvsNI", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-1hJR3r16J8Q", "title": "Whatnot - Running Away - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Running Away.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/1hJR3r16J8Q.mp4", "duration": "4:32", "file_size": "120089239", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "1hJR3r16J8Q", "original_url": "https://www.youtube.com/watch?v=1hJR3r16J8Q", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-Km_6Ux09jj4", "title": "Whatnot - Dispatch - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Dispatch.\"\n\nSee the full performance here:\nhttps://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/Km_6Ux09jj4.mp4", "duration": "4:01", "file_size": "108265306", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/Km_6Ux09jj4.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "Km_6Ux09jj4", "original_url": "https://www.youtube.com/watch?v=Km_6Ux09jj4", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-grB5ydvYWW8", "title": "Wintergreen Sessions Episode 1: Whatnot", "description": "Welcome to Wintergreen Sessions! This is a new series dedicated to capturing the live performances of artists and bands. I say we because we're working in conjunction with Kicker Pictures to record high quality professional video alongside the live audio recording. Today, we're starting off our series with a local band from here in CT. Whatnot recorded their debut record, \"Self-Titled,\" here at the Wintergreen Studio. Today they start off their performance with a brand new, never before heard song. After that, they dive into two familiar tunes off their EP - With some slight changes.\n\nWhatnot - \nYoutube: @WhatnotTheBand \nInstagram: @whatnot.band\n\nKicker Pictures - \nYoutube: @kickerpictures \nInstagram: @Kickerpicturesct\nWebsite: https://www.kickerpictures.com/\n\nWintergreen Sessions - \nInstagram: @Wintergreen_sessions", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/grB5ydvYWW8.mp4", "duration": "13:49", "file_size": "350824169", "format": "MP4", "status": "available", "upload_date": "2026-09-22", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/grB5ydvYWW8.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "grB5ydvYWW8", "original_url": "https://www.youtube.com/watch?v=grB5ydvYWW8", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "rob-meglio-sponsor-me-tape-october-2026", "title": "Rob Meglio's Sponsor Me Tape - October 2026", "description": "Rob Meglio's sponsor me tape filmed at flux on 10.17.26", "host": "Rob Meglio", "host_slug": "rob-meglio", "featured_skater": "Rob Meglio", "featured_skater_slug": "rob-meglio", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Rob%20Meglio%20-%20Sponsor%20Me%20Tape%20for%20Flux%20-%20October%202026.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-10-20", "thumbnail": "/static/thumbnails/rob-meglio-sponsor-me-tape-october-2026.jpg?v=20261020", "category": "skating", "tags": ["tallboyz", "skating", "rob-meglio", "flux", "comedy"]}, {"id": "tallboyz-obsolete", "title": "Tallboyz - Obsolete", "description": "A full-length skating film from Tallboyz featuring Dave Gunn and Andrew Leverton. Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Tallboyz%20-%20Obsolete%20-%20Full%20Film.mov", "duration": null, "file_size": null, "format": "MOV", "status": "available", "upload_date": "2026-05-27", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete_Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete%20-%20Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete5.jpg", "category": "film", "tags": ["tallboyz", "full-film", "skating", "film", "short-film"]}, {"id": "tallboyz-ufrwhite", "title": "UFR White - Featuring Dave Gunn", "description": "New skating content from Tallboyz featuring Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "featured_skater": "Dave Gunn", "featured_skater_slug": "dave-gunn", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-07-08", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite_thumb.jpg", "category": "clip", "tags": ["tallboyz", "skating", "dave-gunn", "clip"]}, {"id": "flux-tb-cash-contest", "title": "Flux TB Cash Contest", "description": "Cash Contest hosted by the Tallboyz at FLUX during their first annual skate film festival at Flux. Shot and edited by Alex Gonzalez.", "url": "https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4", "host": "Tallboyz", "host_slug": "tallboyz", "filmmaker": "Alex Gonzalez", "filmmaker_slug": "alex-gonzalez", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-04-06", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg", "tags": ["tallboyz", "skating", "alex-gonzalez", "contest", "flux"]}, {"id": "samuel-dylan-witch-stop-and-rewind", "title": "Samuel Dylan Witch \u2014 Stop and Rewind", "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d", "host": "Samuel Dylan Witch", "host_slug": "samuel-dylan-witch", "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4", "duration": "4:03", "file_size": 312349763, "format": "MP4", "status": "available", "upload_date": "2026-10-16", "thumbnail": "/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg", "tags": ["music-video", "samuel-dylan-witch"]}, {"id": "poets-and-friends-10", "event_id": "2026-04-30T18:30:00", "title": "Poets & Friends #10 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #10, originally recorded live on April 30, 2026 at Koffee?, New Haven CT.", "host": "Ahoy Indie Media", "host_slug": "ahoy-indie-media", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets_10_FULL.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-05-21", "thumbnail": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets%20%2310.jpg"}, {"id": "poets-and-friends-9", "event_id": "2026-03-26T18:30:00", "title": "Poets & Friends #9 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #9: Springtime, originally recorded live on March 26, 2026 at Koffee?, New Haven CT.", "host": "Ahoy Indie Media", "host_slug": "ahoy-indie-media", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-09/Poets%20and%20Friends%20%239%20-%20full.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-03-30", "thumbnail": "https://partiful.imgix.net/external/user/CwCebGXbOBSYcICoVLo5921X2ZC3/50ZHnbZBbi-ReHwK2D24a?fit=clip&w=460&auto=format"}, {"id": "tyler-needs-a-break-ep4-full", "title": "Tyler Needs a Break \u2014 Episode 4: Sam Carlson (Full Show)", "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour. Full episode of Tyler Needs a Break, Episode 4.", "url": "https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-03-22", "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-full_sam-carlson_8646f844c333.jpg"}, {"id": "poets-and-friends-8", "event_id": "2026-02-26T18:30:00", "title": "Poets & Friends #8 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #8, originally recorded live on February 26, 2026 at Koffee?, New Haven CT. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha.", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets%20and%20Friends%20%238%20-%20Draft%203.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-02-26", "thumbnail": "/static/thumbnails/poets-and-friends-8_b1908116a7c8.jpg"}, {"id": "poets-and-friends-4", "event_id": "2025-10-30T18:30:00", "title": "Poets & Friends #4: Spooky Edition - Live Show Recording", "description": "Full recording of the Spooky Edition poetry and performance event", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets4Total.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2025-11-18", "thumbnail": "/static/thumbnails/poets-and-friends-4_24ec074f1c38.jpg"}, {"id": "poets-and-friends-3", "event_id": "2025-09-24T19:00:00", "title": "Poets and Friends #3 - Live Show Recording", "description": "Full recording of the live poetry and performance event", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Ahoy_poets%20and%20friends%20-%203%20-%20ready.mov", "duration": "39 minutes", "file_size": "3.4GB", "format": "MOV", "status": "available", "upload_date": "2025-10-01", "thumbnail": "/static/thumbnails/poets-and-friends-3_a0e72c328dba.jpg"}, {"id": "poets-and-friends-13-part-0-opening-remarks", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Opening Remarks", "description": "Alex Gonzalez kicks off Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Alex Gonzalez", "host_slug": "alex-gonzalez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_0_Opening.mp4", "duration": "2:15", "duration_seconds": 135, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-0-opening-remarks_6ba3a44db0ab.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-1-paul-wildy", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Paul Wildy", "description": "Paul Wildy performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Paul Wildy", "host_slug": "paul-wildy", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_1_PaulWildy.mp4", "duration": "4:09", "duration_seconds": 249, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-1-paul-wildy_7aeecfa84620.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-2-elena-gerald", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Elena Gerald", "description": "Elena Gerald performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Elena Gerald", "host_slug": "elena-gerald", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_2_ElenaGerald.mp4", "duration": "3:49", "duration_seconds": 229, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-2-elena-gerald_c07344d27c21.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-3-aidan-bauer", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Aidan Bauer", "description": "Aidan Bauer performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Aidan Bauer", "host_slug": "aidan-bauer", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_3_AidanBauer.mp4", "duration": "3:05", "duration_seconds": 185, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-3-aidan-bauer_ac40d34fc94f.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-4-pat-clendenen", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Pat Clendenen", "description": "Pat Clendenen performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Pat Clendenen", "host_slug": "pat-clendenen", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_4_PatClendenen.mp4", "duration": "1:52", "duration_seconds": 112, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-4-pat-clendenen_e0df2fee0195.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-5-ellen-martin", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Ellen Martin", "description": "Ellen Martin performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Ellen Martin", "host_slug": "ellen-martin", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_5_EllenMartin.mp4", "duration": "4:48", "duration_seconds": 288, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-5-ellen-martin_b747148a13d0.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-6-kyle-middleton", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Kyle Middleton", "description": "Kyle Middleton performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Kyle Middleton", "host_slug": "kyle-middleton", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_6_KyleMiddleton.mp4", "duration": "2:27", "duration_seconds": 147, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-6-kyle-middleton_23b780be729b.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-7-seth-bollinger", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Seth Bollinger", "description": "Seth Bollinger performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Seth Bollinger", "host_slug": "seth-bollinger", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_7_SethBollinger.mp4", "duration": "5:05", "duration_seconds": 305, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-7-seth-bollinger_72579bd8fe14.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-8-jailene-rodriguez", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Jailene Rodriguez", "description": "Jailene Rodriguez performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Jailene Rodriguez", "host_slug": "jailene-rodriguez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_8_JaileneRodriguez.mp4", "duration": "5:59", "duration_seconds": 359, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-8-jailene-rodriguez_376daeb23f0b.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-10-phil", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Phil", "description": "Phil performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Phil", "host_slug": "phil", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_10_phil.mp4", "duration": "3:01", "duration_seconds": 181, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-10-phil_af7e0a451d9a.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-11-prasaus", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Prasaus", "description": "Prasaus performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Prasaus", "host_slug": "prasaus", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_11_Prasaus.mp4", "duration": "2:48", "duration_seconds": 168, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-11-prasaus_3f2522d89cc9.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-12-james", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 James", "description": "James performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "James", "host_slug": "james", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_12_James.mp4", "duration": "2:06", "duration_seconds": 126, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-12-james_52804eeed656.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-13-cj", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 CJ", "description": "CJ performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "CJ", "host_slug": "cj", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_13_CJ.mp4", "duration": "2:25", "duration_seconds": 145, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-13-cj_50182d842ff5.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-14-khanyisile-nawa", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Khanyisile Nawa", "description": "Khanyisile Nawa performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Khanyisile Nawa", "host_slug": "khanyisile-nawa", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_14_Kanye.mp4", "duration": "4:51", "duration_seconds": 291, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-14-khanyisile-nawa_4225e831ec91.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}, {"id": "poets-and-friends-13-part-15-closing-remarks", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Closing Remarks", "description": "Alex Gonzalez concludes Poets & Friends #13 with closing remarks, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Alex Gonzalez", "host_slug": "alex-gonzalez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_15_ClosingRemarks.mp4", "duration": "1:40", "duration_seconds": 100, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-15-closing-remarks_67ca889007a3.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"]}]}, {"number": "102", "name": "WINTERGREEN STUDIOS", "tagline": "Live Concerts & Studio Sessions", "videos": [{"id": "wintergreen-sessions-H6iranjvsNI", "title": "Whatnot - Sand - Live @ Wintergreen Sessions", "description": "Whatnot performs their Roblox minigame hit, \"Sand.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4", "duration": "5:24", "file_size": "126523475", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "H6iranjvsNI", "original_url": "https://www.youtube.com/watch?v=H6iranjvsNI", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-1hJR3r16J8Q", "title": "Whatnot - Running Away - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Running Away.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/1hJR3r16J8Q.mp4", "duration": "4:32", "file_size": "120089239", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "1hJR3r16J8Q", "original_url": "https://www.youtube.com/watch?v=1hJR3r16J8Q", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-Km_6Ux09jj4", "title": "Whatnot - Dispatch - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Dispatch.\"\n\nSee the full performance here:\nhttps://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/Km_6Ux09jj4.mp4", "duration": "4:01", "file_size": "108265306", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/Km_6Ux09jj4.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "Km_6Ux09jj4", "original_url": "https://www.youtube.com/watch?v=Km_6Ux09jj4", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}, {"id": "wintergreen-sessions-grB5ydvYWW8", "title": "Wintergreen Sessions Episode 1: Whatnot", "description": "Welcome to Wintergreen Sessions! This is a new series dedicated to capturing the live performances of artists and bands. I say we because we're working in conjunction with Kicker Pictures to record high quality professional video alongside the live audio recording. Today, we're starting off our series with a local band from here in CT. Whatnot recorded their debut record, \"Self-Titled,\" here at the Wintergreen Studio. Today they start off their performance with a brand new, never before heard song. After that, they dive into two familiar tunes off their EP - With some slight changes.\n\nWhatnot - \nYoutube: @WhatnotTheBand \nInstagram: @whatnot.band\n\nKicker Pictures - \nYoutube: @kickerpictures \nInstagram: @Kickerpicturesct\nWebsite: https://www.kickerpictures.com/\n\nWintergreen Sessions - \nInstagram: @Wintergreen_sessions", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/grB5ydvYWW8.mp4", "duration": "13:49", "file_size": "350824169", "format": "MP4", "status": "available", "upload_date": "2026-09-22", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/grB5ydvYWW8.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "grB5ydvYWW8", "original_url": "https://www.youtube.com/watch?v=grB5ydvYWW8", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions"}]}, {"number": "103", "name": "AHOY RADIO 24/7", "tagline": "Continuous Indie Airplay", "videos": [{"id": "song_1", "title": "Seen Better Days", "host": "Samuel Dylan Witch", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3", "category": "radio"}, {"id": "song_2", "title": "Beneath the Willow Tree", "host": "Samuel Dylan Witch", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3", "category": "radio"}, {"id": "song_3", "title": "Put Me on the Run", "host": "Samuel Dylan Witch", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3", "category": "radio"}, {"id": "song_4", "title": "You Know Me", "host": "Samuel Dylan Witch", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/You+Know+Me+Draft+2.mp3", "category": "radio"}, {"id": "song_5", "title": "Watching Her Fly", "host": "Samuel Dylan Witch", "url": "https://ahoycollection.s3.amazonaws.com/Coral+Reefer+-+Untitled+(original).mp3", "category": "radio"}, {"id": "song_6", "title": "Far From Here", "host": "Cambell Rice", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-+From+Here.mp3", "category": "radio"}, {"id": "song_7", "title": "Sunflower", "host": "Cambell Rice", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Sunflower.mp3", "category": "radio"}, {"id": "song_8", "title": "To Play Guitar in a Huge Room", "host": "Cambell Rice", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Trying+to+play+guitar+in+a+huge+room.mp3", "category": "radio"}, {"id": "song_9", "title": "Summer Bummer", "host": "Youth XL", "url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Summer+Bummer.mp3", "category": "radio"}, {"id": "song_10", "title": "Yoga", "host": "Youth XL", "url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Yoga.mp3", "category": "radio"}, {"id": "song_11", "title": "Text Your Friends", "host": "Youth XL", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Text+Your+Friends.mp3", "category": "radio"}, {"id": "song_12", "title": "Gypsy Gia", "host": "Youth XL", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Gypsy+Gia.mp3", "category": "radio"}, {"id": "song_14", "title": "Glued in the Nude", "host": "Riddle M", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Glued+in+Nude.mp3", "category": "radio"}, {"id": "song_13", "title": "Reasons", "host": "Fella Gazelle", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Fella%20Gazelle%20-%20Reasons%20-%20Radio%20Edit.mp3", "category": "radio"}, {"id": "song_15", "title": "Honeydew", "host": "Riddle M", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Honeydew.mp3", "category": "radio"}, {"id": "song_16", "title": "Oceans", "host": "Justin Arena", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3", "category": "radio"}, {"id": "song_17", "title": "When You Wake Up", "host": "Justin Arena", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3", "category": "radio"}, {"id": "song_18", "title": "Crash The Party", "host": "Justin Arena", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin%20Arena%20-%20Crash%20The%20Party%20(ft.%20Nicole%20Gauthier).mp3", "category": "radio"}, {"id": "song_19", "title": "Lost Time", "host": "Clones of Clarence", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Lost+Time+(I+miss+you).mp3", "category": "radio"}, {"id": "song_20", "title": "Salty Salsa", "host": "Clones of Clarence", "url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Salty+Salsa.mp3", "category": "radio"}]}, {"number": "104", "name": "MUSIC & CULTURE", "tagline": "Underground Videos & Skate Tapes", "videos": [{"id": "samuel-dylan-witch-stop-and-rewind", "title": "Samuel Dylan Witch \u2014 Stop and Rewind", "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d", "host": "Samuel Dylan Witch", "host_slug": "samuel-dylan-witch", "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4", "duration": "4:03", "file_size": 312349763, "format": "MP4", "status": "available", "upload_date": "2026-10-16", "thumbnail": "/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg", "tags": ["music-video", "samuel-dylan-witch"]}, {"id": "rob-meglio-sponsor-me-tape-october-2026", "title": "Rob Meglio's Sponsor Me Tape - October 2026", "description": "Rob Meglio's sponsor me tape filmed at flux on 10.17.26", "host": "Rob Meglio", "host_slug": "rob-meglio", "featured_skater": "Rob Meglio", "featured_skater_slug": "rob-meglio", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Rob%20Meglio%20-%20Sponsor%20Me%20Tape%20for%20Flux%20-%20October%202026.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-10-20", "thumbnail": "/static/thumbnails/rob-meglio-sponsor-me-tape-october-2026.jpg?v=20261020", "category": "skating", "tags": ["tallboyz", "skating", "rob-meglio", "flux", "comedy"]}, {"id": "tallboyz-obsolete", "title": "Tallboyz - Obsolete", "description": "A full-length skating film from Tallboyz featuring Dave Gunn and Andrew Leverton. Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Tallboyz%20-%20Obsolete%20-%20Full%20Film.mov", "duration": null, "file_size": null, "format": "MOV", "status": "available", "upload_date": "2026-05-27", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete_Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete%20-%20Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete5.jpg", "category": "film", "tags": ["tallboyz", "full-film", "skating", "film", "short-film"]}, {"id": "tallboyz-ufrwhite", "title": "UFR White - Featuring Dave Gunn", "description": "New skating content from Tallboyz featuring Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "featured_skater": "Dave Gunn", "featured_skater_slug": "dave-gunn", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-07-08", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite_thumb.jpg", "category": "clip", "tags": ["tallboyz", "skating", "dave-gunn", "clip"]}, {"id": "flux-tb-cash-contest", "title": "Flux TB Cash Contest", "description": "Cash Contest hosted by the Tallboyz at FLUX during their first annual skate film festival at Flux. Shot and edited by Alex Gonzalez.", "url": "https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4", "host": "Tallboyz", "host_slug": "tallboyz", "filmmaker": "Alex Gonzalez", "filmmaker_slug": "alex-gonzalez", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-04-06", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg", "tags": ["tallboyz", "skating", "alex-gonzalez", "contest", "flux"]}]}];
+
+    let selectedChannelIndex = 0;
+    let selectedProgramIndex = 0;
+    let currentZone = 'channels';
+
+    let playingChannel = null;
+    let playingIndex = 0;
+
+    const savedIds = new Set(JSON.parse(localStorage.getItem('Ahoy_Saved_Ids') || '[]'));
+
+    function isSaved(id) {
+      return savedIds.has(id);
+    }
+
+    function toggleSave(id) {
+      if (savedIds.has(id)) savedIds.delete(id);
+      else savedIds.add(id);
+      localStorage.setItem('Ahoy_Saved_Ids', JSON.stringify(Array.from(savedIds)));
+      updateSaveIndicator();
+    }
+
+    const mediaEl = document.getElementById('media-element');
+    const audioEl = document.getElementById('audio-element');
+    const headerChannel = document.getElementById('header-channel');
+    const headerNowplaying = document.getElementById('header-nowplaying');
+    const nowplayingTitle = document.getElementById('nowplaying-title');
+    const playerStatus = document.getElementById('player-status');
+    const saveIndicator = document.getElementById('save-indicator');
+    const guideHeader = document.getElementById('guide-header');
+    const channelList = document.getElementById('channel-list');
+    const programList = document.getElementById('program-list');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+
+    function renderChannels() {
+      channelList.innerHTML = '';
+      CHANNELS.forEach((ch, idx) => {
+        const card = document.createElement('div');
+        const isActive = idx === selectedChannelIndex;
+        const isFocused = currentZone === 'channels' && idx === selectedChannelIndex;
+
+        card.className = 'channel-card' + (isActive ? ' active' : '') + (isFocused ? ' focused' : '');
+        card.innerHTML = `
+          <span class="ch-num">${ch.number}</span>
+          <div class="ch-info">
+            <span class="ch-name">${ch.name}</span>
+            <span class="ch-tagline">${ch.tagline}</span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          currentZone = 'channels';
+          tuneChannel(idx);
+        };
+
+        channelList.appendChild(card);
+      });
+
+      scrollIntoViewIfNeeded(channelList, selectedChannelIndex);
+    }
+
+    function renderPrograms() {
+      const ch = CHANNELS[selectedChannelIndex];
+      guideHeader.innerText = `${ch.name} • SCHEDULE (${ch.videos.length} IN ROTATION)`;
+      programList.innerHTML = '';
+
+      ch.videos.forEach((vid, idx) => {
+        const card = document.createElement('div');
+        const isPlaying = playingChannel && playingChannel.number === ch.number && playingIndex === idx;
+        const isFocused = currentZone === 'programs' && idx === selectedProgramIndex;
+
+        card.className = 'program-card' + (isPlaying ? ' playing' : '') + (isFocused ? ' focused' : '');
+        card.innerHTML = `
+          <div style="display: flex; flex-direction: column; overflow: hidden;">
+            <span class="prog-title">${vid.title}</span>
+            <span class="prog-host">${vid.host || 'Ahoy'}</span>
+          </div>
+          <span class="prog-badge">${isPlaying ? 'PLAYING NOW' : 'ON AIR'}</span>
+        `;
+
+        card.onclick = () => {
+          currentZone = 'programs';
+          selectedProgramIndex = idx;
+          playItem(ch, idx);
+        };
+
+        programList.appendChild(card);
+      });
+
+      scrollIntoViewIfNeeded(programList, selectedProgramIndex);
+    }
+
+    function scrollIntoViewIfNeeded(container, index) {
+      const items = container.children;
+      if (items[index]) {
+        items[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
+    // TUNE CHANNEL (PLUTO TV: IMMEDIATELY STARTS PLAYING)
+    function tuneChannel(idx) {
+      selectedChannelIndex = idx;
+      selectedProgramIndex = 0;
+      const ch = CHANNELS[idx];
+
+      renderChannels();
+      renderPrograms();
+
+      if (ch.videos.length > 0) {
+        playItem(ch, 0);
+      }
+
+      updateFocus();
+    }
+
+    function playItem(ch, idx) {
+      playingChannel = ch;
+      playingIndex = idx;
+      const vid = ch.videos[idx];
+      if (!vid) return;
+
+      headerChannel.innerText = `CH ${ch.number} • ${ch.name}`;
+      headerNowplaying.innerText = `${vid.title} (${vid.host || 'Ahoy'})`;
+      nowplayingTitle.innerText = vid.title;
+      playerStatus.innerText = `${ch.name} · ${vid.host || 'Ahoy'} · Continuous queue active`;
+
+      updateSaveIndicator();
+
+      if (vid.category === 'radio' || (vid.url && vid.url.endsWith('.mp3'))) {
+        mediaEl.pause();
+        mediaEl.style.display = 'none';
+        audioEl.src = vid.url;
+        audioEl.play().catch(() => {});
+      } else {
+        audioEl.pause();
+        mediaEl.style.display = 'block';
+        mediaEl.src = vid.url;
+        mediaEl.play().catch(() => {});
+      }
+
+      renderPrograms();
+    }
+
+    function playNext() {
+      if (!playingChannel || playingChannel.videos.length === 0) return;
+      playingIndex = (playingIndex + 1) % playingChannel.videos.length;
+      playItem(playingChannel, playingIndex);
+    }
+
+    function updateSaveIndicator() {
+      if (!playingChannel || playingChannel.videos.length === 0) return;
+      const vid = playingChannel.videos[playingIndex];
+      const saved = isSaved(vid.id);
+      saveIndicator.innerText = saved ? '★ SAVED IN LIBRARY [X]' : '[X] SAVE TO LIBRARY';
+      saveIndicator.className = 'liquid-pill save-indicator-badge' + (saved ? ' saved' : '');
+    }
+
+    function toggleFullscreen() {
+      const cont = document.getElementById('player-container');
+      if (!document.fullscreenElement) {
+        if (cont.requestFullscreen) cont.requestFullscreen();
+        else if (mediaEl.requestFullscreen) mediaEl.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    function updateFocus() {
+      document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+
+      if (currentZone === 'channels') {
+        const items = channelList.querySelectorAll('.channel-card');
+        if (items[selectedChannelIndex]) {
+          items[selectedChannelIndex].classList.add('focused');
+          scrollIntoViewIfNeeded(channelList, selectedChannelIndex);
+        }
+      } else if (currentZone === 'programs') {
+        const items = programList.querySelectorAll('.program-card');
+        if (items[selectedProgramIndex]) {
+          items[selectedProgramIndex].classList.add('focused');
+          scrollIntoViewIfNeeded(programList, selectedProgramIndex);
+        }
+      } else if (currentZone === 'fullscreen_btn') {
+        btnFullscreen.classList.add('focused');
+      }
+    }
+
+    // D-PAD & KEYBOARD NAVIGATION
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          if (currentZone === 'channels') {
+            if (selectedChannelIndex > 0) {
+              tuneChannel(selectedChannelIndex - 1);
+            }
+          } else if (currentZone === 'programs') {
+            if (selectedProgramIndex > 0) {
+              selectedProgramIndex--;
+              updateFocus();
+            } else {
+              currentZone = 'fullscreen_btn';
+              updateFocus();
+            }
+          }
+          break;
+
+        case 'ArrowDown':
+          if (currentZone === 'channels') {
+            if (selectedChannelIndex < CHANNELS.length - 1) {
+              tuneChannel(selectedChannelIndex + 1);
+            }
+          } else if (currentZone === 'programs') {
+            const ch = CHANNELS[selectedChannelIndex];
+            if (selectedProgramIndex < ch.videos.length - 1) {
+              selectedProgramIndex++;
+              updateFocus();
+            }
+          } else if (currentZone === 'fullscreen_btn') {
+            currentZone = 'programs';
+            selectedProgramIndex = 0;
+            updateFocus();
+          }
+          break;
+
+        case 'ArrowRight':
+          if (currentZone === 'channels') {
+            currentZone = 'programs';
+            selectedProgramIndex = 0;
+            updateFocus();
+          }
+          break;
+
+        case 'ArrowLeft':
+          if (currentZone === 'programs' || currentZone === 'fullscreen_btn') {
+            currentZone = 'channels';
+            updateFocus();
+          }
+          break;
+
+        case 'Enter':
+          if (currentZone === 'channels') {
+            currentZone = 'programs';
+            updateFocus();
+          } else if (currentZone === 'programs') {
+            playItem(CHANNELS[selectedChannelIndex], selectedProgramIndex);
+          } else if (currentZone === 'fullscreen_btn') {
+            toggleFullscreen();
+          }
+          break;
+
+        case ' ':
+          if (mediaEl.style.display !== 'none') {
+            if (mediaEl.paused) mediaEl.play(); else mediaEl.pause();
+          } else {
+            if (audioEl.paused) audioEl.play(); else audioEl.pause();
+          }
+          break;
+
+        case 'x':
+        case 'X':
+          if (playingChannel && playingChannel.videos[playingIndex]) {
+            toggleSave(playingChannel.videos[playingIndex].id);
+          }
+          break;
+
+        case 'f':
+        case 'F':
+          toggleFullscreen();
+          break;
+
+        case 'Escape':
+        case 'Backspace':
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else if (currentZone !== 'channels') {
+            currentZone = 'channels';
+            updateFocus();
+          }
+          break;
+      }
+    });
+
+    mediaEl.onended = playNext;
+    audioEl.onended = playNext;
+
+    window.addEventListener('click', () => {
+      if (mediaEl.muted) mediaEl.muted = false;
+    }, { once: true });
+
+    // INIT (Channel 101 Starts Live!)
+    tuneChannel(0);
+    updateFocus();
+  </script>
+</body>
+</html>

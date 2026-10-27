@@ -144,19 +144,12 @@ namespace AhoyXbox
                     };
                 }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
 
-                var channels = new List<Channel>
-                {
-                    new Channel { Number = "101", Name = "AHOY TV LIVE", Tagline = "24/7 Indie Mix Broadcast", Videos = videos }
-                };
+                // EXACTLY 4 CANONICAL CHANNELS (Matches app.ahoy.ooo backend /api/live-tv/channels)
+                var liveShowsVideos = videos.Where(v => v.Category == "live show" || v.Tags.Contains("wintergreen-sessions") || v.Tags.Contains("live")).ToList();
+                if (liveShowsVideos.Count == 0) liveShowsVideos = videos.Take(10).ToList();
 
-                // Wintergreen Studios channel
-                var wintergreenVideos = videos.Where(v => v.Tags.Contains("wintergreen-sessions") || v.Host.Contains("Wintergreen")).ToList();
-                if (wintergreenVideos.Count > 0)
-                {
-                    channels.Add(new Channel { Number = "102", Name = "WINTERGREEN STUDIOS", Tagline = "Live Sessions & Archives", Videos = wintergreenVideos });
-                }
-
-                // Ahoy Radio 24/7 channel from music.json
+                var musicVideos = videos.Where(v => v.Tags.Contains("music-video") || v.Tags.Contains("music")).ToList();
+                // Augment Music Videos with audio tracks from music.json
                 try
                 {
                     var musicFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/music.json"));
@@ -165,56 +158,45 @@ namespace AhoyXbox
                     if (musicRoot.ContainsKey("tracks"))
                     {
                         var musicArray = musicRoot.GetNamedArray("tracks");
-                        var radioTracks = musicArray.Select(t => {
+                        var tracks = musicArray.Select(t => {
                             var row = t.GetObject();
                             return new Video {
                                 Id = row.GetNamedString("track_id", Guid.NewGuid().ToString()),
                                 Title = row.GetNamedString("title", "Untitled Track"),
-                                Host = row.GetNamedString("artist", "Ahoy Radio"),
+                                Host = row.GetNamedString("artist", "Ahoy Music"),
                                 Url = row.GetNamedString("audio_url", ""),
-                                Category = "radio",
-                                Tags = new List<string> { "radio", "music" }
+                                Category = "music",
+                                Tags = new List<string> { "music", "audio" }
                             };
                         }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
-
-                        if (radioTracks.Count > 0)
-                        {
-                            channels.Add(new Channel { Number = "103", Name = "AHOY RADIO 24/7", Tagline = "Continuous Indie Airplay", Videos = radioTracks });
-                        }
+                        musicVideos.AddRange(tracks);
                     }
                 }
                 catch { }
+                if (musicVideos.Count == 0) musicVideos = videos;
 
-                // Music Videos channel
-                var musicVideos = videos.Where(v => v.Tags.Contains("music-video")).ToList();
-                if (musicVideos.Count > 0)
+                var filmVideos = videos.Where(v => v.Category == "film" || v.Category == "skating" || v.Tags.Contains("short-film") || v.Tags.Contains("skating")).ToList();
+                if (filmVideos.Count == 0) filmVideos = videos;
+
+                var miscVideos = videos; // Continuous 24/7 Mix
+
+                var channels = new List<Channel>
                 {
-                    channels.Add(new Channel { Number = "104", Name = "MUSIC VIDEOS", Tagline = "Premieres & Soundscapes", Videos = musicVideos });
-                }
-
-                // Skating channel
-                var skateVideos = videos.Where(v => v.Category == "skating" || v.Tags.Contains("skating")).ToList();
-                if (skateVideos.Count > 0)
-                {
-                    channels.Add(new Channel { Number = "105", Name = "SKATING", Tagline = "Street & Park Video Tapes", Videos = skateVideos });
-                }
-
-                // Saved Library channel
-                var savedVideos = videos.Where(v => SavedStore.Contains(v.Id)).ToList();
-                channels.Add(new Channel { Number = "106", Name = "SAVED LIBRARY", Tagline = "Your Bookmarked Shows", Videos = savedVideos });
+                    new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Live Concerts", Videos = liveShowsVideos },
+                    new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres, Visuals & Soundscapes", Videos = musicVideos },
+                    new Channel { Number = "103", Name = "Films", Tagline = "Skate Tapes, Documentaries & Shorts", Videos = filmVideos },
+                    new Channel { Number = "104", Name = "Misc", Tagline = "Continuous Cultural Mix & Curations", Videos = miscVideos }
+                };
 
                 Channels.ItemsSource = channels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
 
                 // Auto-Play Channel 101 immediately (Pluto TV behavior)
-                if (channels.Count > 0 && channels[0].Videos.Count > 0)
-                {
-                    playingChannel = channels[0];
-                    playingIndex = 0;
-                    Programs.ItemsSource = playingChannel.Videos;
-                    PlayCurrent();
-                }
+                playingChannel = channels[0];
+                playingIndex = 0;
+                Programs.ItemsSource = playingChannel.Videos;
+                PlayCurrent();
             }
             catch (Exception)
             {
@@ -229,7 +211,7 @@ namespace AhoyXbox
                 Programs.ItemsSource = channel.Videos;
                 GuideHeader.Text = $"{channel.Name.ToUpperInvariant()} • SCHEDULE ({channel.Videos.Count} IN ROTATION)";
 
-                // Instant Channel Surfing: Switching channels immediately starts playing that channel live!
+                // Instant Channel Surfing: Switching channels immediately tunes and starts playback
                 if (channel.Videos.Count > 0)
                 {
                     playingChannel = channel;
@@ -239,7 +221,7 @@ namespace AhoyXbox
                 else
                 {
                     NowPlaying.Text = channel.Name;
-                    Status.Text = "No items in this queue yet. Press [X] on any video to add it here.";
+                    Status.Text = "Empty queue. Press [X] on any video to add it.";
                     HeaderNowPlaying.Text = "Empty Queue";
                 }
             }
@@ -259,9 +241,9 @@ namespace AhoyXbox
             if (playingChannel == null || playingChannel.Videos.Count == 0) return;
             var video = playingChannel.Videos[playingIndex];
             NowPlaying.Text = video.Title;
-            HeaderChannel.Text = $"CH {playingChannel.Number} • {playingChannel.Name}";
+            HeaderChannel.Text = $"CH {playingChannel.Number} • {playingChannel.Name.ToUpperInvariant()}";
             HeaderNowPlaying.Text = $"{video.Title} ({video.Host})";
-            Status.Text = $"{playingChannel.Name} · {video.Host} · Continuous queue active";
+            Status.Text = $"{playingChannel.Name} · {video.Host} · Continuous broadcast active";
             UpdateSaveStatus(video.Id);
 
             try
@@ -271,7 +253,7 @@ namespace AhoyXbox
             }
             catch (Exception)
             {
-                Status.Text = "This stream could not open. Tuning to next available program...";
+                Status.Text = "Reconnecting to live queue...";
             }
         }
 
@@ -312,7 +294,7 @@ namespace AhoyXbox
         private async void Failed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                Status.Text = "Stream disconnected. Reconnecting to live queue...";
+                Status.Text = "Stream reconnecting...";
                 if (playingChannel != null && playingChannel.Videos.Count > 0)
                 {
                     playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
