@@ -8,3 +8,5 @@ AppPackages/
 *.appxupload
 *.appxbundle
 dist/*_Test/
+dist/release/
+dist/release_packages/
