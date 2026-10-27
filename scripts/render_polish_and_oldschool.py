@@ -335,7 +335,7 @@ html_apple_polish = f"""<!DOCTYPE html>
       <div class="nav-group">
         <div class="nav-header">Browse</div>
         <div class="nav-item active">
-          <span>AHOY TV</span>
+          <span>AHOY TV Channels</span>
         </div>
         <div class="nav-item">
           <span>Radio</span>
@@ -346,9 +346,6 @@ html_apple_polish = f"""<!DOCTYPE html>
         </div>
         <div class="nav-item">
           <span>Skating</span>
-        </div>
-        <div class="nav-item">
-          <span>Podcasts</span>
         </div>
       </div>
     </div>

@@ -296,9 +296,8 @@ html_apple_wintergreen = f"""<!DOCTYPE html>
     </div>
 
     <div class="nav-tabs">
-      <div class="nav-tab active">Wintergreen Studios</div>
-      <div class="nav-tab">Ahoy TV Channels</div>
-      <div class="nav-tab">Radio 24/7</div>
+      <div class="nav-tab active">Ahoy TV Channels</div>
+      <div class="nav-tab">Radio</div>
       <div class="nav-tab">Music</div>
       <div class="nav-tab">Skating</div>
     </div>
