@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    background: #0A0D14;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* Left Navigation Rail (Xbox controller D-pad friendly) */
+  .nav-rail {
+    width: 320px;
+    background: #0E131C;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 44px 32px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 48px;
+  }
+  .brand-logo {
+    height: 38px;
+  }
+  .brand-tv {
+    font-size: 18px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-left: 10px;
+    letter-spacing: 1px;
+    opacity: 0.9;
+  }
+
+  .nav-section-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #6C7A8E;
+    font-weight: 700;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  .nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #8E9AA8;
+    background: transparent;
+    border: 2px solid transparent;
+  }
+  .nav-btn .icon {
+    font-size: 22px;
+    margin-right: 16px;
+    width: 28px;
+    text-align: center;
+  }
+  .nav-btn.active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    border-color: #FFFFFF; /* High visibility focus border for controller */
+  }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: #FF3B30;
+    border-radius: 50%;
+    margin-left: auto;
+    box-shadow: 0 0 10px #FF3B30;
+  }
+
+  .nav-bottom-info {
+    font-size: 13px;
+    color: #4A5568;
+    line-height: 1.6;
+  }
+
+  /* Main Content Area */
+  .main-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 44px 56px;
+    overflow: hidden;
+  }
+
+  .top-tabs {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 28px;
+  }
+  .tab-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+  }
+  .tab-tagline {
+    font-size: 16px;
+    color: #6C7A8E;
+    margin-top: 6px;
+  }
+
+  /* Grid Showcase with TV, Radio, and Music cards */
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Video Feature Box */
+  .feature-hero {
+    background: #111622;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-video-still {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+  }
+  .hero-badge-row {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    display: flex;
+    gap: 12px;
+  }
+  .badge-tag {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #FFC107;
+  }
+  .hero-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px 36px;
+    background: linear-gradient(to top, rgba(10, 13, 20, 0.96) 0%, rgba(10, 13, 20, 0.6) 60%, transparent 100%);
+  }
+  .hero-title {
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .hero-desc {
+    font-size: 16px;
+    color: #A0AEC0;
+    margin-bottom: 16px;
+  }
+  .hero-action-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #FFFFFF;
+    color: #0A0D14;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+  }
+
+  /* Right Column: Radio 24/7 & Music Feed */
+  .side-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Radio Card */
+  .radio-card {
+    background: linear-gradient(135deg, #1C152B 0%, #111420 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .radio-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .on-air-pill {
+    background: #FF3B30;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .radio-card-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .vinyl-art {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #2D3748;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+  }
+  .radio-track-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .radio-artist {
+    font-size: 14px;
+    color: #A0AEC0;
+    margin-bottom: 10px;
+  }
+  .sync-clock-note {
+    font-size: 12px;
+    color: #718096;
+  }
+
+  /* Music Top Tracks */
+  .music-section {
+    background: #0E131C;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .section-label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #8E9AA8;
+  }
+  .track-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .track-num {
+    font-size: 14px;
+    color: #718096;
+    width: 24px;
+  }
+  .track-info {
+    flex: 1;
+  }
+  .track-name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .track-by {
+    font-size: 13px;
+    color: #718096;
+  }
+  .track-len {
+    font-size: 13px;
+    color: #718096;
+  }
+
+  /* Bottom Mini Controller Bar */
+  .bottom-bar {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #4A5568;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Left Navigation Rail -->
+  <div class="nav-rail">
+    <div>
+      <div class="brand">
+        <img class="brand-logo" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/ahoy_official_white.png">
+        <span class="brand-tv">TV</span>
+      </div>
+
+      <div class="nav-section-label">Browse</div>
+      <div class="nav-items">
+        <div class="nav-btn active">
+          <span class="icon">📺</span>
+          <span>AHOY TV</span>
+        </div>
+        <div class="nav-btn">
+          <span class="icon">📻</span>
+          <span>Radio</span>
+          <span class="live-dot"></span>
+        </div>
+        <div class="nav-btn">
+          <span class="icon">🎵</span>
+          <span>Music</span>
+        </div>
+        <div class="nav-btn">
+          <span class="icon">🛹</span>
+          <span>Skating</span>
+        </div>
+        <div class="nav-btn">
+          <span class="icon">🎙️</span>
+          <span>Podcasts</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bottom-info">
+      <div>Xbox Controller Navigation</div>
+      <div>D-pad to Move &bull; A to Select</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-stage">
+    <div class="top-tabs">
+      <div>
+        <div class="tab-title">Independent Culture. Always On.</div>
+        <div class="tab-tagline">Curated TV channels, 24/7 synchronized indie radio, and on-demand music.</div>
+      </div>
+    </div>
+
+    <div class="showcase-grid">
+      <!-- AHOY TV Hero -->
+      <div class="feature-hero">
+        <img class="hero-video-still" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png">
+        <div class="hero-badge-row">
+          <div class="badge-tag">▶ AHOY TV &bull; CHANNEL 01</div>
+          <div class="badge-tag" style="color: #00E5FF;">CONTINUOUS QUEUE</div>
+        </div>
+        <div class="hero-info-overlay">
+          <div class="hero-title">Rob Meglio's Sponsor Me Tape - October 2026</div>
+          <div class="hero-desc">Rob Meglio's sponsor me tape filmed at flux on 10.17.26 &bull; Skating &bull; Tallboyz</div>
+          <button class="hero-action-btn">▶ Watch Channel</button>
+        </div>
+      </div>
+
+      <!-- Right Column: Radio & Music -->
+      <div class="side-stack">
+        <!-- Live Radio Card -->
+        <div class="radio-card">
+          <div class="radio-card-header">
+            <span style="font-weight: 700; font-size: 15px; letter-spacing: 1px;">AHOY LIVE RADIO</span>
+            <span class="on-air-pill">ON AIR</span>
+          </div>
+          <div class="radio-card-body">
+            <img class="vinyl-art" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/samuel.jpg">
+            <div>
+              <div class="radio-track-title">Seen Better Days</div>
+              <div class="radio-artist">Samuel Dylan Witch</div>
+              <div class="sync-clock-note">Worldwide Synchronized Broadcast</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Music On Demand -->
+        <div class="music-section">
+          <div class="section-label-row">
+            <span>INDIE MUSIC ON DEMAND</span>
+            <span style="color: #6C7A8E;">PLAY ALL</span>
+          </div>
+
+          <div class="track-row">
+            <span class="track-num">01</span>
+            <div class="track-info">
+              <div class="track-name">Beneath the Willow Tree</div>
+              <div class="track-by">Samuel Dylan Witch &bull; Single</div>
+            </div>
+            <span class="track-len">03:17</span>
+          </div>
+
+          <div class="track-row">
+            <span class="track-num">02</span>
+            <div class="track-info">
+              <div class="track-name">Reasons (Radio Edit)</div>
+              <div class="track-by">Fella Gazelle &bull; Single</div>
+            </div>
+            <span class="track-len">04:02</span>
+          </div>
+
+          <div class="track-row">
+            <span class="track-num">03</span>
+            <div class="track-info">
+              <div class="track-name">Live at Flux Session #4</div>
+              <div class="track-by">Wintergreen Collective</div>
+            </div>
+            <span class="track-len">05:45</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom controller hint -->
+    <div class="bottom-bar">
+      <span>D-pad / Left Stick to Navigate &bull; Press A to Tune In &bull; Press B to Back</span>
+      <span>Ahoy TV v0.2.0 &bull; Xbox Series X|S &bull; Windows 11</span>
+    </div>
+  </div>
+
+</body>
+</html>
