@@ -52,6 +52,7 @@ namespace AhoyXbox
         public string Title { get; set; }
         public string Host { get; set; }
         public string Url { get; set; }
+        public string Thumbnail { get; set; }
         public string Category { get; set; }
         public List<string> Tags { get; set; }
         public bool IsSaved => SavedStore.Contains(Id);
@@ -132,24 +133,31 @@ namespace AhoyXbox
             try
             {
                 var root = JsonObject.Parse(json);
-                var videos = root.GetNamedArray("videos").Select(value => {
+                var rawVideos = root.GetNamedArray("videos").Select(value => {
                     var row = value.GetObject();
+                    var rawThumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "";
+                    if (!string.IsNullOrEmpty(rawThumb) && rawThumb.StartsWith("/"))
+                        rawThumb = "https://app.ahoy.ooo" + rawThumb;
+                    else if (string.IsNullOrEmpty(rawThumb))
+                        rawThumb = "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg";
+
                     return new Video {
                         Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
                         Title = row.GetNamedString("title", "Untitled"),
                         Host = row.GetNamedString("host", "Ahoy"),
                         Url = row.GetNamedString("url", ""),
+                        Thumbnail = rawThumb,
                         Category = row.GetNamedString("category", ""),
                         Tags = row.ContainsKey("tags") ? row.GetNamedArray("tags").Select(t => t.GetString()).ToList() : new List<string>()
                     };
                 }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
 
-                // EXACTLY 4 CANONICAL CHANNELS (Matches app.ahoy.ooo backend /api/live-tv/channels)
-                var liveShowsVideos = videos.Where(v => v.Category == "live show" || v.Tags.Contains("wintergreen-sessions") || v.Tags.Contains("live")).ToList();
-                if (liveShowsVideos.Count == 0) liveShowsVideos = videos.Take(10).ToList();
+                var liveShowsVids = rawVideos.Where(v => v.Category == "live show" || v.Tags.Contains("wintergreen-sessions") || v.Tags.Contains("live") || v.Title.ToLowerInvariant().Contains("whatnot")).ToList();
+                var musicVids = rawVideos.Where(v => v.Tags.Contains("music-video") || v.Tags.Contains("music") || v.Category == "music").ToList();
+                var filmVids = rawVideos.Where(v => v.Category == "film" || v.Category == "skating" || v.Tags.Contains("skating") || v.Tags.Contains("short-film")).ToList();
+                var miscVids = rawVideos;
 
-                var musicVideos = videos.Where(v => v.Tags.Contains("music-video") || v.Tags.Contains("music")).ToList();
-                // Augment Music Videos with audio tracks from music.json
+                // Load Radio Tracks into Music
                 try
                 {
                     var musicFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/music.json"));
@@ -158,34 +166,30 @@ namespace AhoyXbox
                     if (musicRoot.ContainsKey("tracks"))
                     {
                         var musicArray = musicRoot.GetNamedArray("tracks");
-                        var tracks = musicArray.Select(t => {
+                        var radioTracks = musicArray.Select(t => {
                             var row = t.GetObject();
+                            var cover = row.ContainsKey("cover_art") ? row.GetNamedString("cover_art", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
                             return new Video {
                                 Id = row.GetNamedString("track_id", Guid.NewGuid().ToString()),
                                 Title = row.GetNamedString("title", "Untitled Track"),
                                 Host = row.GetNamedString("artist", "Ahoy Music"),
                                 Url = row.GetNamedString("audio_url", ""),
+                                Thumbnail = cover,
                                 Category = "music",
                                 Tags = new List<string> { "music", "audio" }
                             };
                         }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
-                        musicVideos.AddRange(tracks);
+                        musicVids.AddRange(radioTracks);
                     }
                 }
                 catch { }
-                if (musicVideos.Count == 0) musicVideos = videos;
-
-                var filmVideos = videos.Where(v => v.Category == "film" || v.Category == "skating" || v.Tags.Contains("short-film") || v.Tags.Contains("skating")).ToList();
-                if (filmVideos.Count == 0) filmVideos = videos;
-
-                var miscVideos = videos; // Continuous 24/7 Mix
 
                 var channels = new List<Channel>
                 {
-                    new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Live Concerts", Videos = liveShowsVideos },
-                    new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres, Visuals & Soundscapes", Videos = musicVideos },
-                    new Channel { Number = "103", Name = "Films", Tagline = "Skate Tapes, Documentaries & Shorts", Videos = filmVideos },
-                    new Channel { Number = "104", Name = "Misc", Tagline = "Continuous Cultural Mix & Curations", Videos = miscVideos }
+                    new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Concerts", Videos = liveShowsVids },
+                    new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres & Soundscapes", Videos = musicVids },
+                    new Channel { Number = "103", Name = "Films", Tagline = "Skate Tapes & Documentaries", Videos = filmVids },
+                    new Channel { Number = "104", Name = "Misc", Tagline = "24/7 Mix & Curations", Videos = miscVids }
                 };
 
                 Channels.ItemsSource = channels;
@@ -248,6 +252,10 @@ namespace AhoyXbox
 
             try
             {
+                if (!string.IsNullOrEmpty(video.Thumbnail))
+                {
+                    Player.PosterSource = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(video.Thumbnail));
+                }
                 media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
                 media.Play();
             }
@@ -274,7 +282,7 @@ namespace AhoyXbox
         private void UpdateSaveStatus(string videoId)
         {
             bool isSaved = SavedStore.Contains(videoId);
-            SaveIndicator.Text = isSaved ? "★ SAVED IN LIBRARY [X]" : "[X] SAVE TO LIBRARY";
+            SaveIndicator.Text = isSaved ? "★ SAVED [X]" : "[X] SAVE";
         }
 
         private void FullscreenClicked(object sender, RoutedEventArgs e)
