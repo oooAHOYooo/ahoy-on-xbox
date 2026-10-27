@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    background-color: #10141D;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    padding: 48px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .logo {
+    font-size: 52px;
+    font-weight: 900;
+    color: #C7FF6B;
+    letter-spacing: -1px;
+    text-transform: lowercase;
+  }
+  .tagline {
+    font-size: 18px;
+    color: #A0AEC0;
+    margin-left: 32px;
+    letter-spacing: 2px;
+    font-weight: 600;
+  }
+  .tv-badge {
+    background: #00E5FF;
+    color: #0A0E17;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: 12px;
+    letter-spacing: 1px;
+  }
+  .content {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 40px;
+    flex: 1;
+    min-height: 0;
+  }
+  .sidebar {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .section-title {
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    color: #718096;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .channel-item {
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px solid transparent;
+  }
+  .channel-item.active {
+    background: rgba(199, 255, 107, 0.12);
+    border-color: #C7FF6B;
+  }
+  .channel-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+  }
+  .channel-desc {
+    font-size: 14px;
+    color: #A0AEC0;
+  }
+  .main-stage {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .player-box {
+    width: 100%;
+    height: 480px;
+    background: #000;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  }
+  .video-bg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1A202C 0%, #0D1117 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .video-mock-art {
+    font-size: 120px;
+    opacity: 0.15;
+    font-weight: 900;
+    letter-spacing: 4px;
+  }
+  .player-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 32px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  }
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    width: 38%;
+    height: 100%;
+    background: #C7FF6B;
+  }
+  .controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #E2E8F0;
+  }
+  .now-playing-info {
+    margin: 20px 0 16px 0;
+  }
+  .now-playing-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+  .now-playing-meta {
+    font-size: 16px;
+    color: #A0AEC0;
+  }
+  .queue-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .queue-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .queue-card-title {
+    font-size: 17px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+  .queue-card-host {
+    font-size: 13px;
+    color: #718096;
+  }
+  .footer-hints {
+    font-size: 14px;
+    color: #718096;
+    letter-spacing: 0.5px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">ahoy<span class="tv-badge">TV</span></div>
+    <div class="tagline">INDEPENDENT CULTURE. ALWAYS ON.</div>
+  </div>
+
+  <div class="content">
+    <div class="sidebar">
+      <div class="section-title">CHANNELS</div>
+      <div class="channel-item active">
+        <div class="channel-name">Ahoy Mix</div>
+        <div class="channel-desc">36 videos · continuous queue</div>
+      </div>
+      <div class="channel-item">
+        <div class="channel-name">Music Videos</div>
+        <div class="channel-desc">Independent artists & visuals</div>
+      </div>
+      <div class="channel-item">
+        <div class="channel-name">Skating</div>
+        <div class="channel-desc">Street, park & sponsor reels</div>
+      </div>
+      <div class="channel-item">
+        <div class="channel-name">G-Dub Disc Golf</div>
+        <div class="channel-desc">Discs, reviews & courses</div>
+      </div>
+    </div>
+
+    <div class="main-stage">
+      <div class="player-box">
+        <div class="video-bg">
+          <div class="video-mock-art">AHOY</div>
+        </div>
+        <div class="player-overlay">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <div class="controls-row">
+            <span>▶ Playing &bull; 03:42 / 09:15</span>
+            <span>HD &bull; Stereo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="now-playing-info">
+        <div class="now-playing-title">Rob Meglio's Sponsor Me Tape - October 2026</div>
+        <div class="now-playing-meta">Ahoy Mix &bull; Rob Meglio &bull; Next video plays automatically</div>
+      </div>
+
+      <div class="queue-list">
+        <div class="queue-card">
+          <div class="queue-card-title">Samuel Dylan Witch — Stop and Rewind</div>
+          <div class="queue-card-host">Samuel Dylan Witch &bull; Music Video</div>
+        </div>
+        <div class="queue-card">
+          <div class="queue-card-title">Which Discraft Putter is Best</div>
+          <div class="queue-card-host">Greg Weese &bull; G-Dub Disc Golf</div>
+        </div>
+        <div class="queue-card">
+          <div class="queue-card-title">Wintergreen Sessions: Live at Flux</div>
+          <div class="queue-card-host">Ahoy Collective &bull; Live Performance</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-hints">
+    D-pad to browse &nbsp;&bull;&nbsp; A to select &nbsp;&bull;&nbsp; Playback controls for pause, seek and fullscreen
+  </div>
+</body>
+</html>

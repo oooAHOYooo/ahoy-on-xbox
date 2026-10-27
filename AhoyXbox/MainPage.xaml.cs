@@ -42,10 +42,34 @@ namespace AhoyXbox
         }
         private async void LoadCatalog(object sender, RoutedEventArgs e)
         {
+            string json = null;
             try
             {
-                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/catalog.json"));
-                var root = JsonObject.Parse(await FileIO.ReadTextAsync(file));
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("AhoyTV/1.0");
+                    json = await client.GetStringAsync(new Uri("https://raw.githubusercontent.com/oooAHOYooo/ahoy-on-xbox/main/AhoyXbox/Data/catalog.json"));
+                }
+            }
+            catch { }
+
+            if (string.IsNullOrEmpty(json))
+            {
+                try
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/catalog.json"));
+                    json = await FileIO.ReadTextAsync(file);
+                }
+                catch (Exception)
+                {
+                    Status.Text = "The catalog could not load. Close and reopen Ahoy to retry.";
+                    return;
+                }
+            }
+
+            try
+            {
+                var root = JsonObject.Parse(json);
                 var videos = root.GetNamedArray("videos").Select(value => {
                     var row = value.GetObject();
                     return new Video {
@@ -61,7 +85,7 @@ namespace AhoyXbox
                 Channels.ItemsSource = channels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
-                Status.Text = "Choose a video to start its channel. Curated queues, not live broadcasts.";
+                Status.Text = "Choose a video to start its channel. Live catalog synced.";
             }
             catch (Exception) { Status.Text = "The catalog could not load. Close and reopen Ahoy to retry."; }
         }

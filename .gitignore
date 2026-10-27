@@ -4,3 +4,7 @@ obj/
 AppPackages/
 *.user
 *.pfx
+*.msixupload
+*.appxupload
+*.appxbundle
+dist/*_Test/
