@@ -11,13 +11,50 @@ using Windows.UI.Xaml.Controls;
 
 namespace AhoyXbox
 {
+    public static class SavedStore
+    {
+        private const string Key = "Ahoy_Saved_Ids";
+        private static readonly HashSet<string> savedIds = new HashSet<string>();
+
+        static SavedStore()
+        {
+            try
+            {
+                var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                if (settings.Values.TryGetValue(Key, out var val) && val is string csv && !string.IsNullOrEmpty(csv))
+                {
+                    foreach (var id in csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        savedIds.Add(id.Trim());
+                }
+            }
+            catch { }
+        }
+
+        public static bool Contains(string id) => !string.IsNullOrEmpty(id) && savedIds.Contains(id);
+
+        public static bool Toggle(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return false;
+            bool added = savedIds.Contains(id) ? savedIds.Remove(id) && false : savedIds.Add(id);
+            try
+            {
+                var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                settings.Values[Key] = string.Join(",", savedIds);
+            }
+            catch { }
+            return added;
+        }
+    }
+
     public sealed class Video
     {
+        public string Id { get; set; }
         public string Title { get; set; }
         public string Host { get; set; }
         public string Url { get; set; }
         public string Category { get; set; }
         public List<string> Tags { get; set; }
+        public bool IsSaved => SavedStore.Contains(Id);
     }
     public sealed class Channel
     {
@@ -39,6 +76,16 @@ namespace AhoyXbox
             Loaded += LoadCatalog;
             Unloaded += Cleanup;
             SystemNavigationManager.GetForCurrentView().BackRequested += Back;
+            KeyDown += (s, e) => {
+                if (e.Key == Windows.System.VirtualKey.GamepadX || e.Key == Windows.System.VirtualKey.X)
+                {
+                    if (Programs.SelectedItem is Video v)
+                    {
+                        bool isSaved = SavedStore.Toggle(v.Id);
+                        Status.Text = isSaved ? $"★ {v.Title} saved to Library!" : $"{v.Title} removed from Library.";
+                    }
+                }
+            };
         }
         private async void LoadCatalog(object sender, RoutedEventArgs e)
         {
@@ -73,15 +120,17 @@ namespace AhoyXbox
                 var videos = root.GetNamedArray("videos").Select(value => {
                     var row = value.GetObject();
                     return new Video {
+                        Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
                         Title = row.GetNamedString("title", "Untitled"), Host = row.GetNamedString("host", "Ahoy"),
                         Url = row.GetNamedString("url", ""), Category = row.GetNamedString("category", ""),
                         Tags = row.ContainsKey("tags") ? row.GetNamedArray("tags").Select(t => t.GetString()).ToList() : new List<string>()
                     };
                 }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
-                var channels = new List<Channel> { new Channel { Name = "Ahoy Mix", Videos = videos } };
+                var channels = new List<Channel> { new Channel { Name = "Ahoy TV (Mix)", Videos = videos } };
+                AddChannel(channels, "Wintergreen Studios", videos.Where(v => v.Tags.Contains("wintergreen-sessions") || v.Host.Contains("Wintergreen")));
                 AddChannel(channels, "Music Videos", videos.Where(v => v.Tags.Contains("music-video")));
                 AddChannel(channels, "Skating", videos.Where(v => v.Category == "skating" || v.Tags.Contains("skating")));
-                AddChannel(channels, "G-Dub Disc Golf", videos.Where(v => v.Tags.Contains("g-dub-disc-golf")));
+                AddChannel(channels, "Saved", videos.Where(v => SavedStore.Contains(v.Id)));
                 Channels.ItemsSource = channels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
