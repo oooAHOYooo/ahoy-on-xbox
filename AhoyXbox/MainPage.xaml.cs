@@ -56,17 +56,22 @@ namespace AhoyXbox
         public List<string> Tags { get; set; }
         public bool IsSaved => SavedStore.Contains(Id);
     }
+
     public sealed class Channel
     {
+        public string Number { get; set; }
         public string Name { get; set; }
+        public string Tagline { get; set; }
         public List<Video> Videos { get; set; }
-        public string CountLabel => Videos.Count + " videos · continuous queue";
+        public string CountLabel => Videos.Count + " in rotation";
     }
+
     public sealed partial class MainPage : Page
     {
         private readonly MediaPlayer media = new MediaPlayer();
         private Channel playingChannel;
         private int playingIndex;
+
         public MainPage()
         {
             InitializeComponent();
@@ -76,17 +81,27 @@ namespace AhoyXbox
             Loaded += LoadCatalog;
             Unloaded += Cleanup;
             SystemNavigationManager.GetForCurrentView().BackRequested += Back;
+
             KeyDown += (s, e) => {
                 if (e.Key == Windows.System.VirtualKey.GamepadX || e.Key == Windows.System.VirtualKey.X)
                 {
-                    if (Programs.SelectedItem is Video v)
+                    ToggleSaveCurrent();
+                }
+                else if (e.Key == Windows.System.VirtualKey.GamepadY || e.Key == Windows.System.VirtualKey.Y)
+                {
+                    Player.IsFullWindow = !Player.IsFullWindow;
+                }
+                else if (e.Key == Windows.System.VirtualKey.GamepadB || e.Key == Windows.System.VirtualKey.B)
+                {
+                    if (Player.IsFullWindow)
                     {
-                        bool isSaved = SavedStore.Toggle(v.Id);
-                        Status.Text = isSaved ? $"★ {v.Title} saved to Library!" : $"{v.Title} removed from Library.";
+                        Player.IsFullWindow = false;
+                        e.Handled = true;
                     }
                 }
             };
         }
+
         private async void LoadCatalog(object sender, RoutedEventArgs e)
         {
             string json = null;
@@ -121,66 +136,200 @@ namespace AhoyXbox
                     var row = value.GetObject();
                     return new Video {
                         Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
-                        Title = row.GetNamedString("title", "Untitled"), Host = row.GetNamedString("host", "Ahoy"),
-                        Url = row.GetNamedString("url", ""), Category = row.GetNamedString("category", ""),
+                        Title = row.GetNamedString("title", "Untitled"),
+                        Host = row.GetNamedString("host", "Ahoy"),
+                        Url = row.GetNamedString("url", ""),
+                        Category = row.GetNamedString("category", ""),
                         Tags = row.ContainsKey("tags") ? row.GetNamedArray("tags").Select(t => t.GetString()).ToList() : new List<string>()
                     };
                 }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
-                var channels = new List<Channel> { new Channel { Name = "Ahoy TV (Mix)", Videos = videos } };
-                AddChannel(channels, "Wintergreen Studios", videos.Where(v => v.Tags.Contains("wintergreen-sessions") || v.Host.Contains("Wintergreen")));
-                AddChannel(channels, "Music Videos", videos.Where(v => v.Tags.Contains("music-video")));
-                AddChannel(channels, "Skating", videos.Where(v => v.Category == "skating" || v.Tags.Contains("skating")));
-                AddChannel(channels, "Saved", videos.Where(v => SavedStore.Contains(v.Id)));
+
+                var channels = new List<Channel>
+                {
+                    new Channel { Number = "101", Name = "AHOY TV LIVE", Tagline = "24/7 Indie Mix Broadcast", Videos = videos }
+                };
+
+                // Wintergreen Studios channel
+                var wintergreenVideos = videos.Where(v => v.Tags.Contains("wintergreen-sessions") || v.Host.Contains("Wintergreen")).ToList();
+                if (wintergreenVideos.Count > 0)
+                {
+                    channels.Add(new Channel { Number = "102", Name = "WINTERGREEN STUDIOS", Tagline = "Live Sessions & Archives", Videos = wintergreenVideos });
+                }
+
+                // Ahoy Radio 24/7 channel from music.json
+                try
+                {
+                    var musicFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/music.json"));
+                    var musicJson = await FileIO.ReadTextAsync(musicFile);
+                    var musicRoot = JsonObject.Parse(musicJson);
+                    if (musicRoot.ContainsKey("tracks"))
+                    {
+                        var musicArray = musicRoot.GetNamedArray("tracks");
+                        var radioTracks = musicArray.Select(t => {
+                            var row = t.GetObject();
+                            return new Video {
+                                Id = row.GetNamedString("track_id", Guid.NewGuid().ToString()),
+                                Title = row.GetNamedString("title", "Untitled Track"),
+                                Host = row.GetNamedString("artist", "Ahoy Radio"),
+                                Url = row.GetNamedString("audio_url", ""),
+                                Category = "radio",
+                                Tags = new List<string> { "radio", "music" }
+                            };
+                        }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
+
+                        if (radioTracks.Count > 0)
+                        {
+                            channels.Add(new Channel { Number = "103", Name = "AHOY RADIO 24/7", Tagline = "Continuous Indie Airplay", Videos = radioTracks });
+                        }
+                    }
+                }
+                catch { }
+
+                // Music Videos channel
+                var musicVideos = videos.Where(v => v.Tags.Contains("music-video")).ToList();
+                if (musicVideos.Count > 0)
+                {
+                    channels.Add(new Channel { Number = "104", Name = "MUSIC VIDEOS", Tagline = "Premieres & Soundscapes", Videos = musicVideos });
+                }
+
+                // Skating channel
+                var skateVideos = videos.Where(v => v.Category == "skating" || v.Tags.Contains("skating")).ToList();
+                if (skateVideos.Count > 0)
+                {
+                    channels.Add(new Channel { Number = "105", Name = "SKATING", Tagline = "Street & Park Video Tapes", Videos = skateVideos });
+                }
+
+                // Saved Library channel
+                var savedVideos = videos.Where(v => SavedStore.Contains(v.Id)).ToList();
+                channels.Add(new Channel { Number = "106", Name = "SAVED LIBRARY", Tagline = "Your Bookmarked Shows", Videos = savedVideos });
+
                 Channels.ItemsSource = channels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
-                Status.Text = "Choose a video to start its channel. Live catalog synced.";
+
+                // Auto-Play Channel 101 immediately (Pluto TV behavior)
+                if (channels.Count > 0 && channels[0].Videos.Count > 0)
+                {
+                    playingChannel = channels[0];
+                    playingIndex = 0;
+                    Programs.ItemsSource = playingChannel.Videos;
+                    PlayCurrent();
+                }
             }
-            catch (Exception) { Status.Text = "The catalog could not load. Close and reopen Ahoy to retry."; }
+            catch (Exception)
+            {
+                Status.Text = "The catalog could not load. Close and reopen Ahoy to retry.";
+            }
         }
-        private static void AddChannel(List<Channel> channels, string name, IEnumerable<Video> videos)
-        {
-            var list = videos.ToList();
-            if (list.Count > 0) channels.Add(new Channel { Name = name, Videos = list });
-        }
+
         private void ChannelChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Channels.SelectedItem is Channel channel) Programs.ItemsSource = channel.Videos;
+            if (Channels.SelectedItem is Channel channel)
+            {
+                Programs.ItemsSource = channel.Videos;
+                GuideHeader.Text = $"{channel.Name.ToUpperInvariant()} • SCHEDULE ({channel.Videos.Count} IN ROTATION)";
+
+                // Instant Channel Surfing: Switching channels immediately starts playing that channel live!
+                if (channel.Videos.Count > 0)
+                {
+                    playingChannel = channel;
+                    playingIndex = 0;
+                    PlayCurrent();
+                }
+                else
+                {
+                    NowPlaying.Text = channel.Name;
+                    Status.Text = "No items in this queue yet. Press [X] on any video to add it here.";
+                    HeaderNowPlaying.Text = "Empty Queue";
+                }
+            }
         }
+
         private void PlayClicked(object sender, ItemClickEventArgs e)
         {
             if (!(Channels.SelectedItem is Channel channel) || !(e.ClickedItem is Video video)) return;
             playingChannel = channel;
             playingIndex = channel.Videos.IndexOf(video);
+            if (playingIndex < 0) playingIndex = 0;
             PlayCurrent();
         }
+
         private void PlayCurrent()
         {
             if (playingChannel == null || playingChannel.Videos.Count == 0) return;
             var video = playingChannel.Videos[playingIndex];
             NowPlaying.Text = video.Title;
-            Status.Text = playingChannel.Name + " · " + video.Host + " · Next video plays automatically";
-            try { media.Source = MediaSource.CreateFromUri(new Uri(video.Url)); media.Play(); }
-            catch (Exception) { Status.Text = "This video could not open. Select another video to continue."; }
+            HeaderChannel.Text = $"CH {playingChannel.Number} • {playingChannel.Name}";
+            HeaderNowPlaying.Text = $"{video.Title} ({video.Host})";
+            Status.Text = $"{playingChannel.Name} · {video.Host} · Continuous queue active";
+            UpdateSaveStatus(video.Id);
+
+            try
+            {
+                media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
+                media.Play();
+            }
+            catch (Exception)
+            {
+                Status.Text = "This stream could not open. Tuning to next available program...";
+            }
         }
+
+        private void ToggleSaveCurrent()
+        {
+            Video target = null;
+            if (Programs.SelectedItem is Video sel) target = sel;
+            else if (playingChannel != null && playingChannel.Videos.Count > playingIndex) target = playingChannel.Videos[playingIndex];
+
+            if (target != null)
+            {
+                bool isSaved = SavedStore.Toggle(target.Id);
+                UpdateSaveStatus(target.Id);
+                Status.Text = isSaved ? $"★ '{target.Title}' saved to Library!" : $"'{target.Title}' removed from Library.";
+            }
+        }
+
+        private void UpdateSaveStatus(string videoId)
+        {
+            bool isSaved = SavedStore.Contains(videoId);
+            SaveIndicator.Text = isSaved ? "★ SAVED IN LIBRARY [X]" : "[X] SAVE TO LIBRARY";
+        }
+
+        private void FullscreenClicked(object sender, RoutedEventArgs e)
+        {
+            Player.IsFullWindow = !Player.IsFullWindow;
+        }
+
         private async void Ended(MediaPlayer sender, object args)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                if (playingChannel == null) return;
+                if (playingChannel == null || playingChannel.Videos.Count == 0) return;
                 playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
                 PlayCurrent();
             });
         }
+
         private async void Failed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                Status.Text = "Playback stopped. Check your connection, then select a video to retry.";
+                Status.Text = "Stream disconnected. Reconnecting to live queue...";
+                if (playingChannel != null && playingChannel.Videos.Count > 0)
+                {
+                    playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
+                    PlayCurrent();
+                }
             });
         }
+
         private void Back(object sender, BackRequestedEventArgs e)
         {
-            if (Player.IsFullWindow) { Player.IsFullWindow = false; e.Handled = true; }
+            if (Player.IsFullWindow)
+            {
+                Player.IsFullWindow = false;
+                e.Handled = true;
+            }
         }
+
         private void Cleanup(object sender, RoutedEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().BackRequested -= Back;

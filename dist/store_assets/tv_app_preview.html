@@ -1,443 +1,1238 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    width: 1920px;
-    height: 1080px;
-    background: #0A0D14;
-    color: #FFFFFF;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    overflow: hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ahoy Streamer — Live TV • Radio • Music</title>
+  <style>
+    :root {
+      --ahoy-cyan: #6ddcff;
+      --ahoy-blue: #00a2ff;
+      --ahoy-violet: #9b8cff;
+      --ahoy-red: #ff3b30;
+      --glass-surface: rgba(14, 18, 28, 0.72);
+      --glass-pill: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --glass-highlight: rgba(255, 255, 255, 0.25);
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-  /* Left Navigation Rail (Xbox controller D-pad friendly) */
-  .nav-rail {
-    width: 320px;
-    background: #0E131C;
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 44px 32px;
-  }
-  .brand {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: 48px;
-  }
-  .brand-logo {
-    height: 38px;
-  }
-  .brand-tv {
-    font-size: 18px;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin-left: 10px;
-    letter-spacing: 1px;
-    opacity: 0.9;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-  .nav-section-label {
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #6C7A8E;
-    font-weight: 700;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-  }
+    /* LOCKED FULL-FRAME TV CANVAS */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Figtree", Inter, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  .nav-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #8E9AA8;
-    background: transparent;
-    border: 2px solid transparent;
-  }
-  .nav-btn .icon {
-    font-size: 22px;
-    margin-right: 16px;
-    width: 28px;
-    text-align: center;
-  }
-  .nav-btn.active {
-    background: rgba(255, 255, 255, 0.08);
-    color: #FFFFFF;
-    border-color: #FFFFFF; /* High visibility focus border for controller */
-  }
-  .live-dot {
-    width: 8px;
-    height: 8px;
-    background: #FF3B30;
-    border-radius: 50%;
-    margin-left: auto;
-    box-shadow: 0 0 10px #FF3B30;
-  }
+    /* FULL-SCREEN LIVE TV ENGINE (ALWAYS PLAYING IN BACKGROUND LIKE PLUTO TV) */
+    #live-video-engine {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      background: #000000;
+    }
+    #video-player {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.4s var(--ease-apple), transform 0.4s var(--ease-apple);
+    }
+    #billboard-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      filter: brightness(0.7) contrast(1.1);
+    }
 
-  .nav-bottom-info {
-    font-size: 13px;
-    color: #4A5568;
-    line-height: 1.6;
-  }
+    /* PLUTO TV CINEMATIC OVERLAY (TRANSLUCENT VIGNETTE WHEN BROWSING GUIDE) */
+    .tv-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: 
+        linear-gradient(to right, rgba(4, 6, 10, 0.94) 0%, rgba(4, 6, 10, 0.75) 42%, rgba(4, 6, 10, 0.25) 75%, transparent 100%),
+        linear-gradient(to top, #04060A 0%, rgba(4, 6, 10, 0.95) 26%, rgba(4, 6, 10, 0.4) 52%, transparent 75%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, transparent 18%);
+      transition: opacity 0.4s var(--ease-apple);
+    }
+    body.guide-hidden .tv-vignette {
+      opacity: 0;
+    }
 
-  /* Main Content Area */
-  .main-stage {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 44px 56px;
-    overflow: hidden;
-  }
+    /* FIXED OS TOP BAR */
+    #os-header {
+      position: absolute;
+      top: 36px;
+      left: 64px;
+      right: 64px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      transition: opacity 0.4s var(--ease-apple), transform 0.4s var(--ease-apple);
+    }
+    body.guide-hidden #os-header {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
 
-  .top-tabs {
-    display: flex;
-    gap: 32px;
-    margin-bottom: 28px;
-  }
-  .tab-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #FFFFFF;
-  }
-  .tab-tagline {
-    font-size: 16px;
-    color: #6C7A8E;
-    margin-top: 6px;
-  }
+    .os-pill {
+      background: var(--glass-pill);
+      backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 12px 30px rgba(0, 0, 0, 0.4);
+      border-radius: 9999px;
+    }
 
-  /* Grid Showcase with TV, Radio, and Music cards */
-  .showcase-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 32px;
-    flex: 1;
-    min-height: 0;
-  }
+    .brand-dock {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 18px;
+    }
+    .brand-dock img {
+      height: 22px;
+      width: auto;
+    }
+    .brand-tv-tag {
+      background: rgba(0, 162, 255, 0.25);
+      border: 1px solid rgba(109, 220, 255, 0.45);
+      color: var(--ahoy-cyan);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
 
-  /* Video Feature Box */
-  .feature-hero {
-    background: #111622;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .hero-video-still {
-    width: 100%;
-    height: 480px;
-    object-fit: cover;
-  }
-  .hero-badge-row {
-    position: absolute;
-    top: 24px;
-    left: 24px;
-    display: flex;
-    gap: 12px;
-  }
-  .badge-tag {
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #FFC107;
-  }
-  .hero-info-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 32px 36px;
-    background: linear-gradient(to top, rgba(10, 13, 20, 0.96) 0%, rgba(10, 13, 20, 0.6) 60%, transparent 100%);
-  }
-  .hero-title {
-    font-size: 30px;
-    font-weight: 800;
-    margin-bottom: 8px;
-  }
-  .hero-desc {
-    font-size: 16px;
-    color: #A0AEC0;
-    margin-bottom: 16px;
-  }
-  .hero-action-btn {
-    display: inline-flex;
-    align-items: center;
-    background: #FFFFFF;
-    color: #0A0D14;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 16px;
-    border: none;
-  }
+    /* 3 CORE PILLARS: TV • RADIO • MUSIC */
+    .tabs-dock {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+      gap: 6px;
+    }
+    .pillar-tab {
+      padding: 9px 24px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.65);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s var(--ease-apple);
+    }
+    .pillar-tab.active {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
+    }
+    .pillar-tab.tv-focused {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+      transform: scale(1.06);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 8px 20px rgba(0,0,0,0.5) !important;
+    }
 
-  /* Right Column: Radio 24/7 & Music Feed */
-  .side-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
+    .status-dock {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ahoy-red);
+      box-shadow: 0 0 10px var(--ahoy-red);
+    }
 
-  /* Radio Card */
-  .radio-card {
-    background: linear-gradient(135deg, #1C152B 0%, #111420 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  }
-  .radio-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .on-air-pill {
-    background: #FF3B30;
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    padding: 4px 10px;
-    border-radius: 4px;
-  }
-  .radio-card-body {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .vinyl-art {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 3px solid #2D3748;
-    object-fit: cover;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-  }
-  .radio-track-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .radio-artist {
-    font-size: 14px;
-    color: #A0AEC0;
-    margin-bottom: 10px;
-  }
-  .sync-clock-note {
-    font-size: 12px;
-    color: #718096;
-  }
+    /* PLUTO TV LIVE TUNER OSD (CHANNEL INFO) — LOCKED RIGID DIMENSIONS */
+    #hero-showcase {
+      position: absolute;
+      top: 15%;
+      left: 64px;
+      width: 780px;
+      height: 260px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 12px;
+      overflow: hidden;
+      transition: opacity 0.4s var(--ease-apple), transform 0.4s var(--ease-apple);
+    }
+    body.guide-hidden #hero-showcase {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
 
-  /* Music Top Tracks */
-  .music-section {
-    background: #0E131C;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 24px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .section-label-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #8E9AA8;
-  }
-  .track-row {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.02);
-  }
-  .track-num {
-    font-size: 14px;
-    color: #718096;
-    width: 24px;
-  }
-  .track-info {
-    flex: 1;
-  }
-  .track-name {
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .track-by {
-    font-size: 13px;
-    color: #718096;
-  }
-  .track-len {
-    font-size: 13px;
-    color: #718096;
-  }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 26px;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: var(--ahoy-red);
+      box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+    }
+    .channel-number {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--ahoy-cyan);
+    }
 
-  /* Bottom Mini Controller Bar */
-  .bottom-bar {
-    margin-top: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    color: #4A5568;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 18px;
-  }
-</style>
+    .hero-title {
+      font-size: 44px;
+      font-weight: 850;
+      letter-spacing: -1.4px;
+      line-height: 1.1;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+      height: 52px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+
+    .hero-badges-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      height: 22px;
+    }
+    .tech-pill {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-synopsis {
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.78);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+      height: 46px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 48px;
+      margin-top: 4px;
+    }
+    .action-btn {
+      height: 48px;
+      padding: 0 28px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s var(--ease-apple);
+    }
+    .btn-play {
+      background: #FFFFFF;
+      color: #000000;
+      border: none;
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.25);
+    }
+    .btn-glass {
+      background: var(--glass-pill);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      color: #FFFFFF;
+    }
+    .action-btn.tv-focused {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 3px #FFFFFF, 0 15px 35px rgba(0,0,0,0.8), 0 0 30px rgba(109, 220, 255, 0.5) !important;
+      border-color: #FFFFFF !important;
+    }
+    .btn-play.tv-focused {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+    }
+    .btn-glass.tv-focused {
+      background: rgba(255, 255, 255, 0.25) !important;
+      color: #FFFFFF !important;
+    }
+
+    /* RADIO STAGE: FIXED LOCKED DIMENSIONS + 3D SLEEVE TILT (NO JUMPING SIZES, NO EQ ANIMATION) */
+    #radio-stage {
+      position: absolute;
+      top: 15%;
+      left: 64px;
+      right: 64px;
+      height: 260px;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      gap: 52px;
+      perspective: 1000px;
+    }
+    .radio-3d-box {
+      width: 250px;
+      height: 250px;
+      flex-shrink: 0;
+      transform-style: preserve-3d;
+      perspective: 900px;
+    }
+    .radio-vinyl-wrap {
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transform: rotateY(-8deg) rotateX(4deg) translateZ(10px);
+      box-shadow: 
+        -20px 25px 60px rgba(0, 0, 0, 0.9),
+        0 0 35px rgba(109, 220, 255, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+      position: relative;
+    }
+    .radio-vinyl-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .radio-vinyl-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .radio-details {
+      width: 650px;
+      height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    #radio-title {
+      font-size: 44px;
+      font-weight: 850;
+      letter-spacing: -1.4px;
+      line-height: 1.1;
+      height: 52px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+    #radio-artist {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--ahoy-cyan);
+      height: 24px;
+      line-height: 24px;
+      text-transform: uppercase;
+    }
+    .radio-tech-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 600;
+      height: 20px;
+    }
+
+    /* BOTTOM HORIZONTAL SHELF (PLUTO TV LIVE EPG GUIDE) */
+    #bottom-shelf {
+      position: absolute;
+      bottom: 36px;
+      left: 0;
+      right: 0;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: opacity 0.4s var(--ease-apple), transform 0.4s var(--ease-apple);
+    }
+    body.guide-hidden #bottom-shelf {
+      opacity: 0;
+      transform: translateY(30px);
+      pointer-events: none;
+    }
+
+    .shelf-meta {
+      padding-left: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .shelf-category-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: rgba(255, 255, 255, 0.9);
+      text-transform: uppercase;
+    }
+    .shelf-counter {
+      font-size: 13px;
+      font-family: monospace;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* 3D SHELF TRACK */
+    .shelf-viewport {
+      width: 100vw;
+      overflow: visible;
+      padding-left: 64px;
+      perspective: 1200px;
+    }
+    .shelf-track {
+      display: flex;
+      gap: 26px;
+      transition: transform 0.35s var(--ease-apple);
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
+
+    /* 3D TV GUIDE CARD */
+    .shelf-card {
+      width: 320px;
+      height: 180px;
+      border-radius: 18px;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      background: #0E121B;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.28s var(--ease-apple), box-shadow 0.28s var(--ease-apple), border-color 0.28s var(--ease-apple);
+    }
+    .shelf-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s var(--ease-apple);
+    }
+    .card-vignette {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.1) 60%, transparent 100%);
+    }
+    .card-info {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transform: translateZ(15px);
+    }
+    .card-host {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--ahoy-cyan);
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-duration {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 3px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: monospace;
+      color: rgba(255, 255, 255, 0.8);
+      transform: translateZ(20px);
+    }
+
+    /* 3D POP FOR FOCUSED CARD */
+    .shelf-card.tv-focused {
+      transform: perspective(1000px) translateZ(35px) scale(1.13) translateY(-8px) rotateX(2deg);
+      border-color: #FFFFFF !important;
+      box-shadow: 
+        0 0 0 3px #FFFFFF,
+        0 30px 65px rgba(0, 0, 0, 0.95),
+        0 0 40px rgba(109, 220, 255, 0.55) !important;
+      z-index: 50;
+    }
+    .shelf-card.tv-focused img {
+      transform: scale(1.05);
+    }
+
+    /* INSTANT LIVE CHANNEL CHANGE OSD BANNER */
+    #channel-osd {
+      position: absolute;
+      top: 120px;
+      right: 64px;
+      background: rgba(14, 18, 28, 0.85);
+      backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 24px;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 30;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s var(--ease-apple);
+      pointer-events: none;
+    }
+    #channel-osd.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CENTER PLAY/PAUSE SPLASH */
+    #center-feedback {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #FFFFFF;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s var(--ease-apple);
+      z-index: 150;
+    }
+    #center-feedback.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Left Navigation Rail -->
-  <div class="nav-rail">
-    <div>
-      <div class="brand">
-        <img class="brand-logo" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/ahoy_official_white.png">
-        <span class="brand-tv">TV</span>
-      </div>
+  <!-- LIVE TV BACKGROUND (ALWAYS ON & INSTANT LIKE PLUTO TV) -->
+  <div id="live-video-engine">
+    <video id="video-player" playsinline preload="metadata" muted autoplay loop></video>
+    <img id="billboard-img" alt="" />
+    <audio id="audio-player" preload="metadata"></audio>
+    <div class="tv-vignette"></div>
+  </div>
 
-      <div class="nav-section-label">Browse</div>
-      <div class="nav-items">
-        <div class="nav-btn active">
-          <span class="icon">📺</span>
-          <span>AHOY TV</span>
-        </div>
-        <div class="nav-btn">
-          <span class="icon">📻</span>
-          <span>Radio</span>
-          <span class="live-dot"></span>
-        </div>
-        <div class="nav-btn">
-          <span class="icon">🎵</span>
-          <span>Music</span>
-        </div>
-        <div class="nav-btn">
-          <span class="icon">🛹</span>
-          <span>Skating</span>
-        </div>
-        <div class="nav-btn">
-          <span class="icon">🎙️</span>
-          <span>Podcasts</span>
-        </div>
+  <!-- FIXED OS HEADER -->
+  <header id="os-header">
+    <div class="os-pill brand-dock">
+      <img src="data:image/png;base64,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" alt="Ahoy" />
+      <span class="brand-tv-tag">STREAMER</span>
+    </div>
+
+    <!-- The 3 Pillars -->
+    <nav class="os-pill tabs-dock">
+      <button class="pillar-tab active" id="tab-tv" onclick="switchPillar('tv')">
+        <span>📺</span>
+        <span>TV</span>
+      </button>
+      <button class="pillar-tab" id="tab-radio" onclick="switchPillar('radio')">
+        <span>📻</span>
+        <span>Radio</span>
+      </button>
+      <button class="pillar-tab" id="tab-music" onclick="switchPillar('music')">
+        <span>🎵</span>
+        <span>Music</span>
+      </button>
+    </nav>
+
+    <div class="os-pill status-dock">
+      <span class="live-dot"></span>
+      <span id="os-clock">10:05 PM</span>
+      <span style="opacity: 0.3;">|</span>
+      <span style="letter-spacing: 1px; font-size: 11px;" id="audio-mode-label">LIVE BROADCAST</span>
+    </div>
+  </header>
+
+  <!-- EDITORIAL HERO / PLUTO TV OSD SHOWCASE -->
+  <section id="hero-showcase">
+    <div class="hero-eyebrow">
+      <div class="live-badge">
+        <span class="live-dot" style="background: #fff; box-shadow: 0 0 8px #fff;"></span>
+        <span>LIVE NOW</span>
+      </div>
+      <div class="channel-number" id="hero-channel-num">CH 101 • WINTERGREEN SESSIONS</div>
+    </div>
+
+    <h1 class="hero-title" id="hero-title">Wintergreen Sessions Episode 1: Whatnot</h1>
+
+    <div class="hero-badges-row">
+      <span class="tech-pill">LIVE ON AIR</span>
+      <span class="tech-pill">4K UHD</span>
+      <span class="tech-pill">5.1 STEREO</span>
+      <span style="opacity: 0.4;">•</span>
+      <span id="hero-duration">13:49</span>
+    </div>
+
+    <p class="hero-synopsis" id="hero-desc">
+      Currently broadcasting live on Ahoy TV. Hit [ENTER] to watch pure fullscreen, or use arrow keys to surf channels.
+    </p>
+
+    <div class="hero-actions">
+      <button class="action-btn btn-play" id="btn-fullscreen-toggle" onclick="togglePlutoFullscreen()">
+        <span>⛶</span>
+        <span id="btn-play-label">Watch Fullscreen</span>
+      </button>
+      <button class="action-btn btn-glass" onclick="toggleAudioMute()">
+        <span id="mute-icon">🔊</span>
+        <span id="mute-label">Unmute Audio</span>
+      </button>
+      <button class="action-btn btn-glass" onclick="tuneNextChannel()">
+        <span>⏭</span>
+        <span>Next Channel</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- RADIO LIVE BROADCAST STAGE (FIXED LOCKED DIMENSIONS + 3D SLEEVE) -->
+  <section id="radio-stage">
+    <div class="radio-3d-box">
+      <div class="radio-vinyl-wrap">
+        <img id="radio-art" src="https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg" alt="Cover" />
       </div>
     </div>
 
-    <div class="nav-bottom-info">
-      <div>Xbox Controller Navigation</div>
-      <div>D-pad to Move &bull; A to Select</div>
+    <div class="radio-details">
+      <div class="hero-eyebrow">
+        <div class="live-badge" style="background: var(--ahoy-red);">
+          <span class="live-dot" style="background: #fff;"></span>
+          <span>ON AIR 24/7</span>
+        </div>
+        <div class="channel-number" style="color: var(--ahoy-cyan);">AHOY INDIE RADIO</div>
+      </div>
+
+      <h1 id="radio-title">Beneath the Willow Tree</h1>
+      <div id="radio-artist">SAMUEL DYLAN WITCH</div>
+
+      <div class="radio-tech-line">
+        <span>320 kbps High-Fidelity Audio</span>
+        <span>•</span>
+        <span>Live Continuous Broadcast</span>
+        <span>•</span>
+        <span>Master Recording</span>
+      </div>
+
+      <div class="hero-actions">
+        <button class="action-btn btn-play" id="btn-radio-tune" onclick="toggleRadioPlay()">
+          <span>▶</span>
+          <span id="btn-radio-label">Listen Live</span>
+        </button>
+        <button class="action-btn btn-glass" onclick="playNextRadioTrack()">
+          <span>⏭</span>
+          <span>Next Broadcast Track</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTANT CHANNEL CHANGE OSD BANNER -->
+  <div id="channel-osd">
+    <div class="live-badge">TUNED</div>
+    <div style="display: flex; flex-direction: column;">
+      <span style="font-size: 14px; font-weight: 800; color: #FFFFFF;" id="osd-title">Wintergreen Sessions</span>
+      <span style="font-size: 11px; font-weight: 700; color: var(--ahoy-cyan);" id="osd-channel">CH 101</span>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="main-stage">
-    <div class="top-tabs">
-      <div>
-        <div class="tab-title">Independent Culture. Always On.</div>
-        <div class="tab-tagline">Curated TV channels, 24/7 synchronized indie radio, and on-demand music.</div>
-      </div>
+  <!-- BOTTOM HORIZONTAL SHELF (LIVE PLUTO TV EPG GUIDE) -->
+  <section id="bottom-shelf">
+    <div class="shelf-meta">
+      <span class="shelf-category-title" id="shelf-title">LIVE CHANNELS & EPISODES</span>
+      <span class="shelf-counter" id="shelf-counter">1 of 12</span>
     </div>
 
-    <div class="showcase-grid">
-      <!-- AHOY TV Hero -->
-      <div class="feature-hero">
-        <img class="hero-video-still" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png">
-        <div class="hero-badge-row">
-          <div class="badge-tag">▶ AHOY TV &bull; CHANNEL 01</div>
-          <div class="badge-tag" style="color: #00E5FF;">CONTINUOUS QUEUE</div>
-        </div>
-        <div class="hero-info-overlay">
-          <div class="hero-title">Rob Meglio's Sponsor Me Tape - October 2026</div>
-          <div class="hero-desc">Rob Meglio's sponsor me tape filmed at flux on 10.17.26 &bull; Skating &bull; Tallboyz</div>
-          <button class="hero-action-btn">▶ Watch Channel</button>
-        </div>
-      </div>
-
-      <!-- Right Column: Radio & Music -->
-      <div class="side-stack">
-        <!-- Live Radio Card -->
-        <div class="radio-card">
-          <div class="radio-card-header">
-            <span style="font-weight: 700; font-size: 15px; letter-spacing: 1px;">AHOY LIVE RADIO</span>
-            <span class="on-air-pill">ON AIR</span>
-          </div>
-          <div class="radio-card-body">
-            <img class="vinyl-art" src="file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/samuel.jpg">
-            <div>
-              <div class="radio-track-title">Seen Better Days</div>
-              <div class="radio-artist">Samuel Dylan Witch</div>
-              <div class="sync-clock-note">Worldwide Synchronized Broadcast</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Music On Demand -->
-        <div class="music-section">
-          <div class="section-label-row">
-            <span>INDIE MUSIC ON DEMAND</span>
-            <span style="color: #6C7A8E;">PLAY ALL</span>
-          </div>
-
-          <div class="track-row">
-            <span class="track-num">01</span>
-            <div class="track-info">
-              <div class="track-name">Beneath the Willow Tree</div>
-              <div class="track-by">Samuel Dylan Witch &bull; Single</div>
-            </div>
-            <span class="track-len">03:17</span>
-          </div>
-
-          <div class="track-row">
-            <span class="track-num">02</span>
-            <div class="track-info">
-              <div class="track-name">Reasons (Radio Edit)</div>
-              <div class="track-by">Fella Gazelle &bull; Single</div>
-            </div>
-            <span class="track-len">04:02</span>
-          </div>
-
-          <div class="track-row">
-            <span class="track-num">03</span>
-            <div class="track-info">
-              <div class="track-name">Live at Flux Session #4</div>
-              <div class="track-by">Wintergreen Collective</div>
-            </div>
-            <span class="track-len">05:45</span>
-          </div>
-        </div>
+    <div class="shelf-viewport">
+      <div class="shelf-track" id="shelf-track">
+        <!-- Rendered via JS -->
       </div>
     </div>
+  </section>
 
-    <!-- Bottom controller hint -->
-    <div class="bottom-bar">
-      <span>D-pad / Left Stick to Navigate &bull; Press A to Tune In &bull; Press B to Back</span>
-      <span>Ahoy TV v0.2.0 &bull; Xbox Series X|S &bull; Windows 11</span>
-    </div>
-  </div>
+  <div id="center-feedback">▶</div>
 
+  <script>
+    const TV_CATALOG = [{"id": "wintergreen-sessions-H6iranjvsNI", "title": "Whatnot - Sand - Live @ Wintergreen Sessions", "description": "Whatnot performs their Roblox minigame hit, \"Sand.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4", "duration": "5:24", "file_size": "126523475", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "H6iranjvsNI", "original_url": "https://www.youtube.com/watch?v=H6iranjvsNI", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_sand.jpg"}, {"id": "wintergreen-sessions-1hJR3r16J8Q", "title": "Whatnot - Running Away - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Running Away.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/1hJR3r16J8Q.mp4", "duration": "4:32", "file_size": "120089239", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "1hJR3r16J8Q", "original_url": "https://www.youtube.com/watch?v=1hJR3r16J8Q", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_running.jpg"}, {"id": "wintergreen-sessions-Km_6Ux09jj4", "title": "Whatnot - Dispatch - Live @ Wintergreen Sessions", "description": "Whatnot performs \"Dispatch.\"\n\nSee the full performance here:\nhttps://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/Km_6Ux09jj4.mp4", "duration": "4:01", "file_size": "108265306", "format": "MP4", "status": "available", "upload_date": "2026-09-23", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/Km_6Ux09jj4.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "Km_6Ux09jj4", "original_url": "https://www.youtube.com/watch?v=Km_6Ux09jj4", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "wintergreen-sessions-grB5ydvYWW8", "title": "Wintergreen Sessions Episode 1: Whatnot", "description": "Welcome to Wintergreen Sessions! This is a new series dedicated to capturing the live performances of artists and bands. I say we because we're working in conjunction with Kicker Pictures to record high quality professional video alongside the live audio recording. Today, we're starting off our series with a local band from here in CT. Whatnot recorded their debut record, \"Self-Titled,\" here at the Wintergreen Studio. Today they start off their performance with a brand new, never before heard song. After that, they dive into two familiar tunes off their EP - With some slight changes.\n\nWhatnot - \nYoutube: @WhatnotTheBand \nInstagram: @whatnot.band\n\nKicker Pictures - \nYoutube: @kickerpictures \nInstagram: @Kickerpicturesct\nWebsite: https://www.kickerpictures.com/\n\nWintergreen Sessions - \nInstagram: @Wintergreen_sessions", "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/grB5ydvYWW8.mp4", "duration": "13:49", "file_size": "350824169", "format": "MP4", "status": "available", "upload_date": "2026-09-22", "thumbnail": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/grB5ydvYWW8.jpg", "host": "Wintergreen Sessions", "host_slug": "wintergreen-sessions", "category": "live show", "tags": ["wintergreen-sessions", "whatnot", "live", "performance", "music"], "youtube_id": "grB5ydvYWW8", "original_url": "https://www.youtube.com/watch?v=grB5ydvYWW8", "uploader": "Wintergreen Sessions", "source_channel": "https://www.youtube.com/@WintergreenSessions", "imported_from": "youtube", "collection": "wintergreen-sessions", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_ep1.jpg"}, {"id": "rob-meglio-sponsor-me-tape-october-2026", "title": "Rob Meglio's Sponsor Me Tape - October 2026", "description": "Rob Meglio's sponsor me tape filmed at flux on 10.17.26", "host": "Rob Meglio", "host_slug": "rob-meglio", "featured_skater": "Rob Meglio", "featured_skater_slug": "rob-meglio", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Rob%20Meglio%20-%20Sponsor%20Me%20Tape%20for%20Flux%20-%20October%202026.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-10-20", "thumbnail": "/static/thumbnails/rob-meglio-sponsor-me-tape-october-2026.jpg?v=20261020", "category": "skating", "tags": ["tallboyz", "skating", "rob-meglio", "flux", "comedy"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png"}, {"id": "samuel-dylan-witch-stop-and-rewind", "title": "Samuel Dylan Witch \u2014 Stop and Rewind", "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d", "host": "Samuel Dylan Witch", "host_slug": "samuel-dylan-witch", "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4", "duration": "4:03", "file_size": 312349763, "format": "MP4", "status": "available", "upload_date": "2026-10-16", "thumbnail": "/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg", "tags": ["music-video", "samuel-dylan-witch"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/samuel.jpg"}, {"id": "poets-and-friends-10", "event_id": "2026-04-30T18:30:00", "title": "Poets & Friends #10 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #10, originally recorded live on April 30, 2026 at Koffee?, New Haven CT.", "host": "Ahoy Indie Media", "host_slug": "ahoy-indie-media", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets_10_FULL.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-05-21", "thumbnail": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets%20%2310.jpg", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-9", "event_id": "2026-03-26T18:30:00", "title": "Poets & Friends #9 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #9: Springtime, originally recorded live on March 26, 2026 at Koffee?, New Haven CT.", "host": "Ahoy Indie Media", "host_slug": "ahoy-indie-media", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-09/Poets%20and%20Friends%20%239%20-%20full.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-03-30", "thumbnail": "https://partiful.imgix.net/external/user/CwCebGXbOBSYcICoVLo5921X2ZC3/50ZHnbZBbi-ReHwK2D24a?fit=clip&w=460&auto=format", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "tyler-needs-a-break-ep4-full", "title": "Tyler Needs a Break \u2014 Episode 4: Sam Carlson (Full Show)", "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour. Full episode of Tyler Needs a Break, Episode 4.", "url": "https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-03-22", "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-full_sam-carlson_8646f844c333.jpg", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-8", "event_id": "2026-02-26T18:30:00", "title": "Poets & Friends #8 \u2014 Full Show Recording", "description": "Full unedited recording of Poets & Friends #8, originally recorded live on February 26, 2026 at Koffee?, New Haven CT. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha.", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets%20and%20Friends%20%238%20-%20Draft%203.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-02-26", "thumbnail": "/static/thumbnails/poets-and-friends-8_b1908116a7c8.jpg", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-4", "event_id": "2025-10-30T18:30:00", "title": "Poets & Friends #4: Spooky Edition - Live Show Recording", "description": "Full recording of the Spooky Edition poetry and performance event", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets4Total.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2025-11-18", "thumbnail": "/static/thumbnails/poets-and-friends-4_24ec074f1c38.jpg", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-3", "event_id": "2025-09-24T19:00:00", "title": "Poets and Friends #3 - Live Show Recording", "description": "Full recording of the live poetry and performance event", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Ahoy_poets%20and%20friends%20-%203%20-%20ready.mov", "duration": "39 minutes", "file_size": "3.4GB", "format": "MOV", "status": "available", "upload_date": "2025-10-01", "thumbnail": "/static/thumbnails/poets-and-friends-3_a0e72c328dba.jpg", "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "tallboyz-obsolete", "title": "Tallboyz - Obsolete", "description": "A full-length skating film from Tallboyz featuring Dave Gunn and Andrew Leverton. Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Tallboyz%20-%20Obsolete%20-%20Full%20Film.mov", "duration": null, "file_size": null, "format": "MOV", "status": "available", "upload_date": "2026-05-27", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete_Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete%20-%20Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete5.jpg", "category": "film", "tags": ["tallboyz", "full-film", "skating", "film", "short-film"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png"}, {"id": "tallboyz-ufrwhite", "title": "UFR White - Featuring Dave Gunn", "description": "New skating content from Tallboyz featuring Dave Gunn.", "host": "Tallboyz", "host_slug": "tallboyz", "featured_skater": "Dave Gunn", "featured_skater_slug": "dave-gunn", "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-07-08", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite_thumb.jpg", "category": "clip", "tags": ["tallboyz", "skating", "dave-gunn", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png"}, {"id": "flux-tb-cash-contest", "title": "Flux TB Cash Contest", "description": "Cash Contest hosted by the Tallboyz at FLUX during their first annual skate film festival at Flux. Shot and edited by Alex Gonzalez.", "url": "https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4", "host": "Tallboyz", "host_slug": "tallboyz", "filmmaker": "Alex Gonzalez", "filmmaker_slug": "alex-gonzalez", "duration": null, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-04-06", "thumbnail": "https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg", "tags": ["tallboyz", "skating", "alex-gonzalez", "contest", "flux"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/rob.png"}, {"id": "poets-and-friends-13-part-0-opening-remarks", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Opening Remarks", "description": "Alex Gonzalez kicks off Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Alex Gonzalez", "host_slug": "alex-gonzalez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_0_Opening.mp4", "duration": "2:15", "duration_seconds": 135, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-0-opening-remarks_6ba3a44db0ab.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-1-paul-wildy", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Paul Wildy", "description": "Paul Wildy performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Paul Wildy", "host_slug": "paul-wildy", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_1_PaulWildy.mp4", "duration": "4:09", "duration_seconds": 249, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-1-paul-wildy_7aeecfa84620.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-2-elena-gerald", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Elena Gerald", "description": "Elena Gerald performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Elena Gerald", "host_slug": "elena-gerald", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_2_ElenaGerald.mp4", "duration": "3:49", "duration_seconds": 229, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-2-elena-gerald_c07344d27c21.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-3-aidan-bauer", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Aidan Bauer", "description": "Aidan Bauer performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Aidan Bauer", "host_slug": "aidan-bauer", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_3_AidanBauer.mp4", "duration": "3:05", "duration_seconds": 185, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-3-aidan-bauer_ac40d34fc94f.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-4-pat-clendenen", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Pat Clendenen", "description": "Pat Clendenen performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Pat Clendenen", "host_slug": "pat-clendenen", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_4_PatClendenen.mp4", "duration": "1:52", "duration_seconds": 112, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-4-pat-clendenen_e0df2fee0195.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-5-ellen-martin", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Ellen Martin", "description": "Ellen Martin performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Ellen Martin", "host_slug": "ellen-martin", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_5_EllenMartin.mp4", "duration": "4:48", "duration_seconds": 288, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-5-ellen-martin_b747148a13d0.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-6-kyle-middleton", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Kyle Middleton", "description": "Kyle Middleton performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Kyle Middleton", "host_slug": "kyle-middleton", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_6_KyleMiddleton.mp4", "duration": "2:27", "duration_seconds": 147, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-6-kyle-middleton_23b780be729b.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-7-seth-bollinger", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Seth Bollinger", "description": "Seth Bollinger performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Seth Bollinger", "host_slug": "seth-bollinger", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_7_SethBollinger.mp4", "duration": "5:05", "duration_seconds": 305, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-7-seth-bollinger_72579bd8fe14.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-8-jailene-rodriguez", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Jailene Rodriguez", "description": "Jailene Rodriguez performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Jailene Rodriguez", "host_slug": "jailene-rodriguez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_8_JaileneRodriguez.mp4", "duration": "5:59", "duration_seconds": 359, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-8-jailene-rodriguez_376daeb23f0b.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-10-phil", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Phil", "description": "Phil performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Phil", "host_slug": "phil", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_10_phil.mp4", "duration": "3:01", "duration_seconds": 181, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-10-phil_af7e0a451d9a.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-11-prasaus", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Prasaus", "description": "Prasaus performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Prasaus", "host_slug": "prasaus", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_11_Prasaus.mp4", "duration": "2:48", "duration_seconds": 168, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-11-prasaus_3f2522d89cc9.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-12-james", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 James", "description": "James performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "James", "host_slug": "james", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_12_James.mp4", "duration": "2:06", "duration_seconds": 126, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-12-james_52804eeed656.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-13-cj", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 CJ", "description": "CJ performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "CJ", "host_slug": "cj", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_13_CJ.mp4", "duration": "2:25", "duration_seconds": 145, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-13-cj_50182d842ff5.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-14-khanyisile-nawa", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Khanyisile Nawa", "description": "Khanyisile Nawa performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Khanyisile Nawa", "host_slug": "khanyisile-nawa", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_14_Kanye.mp4", "duration": "4:51", "duration_seconds": 291, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-14-khanyisile-nawa_4225e831ec91.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}, {"id": "poets-and-friends-13-part-15-closing-remarks", "event_id": "2026-09-24T18:30:00", "title": "Poets & Friends #13 \u2014 Closing Remarks", "description": "Alex Gonzalez concludes Poets & Friends #13 with closing remarks, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.", "host": "Alex Gonzalez", "host_slug": "alex-gonzalez", "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_15_ClosingRemarks.mp4", "duration": "1:40", "duration_seconds": 100, "file_size": null, "format": "MP4", "status": "available", "upload_date": "2026-09-24", "thumbnail": "/static/thumbnails/poets-and-friends-13-part-15-closing-remarks_67ca889007a3.jpg", "category": "live show", "tags": ["poets-and-friends", "live", "poetry", "performance", "clip"], "local_thumb": "file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_dispatch.jpg"}];
+    const MUSIC_CATALOG = [{"track_id": "song_1", "title": "Seen Better Days", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 190, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3", "cover_art": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": false, "date_added": null, "position": 0, "play_count": 0, "tags": ["indie", "samuel-dylan-witch"]}, {"track_id": "song_2", "title": "Beneath the Willow Tree", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 197, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3", "cover_art": "https://i.ytimg.com/vi/koPyEhqksBk/maxresdefault.jpg", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": false, "date_added": null, "position": 1, "play_count": 0, "tags": ["indie", "samuel-dylan-witch"]}, {"track_id": "song_3", "title": "Put Me on the Run", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 159, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3", "cover_art": "https://i.ytimg.com/vi/uEqMlBsKYpQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLABNZs86_3-knu6Zq78I43Am1eLWA", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": false, "date_added": null, "position": 2, "play_count": 0, "tags": ["indie", "samuel-dylan-witch"]}, {"track_id": "song_4", "title": "You Know Me", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 111, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/You+Know+Me+Draft+2.mp3", "cover_art": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": false, "date_added": null, "position": 3, "play_count": 0, "tags": ["indie", "samuel-dylan-witch"]}, {"track_id": "song_5", "title": "Watching Her Fly", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 86, "audio_url": "https://ahoycollection.s3.amazonaws.com/Coral+Reefer+-+Untitled+(original).mp3", "cover_art": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": false, "date_added": null, "position": 4, "play_count": 0, "tags": ["indie", "samuel-dylan-witch"]}, {"track_id": "song_6", "title": "Far From Here", "artist": "Cambell Rice", "album": "Single", "genre": "Indie", "duration_seconds": 162, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-+From+Here.mp3", "cover_art": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg", "artist_slug": "cambell-rice", "featured": false, "is_new": false, "date_added": null, "position": 5, "play_count": 0, "tags": ["indie", "cambell-rice"]}, {"track_id": "song_7", "title": "Sunflower", "artist": "Cambell Rice", "album": "Single", "genre": "Indie", "duration_seconds": 130, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Sunflower.mp3", "cover_art": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg", "artist_slug": "cambell-rice", "featured": true, "is_new": false, "date_added": null, "position": 6, "play_count": 0, "tags": ["indie", "cambell-rice", "featured"]}, {"track_id": "song_8", "title": "To Play Guitar in a Huge Room", "artist": "Cambell Rice", "album": "Single", "genre": "Indie", "duration_seconds": 75, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Trying+to+play+guitar+in+a+huge+room.mp3", "cover_art": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg", "artist_slug": "cambell-rice", "featured": false, "is_new": false, "date_added": null, "position": 7, "play_count": 0, "tags": ["indie", "cambell-rice"]}, {"track_id": "song_9", "title": "Summer Bummer", "artist": "Youth XL", "album": "Single", "genre": "Indie", "duration_seconds": 239, "audio_url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Summer+Bummer.mp3", "cover_art": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyBXIMTxuYsGbaO23UEDr-TeH57LhPKid4ohwt85HyZgtprWiecvV_iFk0dYCMMJnT3ys&usqp=CAU", "artist_slug": "youth-xl", "featured": true, "is_new": false, "date_added": null, "position": 8, "play_count": 0, "tags": ["indie", "youth-xl", "featured"]}, {"track_id": "song_10", "title": "Yoga", "artist": "Youth XL", "album": "Single", "genre": "Indie", "duration_seconds": 223, "audio_url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Yoga.mp3", "cover_art": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwxXTk37iEbLqFEa5QZWImJbtIqoBi88rgTrfpWKfckiC3UWuODDcuVjPkUIbqzkADylo&usqp=CAU", "artist_slug": "youth-xl", "featured": false, "is_new": false, "date_added": null, "position": 9, "play_count": 0, "tags": ["indie", "youth-xl"]}, {"track_id": "song_11", "title": "Text Your Friends", "artist": "Youth XL", "album": "Single", "genre": "Indie", "duration_seconds": 191, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Text+Your+Friends.mp3", "cover_art": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSow7Comi15tPYB3O0QzhiYwcuzAZzYelN4I9eF_S8TaBClkoWBFP02jWx3PCiQe3xTKnM&usqp=CAU", "artist_slug": "youth-xl", "featured": true, "is_new": false, "date_added": null, "position": 10, "play_count": 0, "tags": ["indie", "youth-xl", "featured"]}, {"track_id": "song_12", "title": "Gypsy Gia", "artist": "Youth XL", "album": "Single", "genre": "Indie", "duration_seconds": 195, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Gypsy+Gia.mp3", "cover_art": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRBzrIX_zhK-rHOqss8IxUE40tCnlx9YOi2nwVX3bamUCD1uh8SFyqaOdzU2xoeogVoGw&usqp=CAU", "artist_slug": "youth-xl", "featured": false, "is_new": false, "date_added": null, "position": 11, "play_count": 0, "tags": ["indie", "youth-xl"]}, {"track_id": "song_14", "title": "Glued in the Nude", "artist": "Riddle M", "album": "Single", "genre": "Indie", "duration_seconds": 156, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Glued+in+Nude.mp3", "cover_art": "https://i.ytimg.com/vi/O2SV8BikOjA/maxresdefault.jpg", "artist_slug": "riddle-m", "featured": false, "is_new": false, "date_added": null, "position": 12, "play_count": 0, "tags": ["indie", "riddle-m"]}, {"track_id": "song_13", "title": "Reasons", "artist": "Fella Gazelle", "album": "Single", "genre": "Indie", "duration_seconds": 211, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Fella%20Gazelle%20-%20Reasons%20-%20Radio%20Edit.mp3", "cover_art": "https://m.media-amazon.com/images/I/61NpQ4vCxOL._UXNaN_FMjpg_QL85_.jpg", "artist_slug": "fella-gazelle", "featured": false, "is_new": false, "date_added": null, "position": 12, "play_count": 0, "tags": ["indie", "fella-gazelle"]}, {"track_id": "song_15", "title": "Honeydew", "artist": "Riddle M", "album": "Single", "genre": "Indie", "duration_seconds": 203, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Honeydew.mp3", "cover_art": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFYDGZSSHnPgwLfJ5HEssYeEnCH95mEuKTfw&usqp=CAU", "artist_slug": "riddle-m", "featured": false, "is_new": false, "date_added": null, "position": 13, "play_count": 0, "tags": ["indie", "riddle-m"]}, {"track_id": "song_16", "title": "Oceans", "artist": "Justin Arena", "album": "Single", "genre": "Indie", "duration_seconds": 195, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ef/9c/aa/ef9caad8-3001-3554-ff16-a8caf4863e91/artwork.jpg/592x592bf.webp", "artist_slug": "justin-arena", "featured": false, "is_new": false, "date_added": null, "position": 14, "play_count": 0, "tags": ["indie", "justin-arena"]}, {"track_id": "song_17", "title": "When You Wake Up", "artist": "Justin Arena", "album": "Single", "genre": "Indie", "duration_seconds": 195, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ff/4e/ab/ff4eab95-c8c9-2c77-8289-3598672e7a74/artwork.jpg/592x592bf.webp", "artist_slug": "justin-arena", "featured": false, "is_new": false, "date_added": null, "position": 15, "play_count": 0, "tags": ["indie", "justin-arena"]}, {"track_id": "song_18", "title": "Crash The Party", "artist": "Justin Arena", "album": "Single", "genre": "Indie", "duration_seconds": 246, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin%20Arena%20-%20Crash%20The%20Party%20(ft.%20Nicole%20Gauthier).mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/89/ea/c8/89eac83d-378c-f272-10e9-f0a67eb0503d/artwork.jpg/592x592bf.webp", "artist_slug": "justin-arena", "featured": false, "is_new": false, "date_added": null, "position": 16, "play_count": 0, "tags": ["indie", "justin-arena"]}, {"track_id": "song_19", "title": "Lost Time", "artist": "Clones of Clarence", "album": "Single", "genre": "Indie", "duration_seconds": 251, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Lost+Time+(I+miss+you).mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/8b/4d/cc/8b4dcc19-b47c-5478-b2de-18587dc0c4b3/artwork.jpg/592x592bf.webp", "artist_slug": "clones-of-clarence", "featured": false, "is_new": true, "date_added": null, "position": 17, "play_count": 0, "tags": ["indie", "clones-of-clarence", "new"]}, {"track_id": "song_20", "title": "Salty Salsa", "artist": "Clones of Clarence", "album": "Single", "genre": "Indie", "duration_seconds": 305, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Salty+Salsa.mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/e8/54/85/e854859f-5173-591b-766f-605268a026f1/artwork.jpg/592x592bf.webp", "artist_slug": "clones-of-clarence", "featured": false, "is_new": true, "date_added": null, "position": 18, "play_count": 0, "tags": ["indie", "clones-of-clarence", "new"]}, {"track_id": "song_21", "title": "Proj 17", "artist": "Clones of Clarence", "album": "Single", "genre": "Indie", "duration_seconds": 220, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Proj+17.mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/e8/54/85/e854859f-5173-591b-766f-605268a026f1/artwork.jpg/592x592bf.webp", "artist_slug": "clones-of-clarence", "featured": true, "is_new": true, "date_added": null, "position": 19, "play_count": 0, "tags": ["indie", "clones-of-clarence", "featured", "new"]}, {"track_id": "song_22", "title": "3AM", "artist": "Clones of Clarence", "album": "Single", "genre": "Indie", "duration_seconds": 309, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+3+AM.mp3", "cover_art": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/98/ce/d0/98ced048-e086-a5ed-4581-9a60daee20b0/artwork.jpg/592x592bf.webp", "artist_slug": "clones-of-clarence", "featured": false, "is_new": true, "date_added": null, "position": 20, "play_count": 0, "tags": ["indie", "clones-of-clarence", "new"]}, {"track_id": "song_23", "title": "Electro", "artist": "Samuel Dylan Witch", "album": "Single", "genre": "Indie", "duration_seconds": 164, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Coral+Reefer+-+elec+(original).mp3", "cover_art": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg", "artist_slug": "samuel-dylan-witch", "featured": false, "is_new": true, "date_added": null, "position": 21, "play_count": 0, "tags": ["indie", "samuel-dylan-witch", "new"]}, {"track_id": "song_24", "title": "My Own Grenade", "artist": "My Own Grenade", "album": "Single", "genre": "Indie", "duration_seconds": 206, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_34B.mp3", "cover_art": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg", "artist_slug": "my-own-grenade", "featured": false, "is_new": false, "date_added": null, "position": 22, "play_count": 0, "tags": ["indie", "my-own-grenade"]}, {"track_id": "song_25", "title": "Frustrated", "artist": "My Own Grenade", "album": "Single", "genre": "Indie", "duration_seconds": 160, "audio_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_Frustrated.mp3", "cover_art": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg", "artist_slug": "my-own-grenade", "featured": false, "is_new": false, "date_added": null, "position": 23, "play_count": 0, "tags": ["indie", "my-own-grenade"]}];
+
+    const PILLARS = ['tv', 'radio', 'music'];
+    let currentPillar = 'tv';
+
+    const ZONE_TABS = 'tabs';
+    const ZONE_ACTIONS = 'actions';
+    const ZONE_SHELF = 'shelf';
+
+    let currentZone = ZONE_SHELF;
+    let selectedTab = 0;
+    let selectedShelf = 0;
+    let selectedAction = 0;
+
+    let isGuideHidden = false;
+    let idleTimer = null;
+    let osdTimer = null;
+    let radioIndex = 0;
+
+    const tabTv = document.getElementById('tab-tv');
+    const tabRadio = document.getElementById('tab-radio');
+    const tabMusic = document.getElementById('tab-music');
+    const pillarButtons = [tabTv, tabRadio, tabMusic];
+
+    const heroShowcase = document.getElementById('hero-showcase');
+    const radioStage = document.getElementById('radio-stage');
+    const billboardImg = document.getElementById('billboard-img');
+    const videoPlayer = document.getElementById('video-player');
+    const audioPlayer = document.getElementById('audio-player');
+
+    const heroChannelNum = document.getElementById('hero-channel-num');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDesc = document.getElementById('hero-desc');
+    const heroDuration = document.getElementById('hero-duration');
+
+    const radioTitle = document.getElementById('radio-title');
+    const radioArtist = document.getElementById('radio-artist');
+    const radioArt = document.getElementById('radio-art');
+    const btnRadioLabel = document.getElementById('btn-radio-label');
+    const btnRadioTune = document.getElementById('btn-radio-tune');
+
+    const shelfTitle = document.getElementById('shelf-title');
+    const shelfCounter = document.getElementById('shelf-counter');
+    const shelfTrack = document.getElementById('shelf-track');
+    const btnFullscreenToggle = document.getElementById('btn-fullscreen-toggle');
+    const muteLabel = document.getElementById('mute-label');
+    const muteIcon = document.getElementById('mute-icon');
+    const actionButtons = [btnFullscreenToggle, document.querySelectorAll('.hero-actions .btn-glass')[0], document.querySelectorAll('.hero-actions .btn-glass')[1]];
+
+    const osClock = document.getElementById('os-clock');
+    const channelOsd = document.getElementById('channel-osd');
+    const osdTitle = document.getElementById('osd-title');
+    const osdChannel = document.getElementById('osd-channel');
+    const centerFeedback = document.getElementById('center-feedback');
+
+    function updateClock() {
+      const now = new Date();
+      osClock.innerText = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Auto-idle hide like Pluto TV
+    function resetIdleTimer() {
+      showGuide();
+      clearTimeout(idleTimer);
+      if (currentPillar === 'tv') {
+        idleTimer = setTimeout(() => {
+          hideGuide();
+        }, 6000);
+      }
+    }
+
+    function hideGuide() {
+      if (currentPillar === 'tv') {
+        isGuideHidden = true;
+        document.body.classList.add('guide-hidden');
+      }
+    }
+
+    function showGuide() {
+      isGuideHidden = false;
+      document.body.classList.remove('guide-hidden');
+    }
+
+    // Switch between TV, Radio, and Music
+    function switchPillar(pillar) {
+      currentPillar = pillar;
+      selectedTab = PILLARS.indexOf(pillar);
+      selectedShelf = 0;
+      showGuide();
+
+      pillarButtons.forEach((b, idx) => {
+        b.className = 'pillar-tab ' + (idx === selectedTab ? 'active' : '');
+      });
+
+      if (currentPillar === 'tv') {
+        heroShowcase.style.display = 'flex';
+        radioStage.style.display = 'none';
+        billboardImg.style.display = 'none';
+        videoPlayer.style.display = 'block';
+        audioPlayer.pause();
+        shelfTitle.innerText = 'LIVE CHANNELS & EPISODES';
+        renderShelf();
+        tuneLiveChannel(0);
+      } else if (currentPillar === 'radio') {
+        heroShowcase.style.display = 'none';
+        radioStage.style.display = 'flex';
+        billboardImg.style.display = 'block';
+        videoPlayer.style.display = 'none';
+        videoPlayer.pause();
+        shelfTitle.innerText = 'AHOY RADIO BROADCAST SCHEDULE';
+        renderRadioShelf();
+        updateRadioStage();
+      } else if (currentPillar === 'music') {
+        heroShowcase.style.display = 'flex';
+        radioStage.style.display = 'none';
+        billboardImg.style.display = 'block';
+        videoPlayer.style.display = 'none';
+        videoPlayer.pause();
+        shelfTitle.innerText = 'AHOY ON-DEMAND MUSIC & SINGLES';
+        renderShelf();
+        updateHero();
+      }
+
+      updateFocus();
+      resetIdleTimer();
+    }
+
+    // PLUTO TV: INSTANT LIVE CHANNEL TUNING
+    function tuneLiveChannel(idx) {
+      const item = TV_CATALOG[idx];
+      if (!item) return;
+
+      selectedShelf = idx;
+      videoPlayer.src = item.url;
+      videoPlayer.play().catch(() => {});
+
+      // Show instant OSD
+      osdTitle.innerText = item.title || 'Live Program';
+      osdChannel.innerText = `CH ${101 + idx} • AHOY LIVE`;
+      channelOsd.classList.add('show');
+      clearTimeout(osdTimer);
+      osdTimer = setTimeout(() => channelOsd.classList.remove('show'), 2200);
+
+      updateHero();
+      alignShelf();
+    }
+
+    function tuneNextChannel() {
+      selectedShelf = (selectedShelf + 1) % TV_CATALOG.length;
+      tuneLiveChannel(selectedShelf);
+      updateFocus();
+      resetIdleTimer();
+    }
+
+    function toggleAudioMute() {
+      videoPlayer.muted = !videoPlayer.muted;
+      muteLabel.innerText = videoPlayer.muted ? 'Unmute Audio' : 'Mute Audio';
+      muteIcon.innerText = videoPlayer.muted ? '🔇' : '🔊';
+      showCenterSplash(videoPlayer.muted ? '🔇' : '🔊');
+      resetIdleTimer();
+    }
+
+    function togglePlutoFullscreen() {
+      if (isGuideHidden) {
+        showGuide();
+      } else {
+        hideGuide();
+      }
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+
+    function renderShelf() {
+      shelfTrack.innerHTML = '';
+      const items = currentPillar === 'tv' ? TV_CATALOG : MUSIC_CATALOG;
+      shelfCounter.innerText = `${selectedShelf + 1} of ${items.length}`;
+
+      items.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'shelf-card';
+        const thumb = currentPillar === 'tv' 
+          ? (item.local_thumb || 'file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_ep1.jpg')
+          : (item.cover_art || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg');
+
+        card.innerHTML = `
+          <img src="${thumb}" alt="" />
+          <div class="card-vignette"></div>
+          <span class="card-duration">${currentPillar === 'tv' ? 'CH ' + (101 + idx) : (item.duration || '03:45')}</span>
+          <div class="card-info">
+            <span class="card-host">${currentPillar === 'tv' ? 'LIVE NOW' : (item.artist || 'Ahoy')}</span>
+            <span class="card-title">${item.title || 'Untitled'}</span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          currentZone = ZONE_SHELF;
+          selectedShelf = idx;
+          updateFocus();
+          if (currentPillar === 'tv') {
+            tuneLiveChannel(idx);
+          } else {
+            startPlay();
+          }
+          resetIdleTimer();
+        };
+
+        shelfTrack.appendChild(card);
+      });
+
+      alignShelf();
+    }
+
+    function renderRadioShelf() {
+      shelfTrack.innerHTML = '';
+      shelfCounter.innerText = `${selectedShelf + 1} of ${MUSIC_CATALOG.length}`;
+
+      MUSIC_CATALOG.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'shelf-card';
+        const thumb = item.cover_art || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
+
+        card.innerHTML = `
+          <img src="${thumb}" alt="" />
+          <div class="card-vignette"></div>
+          <span class="card-duration">ON AIR</span>
+          <div class="card-info">
+            <span class="card-host" style="color: #ff3b30;">${item.artist || 'Ahoy Artist'}</span>
+            <span class="card-title">${item.title || 'Untitled'}</span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          currentZone = ZONE_SHELF;
+          selectedShelf = idx;
+          radioIndex = idx;
+          updateRadioStage();
+          updateFocus();
+          startRadioTrack(idx);
+          resetIdleTimer();
+        };
+
+        shelfTrack.appendChild(card);
+      });
+
+      alignShelf();
+    }
+
+    function alignShelf() {
+      const cardWidth = 320 + 26;
+      const offset = -(selectedShelf * cardWidth);
+      shelfTrack.style.transform = `translateX(${offset}px)`;
+      const total = currentPillar === 'tv' ? TV_CATALOG.length : MUSIC_CATALOG.length;
+      shelfCounter.innerText = `${selectedShelf + 1} of ${total}`;
+    }
+
+    function updateHero() {
+      const items = currentPillar === 'tv' ? TV_CATALOG : MUSIC_CATALOG;
+      const current = items[selectedShelf] || items[0];
+      if (!current) return;
+
+      heroTitle.innerText = current.title || 'Untitled';
+      if (currentPillar === 'tv') {
+        heroChannelNum.innerText = `CH ${101 + selectedShelf} • \${(current.host || 'AHOY TV').toUpperCase()}`;
+        heroDesc.innerText = current.description || 'Broadcasting live on Ahoy TV. Hit [ENTER] to watch pure fullscreen.';
+      } else {
+        heroChannelNum.innerText = (current.artist || 'AHOY MUSIC').toUpperCase();
+        heroDesc.innerText = current.description || `Album: ${current.album || 'Single'} • Master Audio stream.`;
+      }
+      heroDuration.innerText = current.duration || '04:20';
+
+      const thumb = currentPillar === 'tv' 
+        ? (current.local_thumb || 'file:///Users/agworkywork/ahoy-on-xbox/dist/store_assets/thumbs/wintergreen_ep1.jpg') 
+        : (current.cover_art || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg');
+      billboardImg.src = thumb;
+    }
+
+    function updateRadioStage() {
+      const track = MUSIC_CATALOG[radioIndex] || MUSIC_CATALOG[0];
+      radioTitle.innerText = track.title || 'Live Radio';
+      radioArtist.innerText = (track.artist || 'Ahoy Independent Radio').toUpperCase();
+      radioArt.src = track.cover_art || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
+      billboardImg.src = track.cover_art || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
+    }
+
+    function startPlay() {
+      if (currentPillar === 'music') {
+        const item = MUSIC_CATALOG[selectedShelf];
+        if (!item) return;
+        videoPlayer.pause();
+        audioPlayer.src = item.audio_url;
+        audioPlayer.play().catch(() => {});
+        showCenterSplash('▶');
+      }
+    }
+
+    function startRadioTrack(idx) {
+      radioIndex = idx;
+      const track = MUSIC_CATALOG[radioIndex];
+      videoPlayer.pause();
+      audioPlayer.src = track.audio_url;
+      audioPlayer.play().catch(() => {});
+      btnRadioLabel.innerText = 'Pause Stream';
+      showCenterSplash('▶');
+    }
+
+    function toggleRadioPlay() {
+      if (!audioPlayer.src) {
+        startRadioTrack(radioIndex);
+        return;
+      }
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        btnRadioLabel.innerText = 'Pause Stream';
+        showCenterSplash('▶');
+      } else {
+        audioPlayer.pause();
+        btnRadioLabel.innerText = 'Listen Live';
+        showCenterSplash('❚❚');
+      }
+    }
+
+    function playNextRadioTrack() {
+      radioIndex = (radioIndex + 1) % MUSIC_CATALOG.length;
+      updateRadioStage();
+      startRadioTrack(radioIndex);
+    }
+
+    function showCenterSplash(symbol) {
+      centerFeedback.innerText = symbol;
+      centerFeedback.classList.add('show');
+      setTimeout(() => centerFeedback.classList.remove('show'), 400);
+    }
+
+    videoPlayer.onended = () => {
+      tuneNextChannel();
+    };
+
+    audioPlayer.onended = () => {
+      if (currentPillar === 'radio') playNextRadioTrack();
+      else {
+        selectedShelf = (selectedShelf + 1) % MUSIC_CATALOG.length;
+        startPlay();
+      }
+    };
+
+    function updateFocus() {
+      document.querySelectorAll('.tv-focused').forEach(el => el.classList.remove('tv-focused'));
+
+      if (currentZone === ZONE_TABS) {
+        if (pillarButtons[selectedTab]) pillarButtons[selectedTab].classList.add('tv-focused');
+      } else if (currentZone === ZONE_ACTIONS) {
+        if (currentPillar === 'radio') {
+          btnRadioTune.classList.add('tv-focused');
+        } else {
+          if (actionButtons[selectedAction]) actionButtons[selectedAction].classList.add('tv-focused');
+        }
+      } else if (currentZone === ZONE_SHELF) {
+        const cards = shelfTrack.querySelectorAll('.shelf-card');
+        if (cards[selectedShelf]) {
+          cards[selectedShelf].classList.add('tv-focused');
+          alignShelf();
+          if (currentPillar === 'tv') {
+            // Instant Live Tune on selection!
+            tuneLiveChannel(selectedShelf);
+          } else if (currentPillar === 'radio') {
+            radioIndex = selectedShelf;
+            updateRadioStage();
+          } else {
+            updateHero();
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      resetIdleTimer();
+
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          if (currentZone === ZONE_SHELF) {
+            currentZone = ZONE_ACTIONS;
+            selectedAction = 0;
+            updateFocus();
+          } else if (currentZone === ZONE_ACTIONS) {
+            currentZone = ZONE_TABS;
+            updateFocus();
+          }
+          break;
+
+        case 'ArrowDown':
+          if (currentZone === ZONE_TABS) {
+            currentZone = ZONE_ACTIONS;
+            selectedAction = 0;
+            updateFocus();
+          } else if (currentZone === ZONE_ACTIONS) {
+            currentZone = ZONE_SHELF;
+            updateFocus();
+          }
+          break;
+
+        case 'ArrowLeft':
+          if (currentZone === ZONE_TABS) {
+            if (selectedTab > 0) {
+              selectedTab--;
+              switchPillar(PILLARS[selectedTab]);
+            }
+          } else if (currentZone === ZONE_ACTIONS) {
+            if (selectedAction > 0) {
+              selectedAction--;
+              updateFocus();
+            }
+          } else if (currentZone === ZONE_SHELF) {
+            if (selectedShelf > 0) {
+              selectedShelf--;
+              updateFocus();
+            }
+          }
+          break;
+
+        case 'ArrowRight':
+          if (currentZone === ZONE_TABS) {
+            if (selectedTab < PILLARS.length - 1) {
+              selectedTab++;
+              switchPillar(PILLARS[selectedTab]);
+            }
+          } else if (currentZone === ZONE_ACTIONS) {
+            if (selectedAction < actionButtons.length - 1) {
+              selectedAction++;
+              updateFocus();
+            }
+          } else if (currentZone === ZONE_SHELF) {
+            const total = currentPillar === 'tv' ? TV_CATALOG.length : MUSIC_CATALOG.length;
+            if (selectedShelf < total - 1) {
+              selectedShelf++;
+              updateFocus();
+            }
+          }
+          break;
+
+        case 'Enter':
+          if (currentZone === ZONE_TABS) {
+            switchPillar(PILLARS[selectedTab]);
+            currentZone = ZONE_SHELF;
+            updateFocus();
+          } else if (currentZone === ZONE_ACTIONS) {
+            if (currentPillar === 'tv') togglePlutoFullscreen();
+            else if (currentPillar === 'radio') toggleRadioPlay();
+            else startPlay();
+          } else if (currentZone === ZONE_SHELF) {
+            if (currentPillar === 'tv') {
+              // In TV mode, Enter toggles Pluto fullscreen!
+              togglePlutoFullscreen();
+            } else if (currentPillar === 'radio') {
+              startRadioTrack(selectedShelf);
+            } else {
+              startPlay();
+            }
+          }
+          break;
+
+        case ' ': // Space toggles mute or play
+          if (currentPillar === 'tv') toggleAudioMute();
+          else if (currentPillar === 'radio') toggleRadioPlay();
+          else startPlay();
+          break;
+
+        case 'f':
+        case 'F':
+          togglePlutoFullscreen();
+          break;
+
+        case 'Escape':
+        case 'Backspace':
+          showGuide();
+          break;
+      }
+    });
+
+    // Listen on user interaction to unmute audio automatically
+    window.addEventListener('click', () => {
+      if (videoPlayer.muted && currentPillar === 'tv') {
+        videoPlayer.muted = false;
+        muteLabel.innerText = 'Mute Audio';
+        muteIcon.innerText = '🔊';
+      }
+    }, { once: true });
+
+    // INIT (Starts on Live TV!)
+    switchPillar('tv');
+  </script>
 </body>
 </html>
