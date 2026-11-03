@@ -127,7 +127,7 @@
                         <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Medium" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
                         <TextBlock Text="{Binding Host}" FontSize="11" Foreground="#8E8E93"/>
                       </StackPanel>
-                      <TextBlock Grid.Column="1" Text="ON AIR" FontSize="10" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                      <TextBlock Grid.Column="1" Text="{Binding DurationLabel}" FontSize="10" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </Grid>
                   </Border>
                 </DataTemplate>
@@ -143,11 +143,13 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
               <TextBlock Text="▲/▼" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Surf Channels" FontSize="11" Foreground="#636366" Margin="0,0,16,0"/>
+              <TextBlock Text=" Surf" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
+              <TextBlock Text="LB/RB" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
+              <TextBlock Text=" Switch CH" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[A]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Fullscreen" FontSize="11" Foreground="#636366" Margin="0,0,16,0"/>
+              <TextBlock Text=" Fullscreen" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[B]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Guide" FontSize="11" Foreground="#636366" Margin="0,0,16,0"/>
+              <TextBlock Text=" Guide" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[X]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
               <TextBlock Text=" Save" FontSize="11" Foreground="#636366"/>
             </StackPanel>

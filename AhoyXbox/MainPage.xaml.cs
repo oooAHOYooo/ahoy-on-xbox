@@ -51,6 +51,9 @@ namespace AhoyXbox
         public string Id { get; set; }
         public string Title { get; set; }
         public string Host { get; set; }
+        public string Description { get; set; }
+        public string Duration { get; set; }
+        public string DurationLabel => !string.IsNullOrEmpty(Duration) ? Duration : "LIVE";
         public string Url { get; set; }
         public string Thumbnail { get; set; }
         public string Category { get; set; }
@@ -100,6 +103,22 @@ namespace AhoyXbox
                         e.Handled = true;
                     }
                 }
+                else if (e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
+                {
+                    if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
+                    {
+                        Channels.SelectedIndex = (Channels.SelectedIndex + 1) % chs.Count;
+                        e.Handled = true;
+                    }
+                }
+                else if (e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
+                {
+                    if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
+                    {
+                        Channels.SelectedIndex = (Channels.SelectedIndex - 1 + chs.Count) % chs.Count;
+                        e.Handled = true;
+                    }
+                }
             };
         }
 
@@ -141,10 +160,20 @@ namespace AhoyXbox
                     else if (string.IsNullOrEmpty(rawThumb))
                         rawThumb = "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg";
 
+                    string durationStr = "";
+                    if (row.ContainsKey("duration"))
+                    {
+                        var dVal = row.GetNamedValue("duration");
+                        if (dVal.ValueType == JsonValueType.String) durationStr = dVal.GetString();
+                    }
+                    string descStr = row.ContainsKey("description") ? row.GetNamedString("description", "") : "";
+
                     return new Video {
                         Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
                         Title = row.GetNamedString("title", "Untitled"),
                         Host = row.GetNamedString("host", "Ahoy"),
+                        Description = descStr,
+                        Duration = durationStr,
                         Url = row.GetNamedString("url", ""),
                         Thumbnail = rawThumb,
                         Category = row.GetNamedString("category", ""),
@@ -169,10 +198,14 @@ namespace AhoyXbox
                         var radioTracks = musicArray.Select(t => {
                             var row = t.GetObject();
                             var cover = row.ContainsKey("cover_art") ? row.GetNamedString("cover_art", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
+                            string trackDuration = row.ContainsKey("duration") ? row.GetNamedString("duration", "") : "";
+                            string trackAlbum = row.ContainsKey("album") ? row.GetNamedString("album", "") : "";
                             return new Video {
                                 Id = row.GetNamedString("track_id", Guid.NewGuid().ToString()),
                                 Title = row.GetNamedString("title", "Untitled Track"),
                                 Host = row.GetNamedString("artist", "Ahoy Music"),
+                                Description = !string.IsNullOrEmpty(trackAlbum) ? $"Album: {trackAlbum}" : "Ahoy Radio 24/7",
+                                Duration = trackDuration,
                                 Url = row.GetNamedString("audio_url", ""),
                                 Thumbnail = cover,
                                 Category = "music",

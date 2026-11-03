@@ -1,10 +1,31 @@
 # Ahoy TV — Production Handoff & Launch Playbook (Target: Tuesday, Nov 10, 2026)
 
-**Document Version:** 1.0  
+**Document Version:** 1.1 (Updated with v0.2.0 release artifacts, LB/RB channel controls, & Duration display)  
 **Current Date:** Tuesday, November 3, 2026  
 **Target Launch Date:** Tuesday, November 10, 2026 (7-day delivery sprint)  
 **Primary Repository:** [github.com/oooAHOYooo/ahoy-on-xbox](https://github.com/oooAHOYooo/ahoy-on-xbox)  
 **Main Targets:** Microsoft Store (Windows 10/11 & Xbox Series X/S / Xbox One) + Web/Raspberry Pi OTA Kiosks
+
+---
+
+## Direct Instructions for the Next Agent
+
+If you are picking up this session:
+1. **Repository state is on `main`**: All code, catalog updates, and docs are committed and pushed to `origin main`.
+2. **Current release packages**: Compiled `v0.2.0` packages are located in `dist/release_packages/v0.2.0/` (built via GitHub Actions CI run `41671270898`):
+   - Store submission upload package: `dist/release_packages/v0.2.0/AHOY-TV-StoreUpload-Package/AhoyXbox_0.2.0.0_x64_bundle.msixupload`
+   - Xbox console sideload bundle: `dist/release_packages/v0.2.0/AHOY-TV-StoreUpload-Package/AhoyXbox_0.2.0.0_Test/AhoyXbox_0.2.0.0_x64.msixbundle`
+   - Web Kiosk package: `dist/release_packages/AhoyTV_Web_Kiosk_v0.2.0.zip`
+3. **Microsoft CLI connection**: The user indicated they will hook up Microsoft credentials later today. Once they provide the Azure AD / Partner Center credentials, run:
+   ```bash
+   msstore reconfigure --tenantId <TENANT_ID> --sellerId <SELLER_ID> --clientId <CLIENT_ID> --clientSecret <CLIENT_SECRET>
+   ```
+   Then check submission status:
+   ```bash
+   msstore submission status --appId 9N6QB77PD6RT
+   ```
+4. **Validation check**: Always run `python3 scripts/validate.py` before committing any XAML, manifest, or catalog edits.
+5. **Rebuilding frontend**: If catalog or channels change, execute `python3 scripts/build_unified_frontend.py` to regenerate `AhoyXbox/Web/index.html` and `dist/store_assets/tv_app_preview.html`.
 
 ---
 
@@ -46,6 +67,7 @@ Ahoy TV is a native, controller-driven big-screen media application and synchron
 - **Runtime:** Universal Windows Platform (Min version `10.0.17763.0`, Target version `10.0.19041.0`).
 - **Core Controller Mapping:**
   - `D-Pad / Left Stick`: Directional focus between Channel List and Schedule EPG.
+  - `LB / RB` (`GamepadLeftShoulder` / `GamepadRightShoulder`): Instant previous / next channel hopping.
   - `A Button`: Select channel / start immediate playback.
   - `X Button` (`GamepadX`): Instant Save / Bookmark toggle into the Saved Library.
   - `Y Button` (`GamepadY`): Fullscreen toggle (`IsFullWindow`).

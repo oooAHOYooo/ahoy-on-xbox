@@ -1239,6 +1239,18 @@ html_content = f"""<!DOCTYPE html>
           toggleScheduleDrawer();
           break;
 
+        case 'PageUp':
+        case '[':
+          selectedChannelIndex = (selectedChannelIndex - 1 + CHANNELS.length) % CHANNELS.length;
+          tuneChannel(selectedChannelIndex);
+          break;
+
+        case 'PageDown':
+        case ']':
+          selectedChannelIndex = (selectedChannelIndex + 1) % CHANNELS.length;
+          tuneChannel(selectedChannelIndex);
+          break;
+
         case 'b':
         case 'B':
           if (scheduleOpen) toggleScheduleDrawer();
@@ -1268,6 +1280,8 @@ html_content = f"""<!DOCTYPE html>
         checkBtn(13, 'ArrowDown');
         checkBtn(14, 'ArrowLeft');
         checkBtn(15, 'ArrowRight');
+        checkBtn(4, 'PageUp');
+        checkBtn(5, 'PageDown');
         checkBtn(0, 'A');
         checkBtn(1, 'B');
         checkBtn(2, 'X');
