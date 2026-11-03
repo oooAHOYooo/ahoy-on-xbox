@@ -1,6 +1,6 @@
 # Microsoft Store release handoff
 
-Status: **Submitted to Microsoft Store (In Certification)** on October 26, 2026. Official package targeting Windows 10/11 and Xbox submitted and currently passing through pre-processing and Store certification.
+Status: **PROCESSED FOR PUBLICATION (Live in Store within ~2 hours)** as of November 3, 2026. Official package targeting Windows 10/11 Desktop and Xbox passed Microsoft certification and is replicating across global Store CDNs.
 
 ## Distribution route
 
@@ -18,7 +18,7 @@ Native UWP media app targeting Windows.Universal, verified and submitted for **W
 - **Store Protocol Link**: `ms-windows-store://pdp/?productid=9N6QB77PD6RT`
 - **Package Family Name (PFN)**: `AhoyIndieMedia.AHOYTV_ga5cs1wvjrpmc`
 - **MSA App ID**: `8be79778-08a1-4c98-85f5-3064da66df73`
-- **Current Submission**: Submission 1 — In Certification (Pre-processing). Auto-publish enabled upon passing certification.
+- **Current Submission**: Submission 1 — Successfully processed and approved on Nov 3, 2026. Auto-publishing active (visible worldwide within 2 hours).
 
 ## Device acceptance
 

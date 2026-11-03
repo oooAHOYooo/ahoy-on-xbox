@@ -39,7 +39,7 @@ Ahoy TV is a native, controller-driven big-screen media application and synchron
 - **Store Protocol:** `ms-windows-store://pdp/?productid=9N6QB77PD6RT`
 - **Store Family Name (PFN):** `AhoyIndieMedia.AHOYTV_ga5cs1wvjrpmc`
 - **Store Package Version:** `0.2.0.0` (aligned with `v0.2.0-alpha.1` release line).
-- **Current Store Submission:** Submission 1 submitted October 26, 2026 (`0.1.0.0` In Certification / Pre-processing, auto-publish enabled); `0.2.0.0` staged for update submission.
+- **Current Store Submission:** Submission 1 (`0.1.0.0`) **Successfully approved & processed for publication on Nov 3, 2026**! Replicating across global Store CDNs (live within 2 hours). Update package `0.2.0.0` is compiled, validated, and ready for update submission.
 - **Core Aesthetic:** Obsidian deep glass UI, authentic lower-third EPG dock, restrained Ahoy `#FF0060` highlight color, and watermarked video playback.
 
 ---
