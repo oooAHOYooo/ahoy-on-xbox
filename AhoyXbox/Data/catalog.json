@@ -1,34 +1,42 @@
 {
-  "source": "Ahoy video catalog snapshot, 2026-10-26",
   "videos": [
+
     {
-      "id": "rob-meglio-sponsor-me-tape-october-2026",
-      "title": "Rob Meglio's Sponsor Me Tape - October 2026",
-      "description": "Rob Meglio's sponsor me tape filmed at flux on 10.17.26",
-      "host": "Rob Meglio",
-      "host_slug": "rob-meglio",
-      "featured_skater": "Rob Meglio",
-      "featured_skater_slug": "rob-meglio",
-      "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Rob%20Meglio%20-%20Sponsor%20Me%20Tape%20for%20Flux%20-%20October%202026.mp4",
-      "duration": null,
-      "file_size": null,
+      "id": "the-problem-with-kids-today-the-beginning-of-the-end-of-the-world",
+      "thumbnails": ["/static/stills/the-problem-with-kids-today/01.webp", "/static/stills/the-problem-with-kids-today/02.webp", "/static/stills/the-problem-with-kids-today/03.webp"],
+      "stills_grade": "photographic",
+      "title": "The Problem With Kids Today — The Beginning of the End of the World",
+      "host": "The Problem With Kids Today",
+      "host_slug": "the-problem-with-kids-today",
+      "description": "Music video for “The Beginning of the End of the World,” the third single from Take It! Filmed and edited by Connor Rog of Kicker Pictures. Glitch Mini DV by Derick Noetzel. Filmed in New Haven, CT.",
+      "url": "https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4",
+      "duration": "2:38",
+      "file_size": 96074837,
       "format": "MP4",
       "status": "available",
-      "upload_date": "2026-10-20",
-      "thumbnail": "/static/thumbnails/rob-meglio-sponsor-me-tape-october-2026.jpg?v=20261020",
-      "category": "skating",
+      "upload_date": "2026-10-28",
+      "thumbnail": "/static/thumbnails/the-problem-with-kids-today-the-beginning-of-the-end-of-the-world.jpg",
       "tags": [
-        "tallboyz",
-        "skating",
-        "rob-meglio",
-        "flux",
-        "comedy"
-      ]
+        "music-video",
+        "the-problem-with-kids-today",
+        "kicker-pictures"
+      ],
+      "youtube_id": "hFFdntpul3c",
+      "original_url": "https://www.youtube.com/watch?v=hFFdntpul3c",
+      "uploader": "The Problem With Kids Today !",
+      "source_upload_date": "2025-07-25",
+      "filmmaker": "Connor Rog",
+      "production_company": "Kicker Pictures",
+      "production_company_slug": "kicker-pictures",
+      "credits": {
+        "filming_and_editing": "Connor Rog of Kicker Pictures",
+        "glitch_mini_dv": "Derick Noetzel"
+      }
     },
     {
       "id": "samuel-dylan-witch-stop-and-rewind",
-      "title": "Samuel Dylan Witch \u2014 Stop and Rewind",
-      "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d",
+      "title": "Samuel Dylan Witch — Stop and Rewind",
+      "description": "Watch Samuel Dylan Witch perform “Stop and Rewind.”",
       "host": "Samuel Dylan Witch",
       "host_slug": "samuel-dylan-witch",
       "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4",
@@ -38,10 +46,7 @@
       "status": "available",
       "upload_date": "2026-10-16",
       "thumbnail": "/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg",
-      "tags": [
-        "music-video",
-        "samuel-dylan-witch"
-      ]
+      "tags": ["music-video", "samuel-dylan-witch"]
     },
     {
       "id": "g-dub-disc-golf-which-putter-best",
@@ -97,7 +102,7 @@
     {
       "id": "g-dub-disc-golf-luna-review",
       "title": "The Discraft Luna",
-      "description": "A detailed review of the Discraft Luna disc \u2014 features, performance, and why it's worth trying.",
+      "description": "A detailed review of the Discraft Luna disc — features, performance, and why it's worth trying.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
       "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20The%20Discraft%20Luna.mp4",
@@ -113,7 +118,7 @@
     },
     {
       "id": "g-dub-disc-golf-discraft-clip",
-      "title": "Discraft \u2014 G-Dub Disc Golf",
+      "title": "Discraft — G-Dub Disc Golf",
       "description": "A quick clip from G-Dub Disc Golf featuring Discraft disc reviews.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
@@ -131,7 +136,7 @@
     },
     {
       "id": "g-dub-disc-golf-chase-for-ace-clip",
-      "title": "Chase for Ace \u2014 G-Dub Disc Golf",
+      "title": "Chase for Ace — G-Dub Disc Golf",
       "description": "A thrilling clip from G-Dub Disc Golf where Greg attempts a challenging ace.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
@@ -150,7 +155,7 @@
     {
       "id": "poets-and-friends-10",
       "event_id": "2026-04-30T18:30:00",
-      "title": "Poets & Friends #10 \u2014 Full Show Recording",
+      "title": "Poets & Friends #10 — Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #10, originally recorded live on April 30, 2026 at Koffee?, New Haven CT.",
       "host": "Ahoy Indie Media",
       "host_slug": "ahoy-indie-media",
@@ -165,7 +170,7 @@
     {
       "id": "poets-and-friends-9",
       "event_id": "2026-03-26T18:30:00",
-      "title": "Poets & Friends #9 \u2014 Full Show Recording",
+      "title": "Poets & Friends #9 — Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #9: Springtime, originally recorded live on March 26, 2026 at Koffee?, New Haven CT.",
       "host": "Ahoy Indie Media",
       "host_slug": "ahoy-indie-media",
@@ -179,7 +184,7 @@
     },
     {
       "id": "tyler-needs-a-break-ep4-full",
-      "title": "Tyler Needs a Break \u2014 Episode 4: Sam Carlson (Full Show)",
+      "title": "Tyler Needs a Break — Episode 4: Sam Carlson (Full Show)",
       "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour. Full episode of Tyler Needs a Break, Episode 4.",
       "url": "https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4",
       "duration": null,
@@ -192,7 +197,7 @@
     {
       "id": "poets-and-friends-8",
       "event_id": "2026-02-26T18:30:00",
-      "title": "Poets & Friends #8 \u2014 Full Show Recording",
+      "title": "Poets & Friends #8 — Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #8, originally recorded live on February 26, 2026 at Koffee?, New Haven CT. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha.",
       "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets%20and%20Friends%20%238%20-%20Draft%203.mp4",
       "duration": null,
@@ -299,7 +304,7 @@
     {
       "id": "poets-and-friends-13-part-0-opening-remarks",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Opening Remarks",
+      "title": "Poets & Friends #13 — Opening Remarks",
       "description": "Alex Gonzalez kicks off Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Alex Gonzalez",
       "host_slug": "alex-gonzalez",
@@ -323,7 +328,7 @@
     {
       "id": "poets-and-friends-13-part-1-paul-wildy",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Paul Wildy",
+      "title": "Poets & Friends #13 — Paul Wildy",
       "description": "Paul Wildy performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Paul Wildy",
       "host_slug": "paul-wildy",
@@ -347,7 +352,7 @@
     {
       "id": "poets-and-friends-13-part-2-elena-gerald",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Elena Gerald",
+      "title": "Poets & Friends #13 — Elena Gerald",
       "description": "Elena Gerald performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Elena Gerald",
       "host_slug": "elena-gerald",
@@ -371,7 +376,7 @@
     {
       "id": "poets-and-friends-13-part-3-aidan-bauer",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Aidan Bauer",
+      "title": "Poets & Friends #13 — Aidan Bauer",
       "description": "Aidan Bauer performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Aidan Bauer",
       "host_slug": "aidan-bauer",
@@ -395,7 +400,7 @@
     {
       "id": "poets-and-friends-13-part-4-pat-clendenen",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Pat Clendenen",
+      "title": "Poets & Friends #13 — Pat Clendenen",
       "description": "Pat Clendenen performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Pat Clendenen",
       "host_slug": "pat-clendenen",
@@ -419,7 +424,7 @@
     {
       "id": "poets-and-friends-13-part-5-ellen-martin",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Ellen Martin",
+      "title": "Poets & Friends #13 — Ellen Martin",
       "description": "Ellen Martin performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Ellen Martin",
       "host_slug": "ellen-martin",
@@ -443,7 +448,7 @@
     {
       "id": "poets-and-friends-13-part-6-kyle-middleton",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Kyle Middleton",
+      "title": "Poets & Friends #13 — Kyle Middleton",
       "description": "Kyle Middleton performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Kyle Middleton",
       "host_slug": "kyle-middleton",
@@ -467,7 +472,7 @@
     {
       "id": "poets-and-friends-13-part-7-seth-bollinger",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Seth Bollinger",
+      "title": "Poets & Friends #13 — Seth Bollinger",
       "description": "Seth Bollinger performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Seth Bollinger",
       "host_slug": "seth-bollinger",
@@ -491,7 +496,7 @@
     {
       "id": "poets-and-friends-13-part-8-jailene-rodriguez",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Jailene Rodriguez",
+      "title": "Poets & Friends #13 — Jailene Rodriguez",
       "description": "Jailene Rodriguez performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Jailene Rodriguez",
       "host_slug": "jailene-rodriguez",
@@ -515,7 +520,7 @@
     {
       "id": "poets-and-friends-13-part-10-phil",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Phil",
+      "title": "Poets & Friends #13 — Phil",
       "description": "Phil performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Phil",
       "host_slug": "phil",
@@ -539,7 +544,7 @@
     {
       "id": "poets-and-friends-13-part-11-prasaus",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Prasaus",
+      "title": "Poets & Friends #13 — Prasaus",
       "description": "Prasaus performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Prasaus",
       "host_slug": "prasaus",
@@ -563,7 +568,7 @@
     {
       "id": "poets-and-friends-13-part-12-james",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 James",
+      "title": "Poets & Friends #13 — James",
       "description": "James performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "James",
       "host_slug": "james",
@@ -587,7 +592,7 @@
     {
       "id": "poets-and-friends-13-part-13-cj",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 CJ",
+      "title": "Poets & Friends #13 — CJ",
       "description": "CJ performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "CJ",
       "host_slug": "cj",
@@ -611,7 +616,7 @@
     {
       "id": "poets-and-friends-13-part-14-khanyisile-nawa",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Khanyisile Nawa",
+      "title": "Poets & Friends #13 — Khanyisile Nawa",
       "description": "Khanyisile Nawa performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Khanyisile Nawa",
       "host_slug": "khanyisile-nawa",
@@ -635,7 +640,7 @@
     {
       "id": "poets-and-friends-13-part-15-closing-remarks",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 \u2014 Closing Remarks",
+      "title": "Poets & Friends #13 — Closing Remarks",
       "description": "Alex Gonzalez concludes Poets & Friends #13 with closing remarks, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Alex Gonzalez",
       "host_slug": "alex-gonzalez",

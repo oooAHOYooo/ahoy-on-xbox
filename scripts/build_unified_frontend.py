@@ -1301,7 +1301,8 @@ with open(target_dist, 'w', encoding='utf-8') as f:
 print(f"Updated {target_dist}")
 
 # 3. Artifact for user browser preview
-target_art = Path('/Users/agworkywork/.gemini/antigravity/brain/a90c34eb-a13f-49bc-822c-f79f8d44883c/ahoy_tv_frontend.html')
+target_art = Path('/Users/agworkywork/.gemini/antigravity/brain/16a4042b-c7c9-4978-be35-735909a8ed76/ahoy_tv_frontend.html')
+target_art.parent.mkdir(parents=True, exist_ok=True)
 with open(target_art, 'w', encoding='utf-8') as f:
     f.write(html_content)
 print(f"Updated {target_art}")
