@@ -11,8 +11,8 @@
 ## Direct Instructions for the Next Agent
 
 If you are picking up this session:
-1. **Repository state is on `main`**: All code, catalog updates, and docs are committed and pushed to `origin main`.
-2. **Current release packages**: Compiled `v0.2.0` packages are located in `dist/release_packages/v0.2.0/` (built via GitHub Actions CI run `41671270898`):
+1. **Repository state is on `main`**: All code, catalog updates, controller bindings, and docs are committed and pushed to `origin main`.
+2. **Current release packages**: Compiled `v0.2.0` packages are located in `dist/release_packages/v0.2.0/` (built via GitHub Actions CI runs `41671270898` and `41673094645`):
    - Store submission upload package: `dist/release_packages/v0.2.0/AHOY-TV-StoreUpload-Package/AhoyXbox_0.2.0.0_x64_bundle.msixupload`
    - Xbox console sideload bundle: `dist/release_packages/v0.2.0/AHOY-TV-StoreUpload-Package/AhoyXbox_0.2.0.0_Test/AhoyXbox_0.2.0.0_x64.msixbundle`
    - Web Kiosk package: `dist/release_packages/AhoyTV_Web_Kiosk_v0.2.0.zip`
