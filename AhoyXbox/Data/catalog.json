@@ -1,14 +1,17 @@
 {
   "videos": [
-
     {
       "id": "the-problem-with-kids-today-the-beginning-of-the-end-of-the-world",
-      "thumbnails": ["/static/stills/the-problem-with-kids-today/01.webp", "/static/stills/the-problem-with-kids-today/02.webp", "/static/stills/the-problem-with-kids-today/03.webp"],
+      "thumbnails": [
+        "/static/stills/the-problem-with-kids-today/01.webp",
+        "/static/stills/the-problem-with-kids-today/02.webp",
+        "/static/stills/the-problem-with-kids-today/03.webp"
+      ],
       "stills_grade": "photographic",
-      "title": "The Problem With Kids Today — The Beginning of the End of the World",
+      "title": "The Problem With Kids Today \u2014 The Beginning of the End of the World",
       "host": "The Problem With Kids Today",
       "host_slug": "the-problem-with-kids-today",
-      "description": "Music video for “The Beginning of the End of the World,” the third single from Take It! Filmed and edited by Connor Rog of Kicker Pictures. Glitch Mini DV by Derick Noetzel. Filmed in New Haven, CT.",
+      "description": "Music video for \u201cThe Beginning of the End of the World,\u201d the third single from Take It! Filmed and edited by Connor Rog of Kicker Pictures. Glitch Mini DV by Derick Noetzel. Filmed in New Haven, CT.",
       "url": "https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4",
       "duration": "2:38",
       "file_size": 96074837,
@@ -35,8 +38,8 @@
     },
     {
       "id": "samuel-dylan-witch-stop-and-rewind",
-      "title": "Samuel Dylan Witch — Stop and Rewind",
-      "description": "Watch Samuel Dylan Witch perform “Stop and Rewind.”",
+      "title": "Samuel Dylan Witch \u2014 Stop and Rewind",
+      "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d",
       "host": "Samuel Dylan Witch",
       "host_slug": "samuel-dylan-witch",
       "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4",
@@ -46,7 +49,10 @@
       "status": "available",
       "upload_date": "2026-10-16",
       "thumbnail": "/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg",
-      "tags": ["music-video", "samuel-dylan-witch"]
+      "tags": [
+        "music-video",
+        "samuel-dylan-witch"
+      ]
     },
     {
       "id": "g-dub-disc-golf-which-putter-best",
@@ -102,7 +108,7 @@
     {
       "id": "g-dub-disc-golf-luna-review",
       "title": "The Discraft Luna",
-      "description": "A detailed review of the Discraft Luna disc — features, performance, and why it's worth trying.",
+      "description": "A detailed review of the Discraft Luna disc \u2014 features, performance, and why it's worth trying.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
       "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20The%20Discraft%20Luna.mp4",
@@ -118,7 +124,7 @@
     },
     {
       "id": "g-dub-disc-golf-discraft-clip",
-      "title": "Discraft — G-Dub Disc Golf",
+      "title": "Discraft \u2014 G-Dub Disc Golf",
       "description": "A quick clip from G-Dub Disc Golf featuring Discraft disc reviews.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
@@ -136,7 +142,7 @@
     },
     {
       "id": "g-dub-disc-golf-chase-for-ace-clip",
-      "title": "Chase for Ace — G-Dub Disc Golf",
+      "title": "Chase for Ace \u2014 G-Dub Disc Golf",
       "description": "A thrilling clip from G-Dub Disc Golf where Greg attempts a challenging ace.",
       "host": "Greg Weese",
       "host_slug": "greg-weese",
@@ -155,7 +161,7 @@
     {
       "id": "poets-and-friends-10",
       "event_id": "2026-04-30T18:30:00",
-      "title": "Poets & Friends #10 — Full Show Recording",
+      "title": "Poets & Friends #10 \u2014 Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #10, originally recorded live on April 30, 2026 at Koffee?, New Haven CT.",
       "host": "Ahoy Indie Media",
       "host_slug": "ahoy-indie-media",
@@ -170,7 +176,7 @@
     {
       "id": "poets-and-friends-9",
       "event_id": "2026-03-26T18:30:00",
-      "title": "Poets & Friends #9 — Full Show Recording",
+      "title": "Poets & Friends #9 \u2014 Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #9: Springtime, originally recorded live on March 26, 2026 at Koffee?, New Haven CT.",
       "host": "Ahoy Indie Media",
       "host_slug": "ahoy-indie-media",
@@ -184,7 +190,7 @@
     },
     {
       "id": "tyler-needs-a-break-ep4-full",
-      "title": "Tyler Needs a Break — Episode 4: Sam Carlson (Full Show)",
+      "title": "Tyler Needs a Break \u2014 Episode 4: Sam Carlson (Full Show)",
       "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour. Full episode of Tyler Needs a Break, Episode 4.",
       "url": "https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4",
       "duration": null,
@@ -197,7 +203,7 @@
     {
       "id": "poets-and-friends-8",
       "event_id": "2026-02-26T18:30:00",
-      "title": "Poets & Friends #8 — Full Show Recording",
+      "title": "Poets & Friends #8 \u2014 Full Show Recording",
       "description": "Full unedited recording of Poets & Friends #8, originally recorded live on February 26, 2026 at Koffee?, New Haven CT. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha.",
       "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets%20and%20Friends%20%238%20-%20Draft%203.mp4",
       "duration": null,
@@ -304,7 +310,7 @@
     {
       "id": "poets-and-friends-13-part-0-opening-remarks",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Opening Remarks",
+      "title": "Poets & Friends #13 \u2014 Opening Remarks",
       "description": "Alex Gonzalez kicks off Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Alex Gonzalez",
       "host_slug": "alex-gonzalez",
@@ -328,7 +334,7 @@
     {
       "id": "poets-and-friends-13-part-1-paul-wildy",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Paul Wildy",
+      "title": "Poets & Friends #13 \u2014 Paul Wildy",
       "description": "Paul Wildy performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Paul Wildy",
       "host_slug": "paul-wildy",
@@ -352,7 +358,7 @@
     {
       "id": "poets-and-friends-13-part-2-elena-gerald",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Elena Gerald",
+      "title": "Poets & Friends #13 \u2014 Elena Gerald",
       "description": "Elena Gerald performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Elena Gerald",
       "host_slug": "elena-gerald",
@@ -376,7 +382,7 @@
     {
       "id": "poets-and-friends-13-part-3-aidan-bauer",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Aidan Bauer",
+      "title": "Poets & Friends #13 \u2014 Aidan Bauer",
       "description": "Aidan Bauer performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Aidan Bauer",
       "host_slug": "aidan-bauer",
@@ -400,7 +406,7 @@
     {
       "id": "poets-and-friends-13-part-4-pat-clendenen",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Pat Clendenen",
+      "title": "Poets & Friends #13 \u2014 Pat Clendenen",
       "description": "Pat Clendenen performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Pat Clendenen",
       "host_slug": "pat-clendenen",
@@ -424,7 +430,7 @@
     {
       "id": "poets-and-friends-13-part-5-ellen-martin",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Ellen Martin",
+      "title": "Poets & Friends #13 \u2014 Ellen Martin",
       "description": "Ellen Martin performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Ellen Martin",
       "host_slug": "ellen-martin",
@@ -448,7 +454,7 @@
     {
       "id": "poets-and-friends-13-part-6-kyle-middleton",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Kyle Middleton",
+      "title": "Poets & Friends #13 \u2014 Kyle Middleton",
       "description": "Kyle Middleton performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Kyle Middleton",
       "host_slug": "kyle-middleton",
@@ -472,7 +478,7 @@
     {
       "id": "poets-and-friends-13-part-7-seth-bollinger",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Seth Bollinger",
+      "title": "Poets & Friends #13 \u2014 Seth Bollinger",
       "description": "Seth Bollinger performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Seth Bollinger",
       "host_slug": "seth-bollinger",
@@ -496,7 +502,7 @@
     {
       "id": "poets-and-friends-13-part-8-jailene-rodriguez",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Jailene Rodriguez",
+      "title": "Poets & Friends #13 \u2014 Jailene Rodriguez",
       "description": "Jailene Rodriguez performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Jailene Rodriguez",
       "host_slug": "jailene-rodriguez",
@@ -520,7 +526,7 @@
     {
       "id": "poets-and-friends-13-part-10-phil",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Phil",
+      "title": "Poets & Friends #13 \u2014 Phil",
       "description": "Phil performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Phil",
       "host_slug": "phil",
@@ -544,7 +550,7 @@
     {
       "id": "poets-and-friends-13-part-11-prasaus",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Prasaus",
+      "title": "Poets & Friends #13 \u2014 Prasaus",
       "description": "Prasaus performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Prasaus",
       "host_slug": "prasaus",
@@ -568,7 +574,7 @@
     {
       "id": "poets-and-friends-13-part-12-james",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — James",
+      "title": "Poets & Friends #13 \u2014 James",
       "description": "James performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "James",
       "host_slug": "james",
@@ -592,7 +598,7 @@
     {
       "id": "poets-and-friends-13-part-13-cj",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — CJ",
+      "title": "Poets & Friends #13 \u2014 CJ",
       "description": "CJ performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "CJ",
       "host_slug": "cj",
@@ -616,7 +622,7 @@
     {
       "id": "poets-and-friends-13-part-14-khanyisile-nawa",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Khanyisile Nawa",
+      "title": "Poets & Friends #13 \u2014 Khanyisile Nawa",
       "description": "Khanyisile Nawa performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Khanyisile Nawa",
       "host_slug": "khanyisile-nawa",
@@ -640,7 +646,7 @@
     {
       "id": "poets-and-friends-13-part-15-closing-remarks",
       "event_id": "2026-09-24T18:30:00",
-      "title": "Poets & Friends #13 — Closing Remarks",
+      "title": "Poets & Friends #13 \u2014 Closing Remarks",
       "description": "Alex Gonzalez concludes Poets & Friends #13 with closing remarks, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
       "host": "Alex Gonzalez",
       "host_slug": "alex-gonzalez",
@@ -772,6 +778,1042 @@
       "source_channel": "https://www.youtube.com/@WintergreenSessions",
       "imported_from": "youtube",
       "collection": "wintergreen-sessions"
+    }
+  ],
+  "music": [
+    {
+      "id": "song_1",
+      "title": "Seen Better Days",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 190,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg"
+    },
+    {
+      "id": "song_2",
+      "title": "Beneath the Willow Tree",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 197,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/koPyEhqksBk/maxresdefault.jpg"
+    },
+    {
+      "id": "song_3",
+      "title": "Put Me on the Run",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 159,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/uEqMlBsKYpQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLABNZs86_3-knu6Zq78I43Am1eLWA"
+    },
+    {
+      "id": "song_4",
+      "title": "You Know Me",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 111,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/You+Know+Me+Draft+2.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg"
+    },
+    {
+      "id": "song_5",
+      "title": "Watching Her Fly",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 86,
+      "stream_url": "https://ahoycollection.s3.amazonaws.com/Coral+Reefer+-+Untitled+(original).mp3",
+      "thumbnail": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg"
+    },
+    {
+      "id": "song_6",
+      "title": "Far From Here",
+      "artist": "Cambell Rice",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 162,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-+From+Here.mp3",
+      "thumbnail": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg"
+    },
+    {
+      "id": "song_7",
+      "title": "Sunflower",
+      "artist": "Cambell Rice",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 130,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Sunflower.mp3",
+      "thumbnail": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg"
+    },
+    {
+      "id": "song_8",
+      "title": "To Play Guitar in a Huge Room",
+      "artist": "Cambell Rice",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 75,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Campbell+Rice-Trying+to+play+guitar+in+a+huge+room.mp3",
+      "thumbnail": "https://m.media-amazon.com/images/I/61APLxryThL._UXNaN_FMjpg_QL85_.jpg"
+    },
+    {
+      "id": "song_9",
+      "title": "Summer Bummer",
+      "artist": "Youth XL",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 239,
+      "stream_url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Summer+Bummer.mp3",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyBXIMTxuYsGbaO23UEDr-TeH57LhPKid4ohwt85HyZgtprWiecvV_iFk0dYCMMJnT3ys&usqp=CAU"
+    },
+    {
+      "id": "song_10",
+      "title": "Yoga",
+      "artist": "Youth XL",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 223,
+      "stream_url": "https://ahoycollection.s3.amazonaws.com/Youth+XL+-+Yoga.mp3",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwxXTk37iEbLqFEa5QZWImJbtIqoBi88rgTrfpWKfckiC3UWuODDcuVjPkUIbqzkADylo&usqp=CAU"
+    },
+    {
+      "id": "song_11",
+      "title": "Text Your Friends",
+      "artist": "Youth XL",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 191,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Text+Your+Friends.mp3",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSow7Comi15tPYB3O0QzhiYwcuzAZzYelN4I9eF_S8TaBClkoWBFP02jWx3PCiQe3xTKnM&usqp=CAU"
+    },
+    {
+      "id": "song_12",
+      "title": "Gypsy Gia",
+      "artist": "Youth XL",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 195,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Youth+XL+-+Gypsy+Gia.mp3",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRBzrIX_zhK-rHOqss8IxUE40tCnlx9YOi2nwVX3bamUCD1uh8SFyqaOdzU2xoeogVoGw&usqp=CAU"
+    },
+    {
+      "id": "song_14",
+      "title": "Glued in the Nude",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 156,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Glued+in+Nude.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/O2SV8BikOjA/maxresdefault.jpg"
+    },
+    {
+      "id": "song_15",
+      "title": "Honeydew",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 203,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Honeydew.mp3",
+      "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFYDGZSSHnPgwLfJ5HEssYeEnCH95mEuKTfw&usqp=CAU"
+    },
+    {
+      "id": "song_16",
+      "title": "Oceans",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 195,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ef/9c/aa/ef9caad8-3001-3554-ff16-a8caf4863e91/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_17",
+      "title": "When You Wake Up",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 195,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Oceans.mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ff/4e/ab/ff4eab95-c8c9-2c77-8289-3598672e7a74/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_18",
+      "title": "Crash The Party",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 246,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin%20Arena%20-%20Crash%20The%20Party%20(ft.%20Nicole%20Gauthier).mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/89/ea/c8/89eac83d-378c-f272-10e9-f0a67eb0503d/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_19",
+      "title": "Lost Time",
+      "artist": "Clones of Clarence",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 251,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Lost+Time+(I+miss+you).mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/8b/4d/cc/8b4dcc19-b47c-5478-b2de-18587dc0c4b3/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_20",
+      "title": "Salty Salsa",
+      "artist": "Clones of Clarence",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 305,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Salty+Salsa.mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/e8/54/85/e854859f-5173-591b-766f-605268a026f1/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_21",
+      "title": "Proj 17",
+      "artist": "Clones of Clarence",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 220,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+Proj+17.mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/e8/54/85/e854859f-5173-591b-766f-605268a026f1/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_22",
+      "title": "3AM",
+      "artist": "Clones of Clarence",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 309,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Clones+of+Clarence+-+3+AM.mp3",
+      "thumbnail": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/98/ce/d0/98ced048-e086-a5ed-4581-9a60daee20b0/artwork.jpg/592x592bf.webp"
+    },
+    {
+      "id": "song_23",
+      "title": "Electro",
+      "artist": "Samuel Dylan Witch",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 164,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Coral+Reefer+-+elec+(original).mp3",
+      "thumbnail": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg"
+    },
+    {
+      "id": "song_24",
+      "title": "My Own Grenade",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 206,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_34B.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_25",
+      "title": "Frustrated",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 160,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_Frustrated.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_26",
+      "title": "My Parents' Couch (Live Cut)",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 244,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_My_Parents_Couch_live_cut.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_27",
+      "title": "Spacegirl With A Headset",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 215,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_Spacegirl_With_A_Headset.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_28",
+      "title": "Special",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 226,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_Special.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_29",
+      "title": "Today Is In My Way",
+      "artist": "My Own Grenade",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 215,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/My_Own_Grenade_-_Today_Is_In_My_Way.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/my+own+grenade.jpeg"
+    },
+    {
+      "id": "song_30",
+      "title": "How I Got Fat While Living Skinny",
+      "artist": "S.G. Carlson",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 148,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/S.G.+Carlson+-+How+I+Got+Fat+While+Living+Skinny.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/SGCarlson-AhoyIndieMedia.png"
+    },
+    {
+      "id": "song_31",
+      "title": "Framework",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 173,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Framework.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a3851680380_16.jpg"
+    },
+    {
+      "id": "song_32",
+      "title": "Fruit In The Shower",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 110,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+Fruit+in+The+Shower.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a3851680380_16.jpg"
+    },
+    {
+      "id": "song_33",
+      "title": "No 1",
+      "artist": "Justin Arena",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 274,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Justin+Arena+-+No+1.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a2804283483_16.jpg"
+    },
+    {
+      "id": "song_34",
+      "title": "Daisies",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 128,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Daisies.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a1273412504_16.jpg"
+    },
+    {
+      "id": "song_35",
+      "title": "Garden Girl",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 122,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Garden+Girl.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a1303332007_16.jpg"
+    },
+    {
+      "id": "song_36",
+      "title": "Magic Man",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 130,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Magic+Man.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a1303332007_16.jpg"
+    },
+    {
+      "id": "song_37",
+      "title": "Melted Side",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 128,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Melted+Side.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a2037135100_16.jpg"
+    },
+    {
+      "id": "song_38",
+      "title": "Snout",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 146,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Snout.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a3669668101_16.jpg"
+    },
+    {
+      "id": "song_39",
+      "title": "Mustard Seed",
+      "artist": "Riddle M",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 127,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Riddle+M+-+Mustard+Seed.mp3",
+      "thumbnail": "https://f4.bcbits.com/img/a2186804885_16.jpg"
+    },
+    {
+      "id": "song_40",
+      "title": "Know By Feel",
+      "artist": "The Tines",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 199,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_The+Tines+-+The+Tines+-+04+-+Know+By+Feel.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_theTinesAlbumArtwork.jpg"
+    },
+    {
+      "id": "song_41",
+      "title": "Chokecherries",
+      "artist": "The Tines",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 266,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_The+Tines_Chokecherries.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_theTinesAlbumArtwork.jpg"
+    },
+    {
+      "id": "song_42",
+      "title": "Moon Views",
+      "artist": "The Tines",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 201,
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_The+Tines+-+The+Tines+-+09+-+Moon+Views.mp3",
+      "thumbnail": "https://ahoycollection.s3.us-east-2.amazonaws.com/ready_theTinesAlbumArtwork.jpg"
+    },
+    {
+      "id": "song_43",
+      "title": "Better Halves",
+      "artist": "Jake Custer",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 288,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Jake%20Custer%20-%20Better%20Halves.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/ahoy_jake-custer.jpg"
+    },
+    {
+      "id": "song_44",
+      "title": "By Myself",
+      "artist": "Jake Custer",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 361,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Jake%20Custer%20-%20By%20Myself.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/ahoy_jake-custer.jpg"
+    },
+    {
+      "id": "song_45",
+      "title": "I'm Fine",
+      "artist": "Jake Custer",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 200,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Jake%20Custer%20-%20I'm%20Fine.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/ahoy_jake-custer.jpg"
+    },
+    {
+      "id": "song_46",
+      "title": "It's a Mad,Mad World",
+      "artist": "Jake Custer",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 362,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Jake%20Custer%20-%20It's%20a%20Mad%2C%20Mad%20World.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/ahoy_jake-custer.jpg"
+    },
+    {
+      "id": "song_47",
+      "title": "You Love to See It",
+      "artist": "Jake Custer",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 233,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Jake%20Custer%20-%20You%20Love%20to%20See%20It.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/ahoy_jake-custer.jpg"
+    },
+    {
+      "id": "song_48",
+      "title": "Float",
+      "artist": "Spider in Stereo",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 100,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/Spide%20in%20Stereo%20-%20Float.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/Spider%20in%20Stereo%20-%20Float.jpg"
+    },
+    {
+      "id": "song_49",
+      "title": "7eleven",
+      "artist": "mintea",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 267,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%207eleven.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20The%20Lost%20Clause%20-%20Album%20Cover.jpg"
+    },
+    {
+      "id": "song_50",
+      "title": "weird",
+      "artist": "mintea",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 181,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20wired.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20The%20Lost%20Clause%20-%20Album%20Cover.jpg"
+    },
+    {
+      "id": "song_51",
+      "title": "fairy wings",
+      "artist": "mintea",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 329,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20fairy%20wings.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20fairy%20wings%20-%20album%20cover.jpg"
+    },
+    {
+      "id": "song_52",
+      "title": "clown girl",
+      "artist": "mintea",
+      "album": "Single",
+      "genre": "Indie",
+      "duration_seconds": 214,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/03%20-%20Mintea%20-%20clown%20girl.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/mintea%20-%20clown%20girl%20.jpg"
+    },
+    {
+      "id": "song_53",
+      "title": "A Routine Affair",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 292,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/A%20Routine%20Affair.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_54",
+      "title": "Between Us Two",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 314,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Between%20Us%20Two.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_55",
+      "title": "ClockedIn, Checked Out",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 245,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/ClockedIn%2C%20Checked%20Out.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_56",
+      "title": "Feel That Way Again",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 276,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Feel%20That%20Way%20Again.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_57",
+      "title": "Hide Away",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 264,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Hide%20Away.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_58",
+      "title": "I Get To Love You",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 253,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Get%20To%20Love%20You.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_59",
+      "title": "Interstellar",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 187,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Interstellar.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_60",
+      "title": "Let Go",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 341,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Let%20Go.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_61",
+      "title": "Wake UpSpread Some Love",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 199,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/Wake%20UpSpread%20Some%20Love.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    },
+    {
+      "id": "song_62",
+      "title": "We'll Be Right Back",
+      "artist": "Jake Custer",
+      "album": "I Think We're Lost",
+      "genre": "Indie",
+      "duration_seconds": 150,
+      "stream_url": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/We%27ll%20Be%20Right%20Back.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-song-collection/jake-custer/i-think-were-lost/I%20Think%20Were%20Lost_1000kb.jpg"
+    }
+  ],
+  "podcasts": [
+    {
+      "id": "poets-and-friends",
+      "title": "Poets & Friends",
+      "description": "A podcast featuring poetry and performances from the Poets & Friends community.",
+      "thumbnail": "https://storage.googleapis.com/ahoy-dynamic-content/_2026/whats-new-thumbnails/POETS%20AND%20FRIENDS.jpg",
+      "episodes": [
+        {
+          "id": "43",
+          "title": "Poets & Friends #9 \u2014 Full Show (Mar 26, 2026)",
+          "description": "Full recording of Poets & Friends #9: Springtime. Originally recorded live on March 26, 2026 at Koffee?, New Haven CT.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/poets-and-friends-43.mp3",
+          "thumbnail": "https://partiful.imgix.net/external/user/CwCebGXbOBSYcICoVLo5921X2ZC3/50ZHnbZBbi-ReHwK2D24a?fit=clip&w=460&auto=format",
+          "date": "2026-03-26"
+        },
+        {
+          "id": "37",
+          "title": "Poets & Friends #8 \u2014 Full Show (Feb 26, 2026)",
+          "description": "Full recording of Poets & Friends #8. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha. Originally recorded live on February 26, 2026.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/poets-and-friends-37.mp3",
+          "thumbnail": "/static/thumbnails/poets-and-friends-4_24ec074f1c38.jpg",
+          "date": "2026-02-26"
+        }
+      ]
+    },
+    {
+      "id": "tyler-needs-a-break",
+      "title": "Tyler Needs a Break",
+      "description": "A podcast about taking it easy. New Haven's own Tyler takes a break and talks about it.",
+      "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep2_aee78832fc65.jpg",
+      "episodes": [
+        {
+          "id": "42",
+          "title": "Episode #04: Sam Carlson",
+          "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-42.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-full_sam-carlson_8646f844c333.jpg",
+          "date": "2026-03-22"
+        },
+        {
+          "id": "tyler-needs-a-break-ep4-release-and-tour",
+          "title": "Release and Tour \u2014 Tyler Needs a Break",
+          "description": "Sam Carlson on releasing music and hitting the road. What it takes to put out a record and take it on tour. A clip from Tyler Needs a Break, Episode 4.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep4-release-and-tour.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-release-and-tour_87e1782cdf98.jpg",
+          "date": "2026-03-22"
+        },
+        {
+          "id": "tyler-needs-a-break-ep4-booking-local-shows",
+          "title": "Booking Local Shows \u2014 Tyler Needs a Break",
+          "description": "Sam Carlson on booking local shows and navigating the scene. How to get your foot in the door and build a local following. A clip from Tyler Needs a Break, Episode 4.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep4-booking-local-shows.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-booking-local-shows_542c179e335d.jpg",
+          "date": "2026-03-22"
+        },
+        {
+          "id": "tyler-needs-a-break-ep4-sweltering-basement-show",
+          "title": "Sweltering Basement Show \u2014 Tyler Needs a Break",
+          "description": "Sam Carlson on playing a sweltering basement show \u2014 the heat, the crowd, and what makes a basement set unforgettable. A clip from Tyler Needs a Break, Episode 4.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep4-sweltering-basement-show.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-sweltering-basement-show_7d4bb9bf95b9.jpg",
+          "date": "2026-03-22"
+        },
+        {
+          "id": "tyler-needs-a-break-ep4-naming-project-breaks",
+          "title": "Naming the Project and Breaks \u2014 Tyler Needs a Break",
+          "description": "Sam Carlson on naming the project and the importance of taking breaks. How stepping back leads to better work. A clip from Tyler Needs a Break, Episode 4.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep4-naming-project-breaks.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep4-naming-project-breaks_1be1987a53c0.jpg",
+          "date": "2026-03-22"
+        },
+        {
+          "id": "39",
+          "title": "Episode #02: Skaters at Flux",
+          "description": "Tyler interviews some skaters at flux park about their mental health",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-39.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep2_aee78832fc65.jpg",
+          "date": "2026-03-13"
+        },
+        {
+          "id": "38",
+          "title": "Episode #01: Intro",
+          "description": "",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-38.mp3",
+          "thumbnail": "/static/thumbnails/tyler-needs-a-break-ep1_01918dfa58dd.jpg",
+          "date": "2026-03-13"
+        },
+        {
+          "id": "tyler-needs-a-break-ep2-ct-skating",
+          "title": "Roots of Connecticut Skating \u2014 Tyler Needs a Break",
+          "description": "Tyler Mirando traces the origins and culture of skateboarding in Connecticut. Where it started, who built it, and what keeps it alive. A clip from Tyler Needs a Break, Episode 2.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep2-ct-skating.mp3",
+          "thumbnail": "https://ahoy.ooo/images/Ahoy-Indie-Media-DEFAULT-COVER-A-8.jpg",
+          "date": "2026-03-13"
+        },
+        {
+          "id": "tyler-needs-a-break-ep2-philly-connection",
+          "title": "The Philly Connection \u2014 Tyler Needs a Break",
+          "description": "Tyler Mirando on the deep ties between Connecticut and the Philadelphia skating scene \u2014 the crews, the spots, and the culture that crossed state lines. A clip from Tyler Needs a Break, Episode 2.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep2-philly-connection.mp3",
+          "thumbnail": "https://ahoy.ooo/images/Ahoy-Indie-Media-DEFAULT-COVER-A-8.jpg",
+          "date": "2026-03-13"
+        },
+        {
+          "id": "tyler-needs-a-break-ep2-skating-metaphor",
+          "title": "Skating as a Metaphor \u2014 Tyler Needs a Break",
+          "description": "What does skateboarding really mean? Tyler Mirando reflects on skating as a lens for life \u2014 persistence, creativity, and finding your own line. A clip from Tyler Needs a Break, Episode 2.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep2-skating-metaphor.mp3",
+          "thumbnail": "https://ahoy.ooo/images/Ahoy-Indie-Media-DEFAULT-COVER-A-8.jpg",
+          "date": "2026-03-13"
+        },
+        {
+          "id": "tyler-needs-a-break-ep2-basement-project",
+          "title": "The Basement Project \u2014 Tyler Needs a Break",
+          "description": "Tyler Mirando talks about the basement project \u2014 what gets built in the margins, away from the spotlight. A clip from Tyler Needs a Break, Episode 2.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/podcasts/converted/tyler-needs-a-break-tyler-needs-a-break-ep2-basement-project.mp3",
+          "thumbnail": "https://ahoy.ooo/images/Ahoy-Indie-Media-DEFAULT-COVER-A-8.jpg",
+          "date": "2026-03-13"
+        }
+      ]
+    },
+    {
+      "id": "ahoy-live-shows",
+      "title": "Ahoy Live Shows",
+      "description": "A podcast version of Ahoy live shows that we capture around the city.",
+      "thumbnail": "https://partiful.imgix.net/user/CwCebGXbOBSYcICoVLo5921X2ZC3/bIldBHtHIMiRSAkGUf4Os?fit=clip&w=800&auto=format",
+      "episodes": [
+        {
+          "id": "41",
+          "title": "Jake Custer Full Set at Spruce Coffee",
+          "description": "Jake Custer performs his full set live at Spruce Coffeeshop on November 7, 2025. Featuring tracks from 'I Think We're Lost'.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/live-shows/Jake%20Full%20Set%20-%20Ahoy%20Music%201%20-%2011.07.25%20-%20Compressed%20.mp3",
+          "thumbnail": "https://partiful.imgix.net/user/CwCebGXbOBSYcICoVLo5921X2ZC3/bIldBHtHIMiRSAkGUf4Os?fit=clip&w=800&auto=format",
+          "date": "2025-11-07"
+        }
+      ]
+    },
+    {
+      "id": "the-rob-show",
+      "title": "The Rob Show",
+      "description": "Rob Meglio hosts conversations with local artists, creators, and characters.",
+      "thumbnail": "https://ahoy.ooo/images/Ahoy-Indie-Media-DEFAULT-COVER-A-8.jpg",
+      "episodes": [
+        {
+          "id": "35",
+          "title": "The Rob Show #43 - John Bock and John Churchhill",
+          "description": "John Bock & John Churchhill, two local musicians, join Rob for an engaging conversation in this episode of The Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/RS_EP_43_%20John%20and%20John.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep%2043.jpg",
+          "date": "2025-05-12"
+        },
+        {
+          "id": "33",
+          "title": "The Rob Show #42 - Michelle Caserta",
+          "description": "Michelle Caserta, Rob's former teacher and mentor, joins the show to discuss her career and life.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready_RS_EP_42_Michelle%20Caserta.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep%2042.png",
+          "date": "2025-05-09"
+        },
+        {
+          "id": "32",
+          "title": "The Rob Show #41 - Phil Toran",
+          "description": "Phil Toran, a filmmaker - costar of pal-bot - finally joins his old pal Rob.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/the%20rob%20show/Rob%20Show%20-%20Ep41%20-%20Phil-Toran-UNCUT.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/the%20rob%20show/ROB%20EPISODE%2041%20-%20Phil%20Toran.jpg",
+          "date": "2025-01-07"
+        },
+        {
+          "id": "31",
+          "title": "The Rob Show #40 - Trevon Bennett",
+          "description": "Trevon Bennett, a local musician and songwriter, joins Rob for an engaging conversation in this episode of The Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Episode%2040%20-%20Trevon%20-%20Ready%20-%201.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/ROB%20EPISODE%2040%20-%20Trevon%20Bennett.jpg",
+          "date": "2025-01-02"
+        },
+        {
+          "id": "28",
+          "title": "The Rob Show #39 - Dr. Tyler Rice",
+          "description": "Dr. Tyler Rice joins Rob for an insightful discussion in this episode of The Rob Show.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Fall%202024%20-%20Ep%2039%20-%20Tyler%20Rice.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/ROB%20EPISODE%2039%20-%20Dr%20Tyler%20Rice.jpg",
+          "date": "2024-11-18"
+        },
+        {
+          "id": "27",
+          "title": "The Rob Show #38 - Justin Neafsey",
+          "description": "Justin Neafsey, a musician and guitarist from CT, joins Rob for an engaging conversation in this episode of The Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Episode%2038%20-%20Justin%20Neafsey%20.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/ROB%20EPISODE%2038%20-%20Justin%20Neafsey.jpg",
+          "date": "2024-11-12"
+        },
+        {
+          "id": "26",
+          "title": "The Rob Show #37 - Kevin McHahon",
+          "description": "Kevin McHahon, a local musician and songwriter, joins Rob for an engaging conversation in this episode of The Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ep37_kevin_The%20Rob%20Show%20-%20Fall%202024.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/ROB%20EPISODE%2037%20-%20Kevin%20McHaon.jpg",
+          "date": "2024-11-05"
+        },
+        {
+          "id": "25",
+          "title": "The Rob Show #36 - Jack Galvin",
+          "description": "Jack Galvin, a Newport Rhode Island surfer and filmmaker.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready-rs-ep36-jackgalvin.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/ROB%20EPISODE%2036%20-%20JACK%20GALVIN.jpg",
+          "date": "2024-10-28"
+        },
+        {
+          "id": "21",
+          "title": "The Rob Show #32 - Tom Berry III",
+          "description": "####",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready_RobShow_Berry_ep32.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/Rob%20Show%20-%20Ep%2032%20-%20Tom%20Berry%20III.jpg",
+          "date": "2024-06-26"
+        },
+        {
+          "id": "20",
+          "title": "The Rob Show #31 - Casey Delbasso",
+          "description": "####",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready_RobShow_CaseyDelbasso_ep31.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/Rob%20Show%20-%20Ep%2031%20-%20Casey%20Delbasso.jpg",
+          "date": "2024-06-26"
+        },
+        {
+          "id": "19",
+          "title": "The Rob Show #30 - Kyle Middleton",
+          "description": "Kyle Middleton is a graphic designer from CT",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready%20The%20Rob%20Show%20-%20Ep%2030%20-%20Kyle.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/Rob%20Show%20-%20Ep%2030%20-%20Kyle%20Middleton.jpg",
+          "date": "2024-05-30"
+        },
+        {
+          "id": "18",
+          "title": "The Rob Show #29 - Andrew Leverton",
+          "description": "Andrew, co-captain of the Tallboyz, is back on the Rob Show - talking shop about everything including the new Tallboyz video premiere",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/readyRobShow_Andrew_ep29.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/Rob%20Show%20-%20Ep29%20-%20Andrew%20Leverton%20-%205.17.24.jpg",
+          "date": "2024-05-23"
+        },
+        {
+          "id": "17",
+          "title": "The Rob Show #28 - Alex Gonzalez",
+          "description": "Alex founder of Ahoy - talks to Rob about behind the scenes - friendships with the Tallboyz and future Willy Wonka type plans",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready_The%20Rob%20Show%20-%20Ep28%20-%20Alex%20Gonzalez.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep28%20-%20Alex%20Gonzalez%20-%205.10.24.jpg",
+          "date": "2024-05-10"
+        },
+        {
+          "id": "16",
+          "title": "The Rob Show #27 - Dave Gunn + Tyler Mirando",
+          "description": "Tallboyz OG's Tyler and Dave join Rob in a remastered Rob Show Classic -  Originally recorded May 2023",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready_RobShow_classic_Dave_Tyler_Ep27.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep27%20-%20Remastered%20Classic%20-5.08.24.jpg",
+          "date": "2024-05-08"
+        },
+        {
+          "id": "15",
+          "title": "The Rob Show #26 - Dan Carbonella",
+          "description": "Dan Carbonella, Manager of Koffee? finally joins the Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/readyRobShow_Dan_ep26.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep26%20-%20Dan%20Carbonella%20-%204.26.24.jpg",
+          "date": "2024-04-29"
+        },
+        {
+          "id": "14",
+          "title": "The Rob Show #25 - Lizzie Considine",
+          "description": "Lizzie Considine living in the havens while originally from Stamford",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready%20The%20Rob%20Show%20-%20Ep%2025%20-%20Lizzie%20Considine.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep25%20-%20Lizzie%20Consindine%20_%204.21.24.jpg",
+          "date": "2024-04-26"
+        },
+        {
+          "id": "13",
+          "title": "The Rob Show #24 - Ellen Martin",
+          "description": "Ellen Martin - neuroscientist from the UK",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready%2BThe%20Rob%20Show%20-%20Ep%2024%20-%20Ellen%20Martin.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/The%20Rob%20Show%20-%20Ep24%20-%20Ellen%20Martin.jpg",
+          "date": "2024-04-15"
+        },
+        {
+          "id": "12",
+          "title": "The Rob Show #23 - Dave Gunn",
+          "description": "CoFounder of the Tallboyz - Born in Hamden - Pro Rollerblader - Former Hockey Player - Alum of the Rob Show",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://storage.googleapis.com/ahoy-podcast-collection/ready%20The%20Rob%20Show%20-%20Ep%2023%20-%20Dave%20Gunn.mp3",
+          "thumbnail": "https://storage.googleapis.com/ahoy-podcast-collection/readyThe%20Rob%20Show%20-%20Ep23%20-%20Dave%20Gunn%20-%204.4.24.jpg",
+          "date": "2024-04-04"
+        },
+        {
+          "id": "11",
+          "title": "The Rob Show #22 - Sam Carlson",
+          "description": "In this episode, Sam Carlson talks about the new construction going on around the Havens and beyond. Also discussing the solar eclipse.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/ready+The+Rob+Show+-+Ep+22+-+Sam+Carlson.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep22+-+Sam+Carlson+-+3.28.24.jpg",
+          "date": "2024-03-28"
+        },
+        {
+          "id": "9",
+          "title": "The Rob Show #20 - Pat Clendenen",
+          "description": "Pat Clendenen, originally from New Haven, returns after 25 years in Boston. A local lawyer and power lifter, Pat is also venturing into skateboarding.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/SUPERready+The+Rob+Show+-+Ep+20+-+Pat+Clendenen.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep20+-+Pat+Clendenen.jpg",
+          "date": ""
+        },
+        {
+          "id": "8",
+          "title": "The Rob Show #19 - Paul Wildy",
+          "description": "Paul Wildy, a 20 plus year cab driver in New Haven, shares his experiences from working on the Carter campaign to witnessing the citys evolution over the decades",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/ready+The+Rob+Show+-+Ep+19+-+Paul+Wildly.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep19+-+Paul+Wildy.jpg",
+          "date": ""
+        },
+        {
+          "id": "7",
+          "title": "The Rob Show #18 - My Own Grenade",
+          "description": "My own grenade has been around since the 90s. What started as a highschool friendship has led to a lifetime of music.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/ready_The+Rob+Show+-+Ep+18+-+My+Own+Gernade.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep18+-+My+Own+Grendade.jpg",
+          "date": ""
+        },
+        {
+          "id": "6",
+          "title": "The Rob Show #17 - Aidan Bauer",
+          "description": "In episode 17 of The Rob Show, Aidan Bauer, a game designer, programmer, and artist, delves into gaming, climbing, and life in New Haven",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/ready_The+Rob+Show+-+Ep+17+-+Aidan+Baur++-+2_7_23.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep17+-+Aidan+Bauer.png",
+          "date": ""
+        },
+        {
+          "id": "5",
+          "title": "The Rob Show #16 - Joshua Sanders",
+          "description": "The Rob Show is Back with ever festive Joshua Sanders, a former Califorian/Texian who loves Christmas.",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/ready_The+Rob+Show+-+Ep+16+-+Joshua+Sanders.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep16+-+Josh+Sanders+copy.png",
+          "date": ""
+        },
+        {
+          "id": "1",
+          "title": "The Rob Show #14 - Ray Meglio",
+          "description": "The Rob Show is Back at with a very special guest - his father - Ray Meglio",
+          "duration": "",
+          "duration_seconds": 0,
+          "audio_url": "https://ahoypodcast.s3.us-east-2.amazonaws.com/The+Rob+Show+-+Ep+14+-+Ray+Meglio+-+11_14_23.mp3",
+          "thumbnail": "https://ahoypodcast.s3.us-east-2.amazonaws.com/Ahoy+Podcast+Default.png",
+          "date": ""
+        }
+      ]
     }
   ]
 }

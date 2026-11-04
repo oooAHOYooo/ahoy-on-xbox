@@ -73,6 +73,7 @@ namespace AhoyXbox
     public sealed partial class MainPage : Page
     {
         private readonly MediaPlayer media = new MediaPlayer();
+        private readonly DispatcherTimer guideTimer = new DispatcherTimer();
         private Channel playingChannel;
         private int playingIndex;
 
@@ -86,25 +87,51 @@ namespace AhoyXbox
             Unloaded += Cleanup;
             SystemNavigationManager.GetForCurrentView().BackRequested += Back;
 
+            guideTimer.Interval = TimeSpan.FromSeconds(6);
+            guideTimer.Tick += (s, e) => {
+                guideTimer.Stop();
+                if (GuideDock != null && !Player.IsFullWindow)
+                {
+                    GuideDock.Visibility = Visibility.Collapsed;
+                }
+            };
+
             KeyDown += (s, e) => {
                 if (e.Key == Windows.System.VirtualKey.GamepadX || e.Key == Windows.System.VirtualKey.X)
                 {
+                    WakeGuide();
                     ToggleSaveCurrent();
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadY || e.Key == Windows.System.VirtualKey.Y)
                 {
                     Player.IsFullWindow = !Player.IsFullWindow;
+                    if (!Player.IsFullWindow) WakeGuide();
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadB || e.Key == Windows.System.VirtualKey.B)
                 {
                     if (Player.IsFullWindow)
                     {
                         Player.IsFullWindow = false;
+                        WakeGuide();
+                        e.Handled = true;
+                    }
+                    else if (GuideDock != null)
+                    {
+                        if (GuideDock.Visibility == Visibility.Visible)
+                        {
+                            GuideDock.Visibility = Visibility.Collapsed;
+                            guideTimer.Stop();
+                        }
+                        else
+                        {
+                            WakeGuide();
+                        }
                         e.Handled = true;
                     }
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
                 {
+                    WakeGuide();
                     if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
                     {
                         Channels.SelectedIndex = (Channels.SelectedIndex + 1) % chs.Count;
@@ -113,13 +140,28 @@ namespace AhoyXbox
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
                 {
+                    WakeGuide();
                     if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
                     {
                         Channels.SelectedIndex = (Channels.SelectedIndex - 1 + chs.Count) % chs.Count;
                         e.Handled = true;
                     }
                 }
+                else
+                {
+                    WakeGuide();
+                }
             };
+        }
+
+        private void WakeGuide()
+        {
+            if (GuideDock != null && GuideDock.Visibility != Visibility.Visible)
+            {
+                GuideDock.Visibility = Visibility.Visible;
+            }
+            guideTimer.Stop();
+            guideTimer.Start();
         }
 
         private async void LoadCatalog(object sender, RoutedEventArgs e)
@@ -229,16 +271,53 @@ namespace AhoyXbox
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
 
-                // Auto-Play Channel 101 immediately (Pluto TV behavior)
+                // Auto-Play Channel 101 immediately (Pluto TV live clock sync)
                 playingChannel = channels[0];
-                playingIndex = 0;
+                var (initIdx, initOffset) = GetLiveSyncPosition(playingChannel);
+                playingIndex = initIdx;
                 Programs.ItemsSource = playingChannel.Videos;
-                PlayCurrent();
+                PlayCurrent(initOffset);
             }
             catch (Exception)
             {
                 Status.Text = "The catalog could not load. Close and reopen Ahoy to retry.";
             }
+        }
+
+        private (int index, double offsetSeconds) GetLiveSyncPosition(Channel channel)
+        {
+            if (channel == null || channel.Videos == null || channel.Videos.Count == 0) return (0, 0);
+            double totalCycle = 0;
+            var durations = new double[channel.Videos.Count];
+            for (int i = 0; i < channel.Videos.Count; i++)
+            {
+                durations[i] = ParseDurationSeconds(channel.Videos[i].Duration);
+                totalCycle += durations[i];
+            }
+            if (totalCycle <= 0) return (0, 0);
+
+            double nowSec = DateTime.UtcNow.TimeOfDay.TotalSeconds % totalCycle;
+            double accumulated = 0;
+            for (int i = 0; i < channel.Videos.Count; i++)
+            {
+                if (nowSec >= accumulated && nowSec < accumulated + durations[i])
+                {
+                    return (i, nowSec - accumulated);
+                }
+                accumulated += durations[i];
+            }
+            return (0, 0);
+        }
+
+        private static double ParseDurationSeconds(string dur)
+        {
+            if (string.IsNullOrEmpty(dur)) return 240.0;
+            var parts = dur.Split(':');
+            if (parts.Length == 2 && double.TryParse(parts[0], out var m) && double.TryParse(parts[1], out var s))
+                return m * 60.0 + s;
+            if (parts.Length == 3 && double.TryParse(parts[0], out var h) && double.TryParse(parts[1], out var m2) && double.TryParse(parts[2], out var s2))
+                return h * 3600.0 + m2 * 60.0 + s2;
+            return 240.0;
         }
 
         private void ChannelChanged(object sender, SelectionChangedEventArgs e)
@@ -248,12 +327,13 @@ namespace AhoyXbox
                 Programs.ItemsSource = channel.Videos;
                 GuideHeader.Text = $"{channel.Name.ToUpperInvariant()} • SCHEDULE ({channel.Videos.Count} IN ROTATION)";
 
-                // Instant Channel Surfing: Switching channels immediately tunes and starts playback
+                // Instant Channel Surfing: Switching channels immediately tunes with clock sync
                 if (channel.Videos.Count > 0)
                 {
                     playingChannel = channel;
-                    playingIndex = 0;
-                    PlayCurrent();
+                    var (syncIdx, syncOffset) = GetLiveSyncPosition(channel);
+                    playingIndex = syncIdx;
+                    PlayCurrent(syncOffset);
                 }
                 else
                 {
@@ -270,17 +350,17 @@ namespace AhoyXbox
             playingChannel = channel;
             playingIndex = channel.Videos.IndexOf(video);
             if (playingIndex < 0) playingIndex = 0;
-            PlayCurrent();
+            PlayCurrent(0);
         }
 
-        private void PlayCurrent()
+        private void PlayCurrent(double seekSeconds = 0)
         {
             if (playingChannel == null || playingChannel.Videos.Count == 0) return;
             var video = playingChannel.Videos[playingIndex];
             NowPlaying.Text = video.Title;
             HeaderChannel.Text = $"CH {playingChannel.Number} • {playingChannel.Name.ToUpperInvariant()}";
             HeaderNowPlaying.Text = $"{video.Title} ({video.Host})";
-            Status.Text = $"{playingChannel.Name} · {video.Host} · Continuous broadcast active";
+            Status.Text = $"{playingChannel.Name} · {video.Host} · Live broadcast active";
             UpdateSaveStatus(video.Id);
 
             try
@@ -290,7 +370,12 @@ namespace AhoyXbox
                     Player.PosterSource = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(video.Thumbnail));
                 }
                 media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
+                if (seekSeconds > 5)
+                {
+                    media.PlaybackSession.Position = TimeSpan.FromSeconds(seekSeconds);
+                }
                 media.Play();
+                WakeGuide();
             }
             catch (Exception)
             {
@@ -308,14 +393,14 @@ namespace AhoyXbox
             {
                 bool isSaved = SavedStore.Toggle(target.Id);
                 UpdateSaveStatus(target.Id);
-                Status.Text = isSaved ? $"★ '{target.Title}' saved to Library!" : $"'{target.Title}' removed from Library.";
+                Status.Text = isSaved ? $"'{target.Title}' saved to Library" : $"'{target.Title}' removed from Library";
             }
         }
 
         private void UpdateSaveStatus(string videoId)
         {
             bool isSaved = SavedStore.Contains(videoId);
-            SaveIndicator.Text = isSaved ? "★ SAVED [X]" : "[X] SAVE";
+            SaveIndicator.Text = isSaved ? "[X] SAVED" : "[X] SAVE";
         }
 
         private void FullscreenClicked(object sender, RoutedEventArgs e)
@@ -328,7 +413,7 @@ namespace AhoyXbox
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 if (playingChannel == null || playingChannel.Videos.Count == 0) return;
                 playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
-                PlayCurrent();
+                PlayCurrent(0);
             });
         }
 
@@ -339,7 +424,7 @@ namespace AhoyXbox
                 if (playingChannel != null && playingChannel.Videos.Count > 0)
                 {
                     playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
-                    PlayCurrent();
+                    PlayCurrent(0);
                 }
             });
         }

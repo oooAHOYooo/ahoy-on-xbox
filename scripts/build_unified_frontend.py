@@ -1,28 +1,22 @@
+# Complete Unified Frontend Builder for Ahoy TV (No Emojis, Pure Broadcast Polish)
 import json
 import base64
+import subprocess
 from pathlib import Path
 
 root = Path('/Users/agworkywork/ahoy-on-xbox')
 
-# Load catalog & music
+# Load catalog data
 with open(root / 'AhoyXbox/Data/catalog.json', 'r', encoding='utf-8') as f:
     catalog_data = json.load(f)
 
-with open(root / 'AhoyXbox/Data/music.json', 'r', encoding='utf-8') as f:
-    music_data = json.load(f)
-
 # Load official white logo as base64 data URI
 with open(root / 'AhoyXbox/Assets/ahoy_official_white.png', 'rb') as f:
-    logo_base64 = "data:image/png;base64," + base64.b64encode(f.read()).decode('utf-8')
+    logo_base64 = 'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
 
 videos = catalog_data.get('videos', [])
-tracks = music_data.get('tracks', [])
-
-def is_disc_golf(v):
-    id_str = v.get('id', '').lower()
-    title_str = v.get('title', '').lower()
-    tags = [t.lower() for t in v.get('tags', [])]
-    return 'disc-golf' in id_str or 'disc-golf' in tags or 'disc' in title_str or 'putter' in title_str
+music_tracks = catalog_data.get('music', [])
+podcast_shows = catalog_data.get('podcasts', [])
 
 def resolve_thumb(thumb):
     if not thumb:
@@ -33,83 +27,67 @@ def resolve_thumb(thumb):
 
 pure_videos = []
 for v in videos:
-    if not is_disc_golf(v):
-        v_clean = dict(v)
-        v_clean['thumbnail'] = resolve_thumb(v.get('thumbnail'))
-        pure_videos.append(v_clean)
+    v_clean = dict(v)
+    v_clean['thumbnail'] = resolve_thumb(v.get('thumbnail'))
+    pure_videos.append(v_clean)
 
 wintergreen_vids = [v for v in pure_videos if 'wintergreen' in v.get('id', '') or 'whatnot' in v.get('title', '').lower()]
 music_vids = [v for v in pure_videos if 'music-video' in v.get('tags', [])]
 skate_vids = [v for v in pure_videos if v.get('category') == 'skating' or 'skating' in v.get('tags', []) or 'tallboyz' in v.get('tags', [])]
 other_vids = [v for v in pure_videos if v not in wintergreen_vids and v not in skate_vids and v not in music_vids]
 
-ahoy_mix_vids = wintergreen_vids + skate_vids + music_vids + other_vids
-music_and_culture_vids = music_vids + skate_vids
-
-radio_tracks = []
-for t in tracks[:20]:
-    cover = t.get('cover_art') or 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg'
-    radio_tracks.append({
-        'id': t.get('track_id'),
-        'title': t.get('title', 'Untitled Track'),
-        'host': t.get('artist', 'Ahoy Radio'),
-        'album': t.get('album', 'Indie Radio 24/7'),
-        'url': t.get('audio_url'),
-        'thumbnail': cover,
-        'category': 'radio',
-        'description': f"Continuous 24/7 indie airplay by {t.get('artist', 'Ahoy Radio')} from {t.get('album', 'Single')}."
-    })
-
-# EXACTLY 4 CHANNELS (MATCHING APP.AHOY.OOO)
 CHANNELS = [
     {
         'number': '101',
-        'name': 'AHOY MIX',
-        'tagline': '24/7 Continuous Indie Broadcast',
+        'name': 'LIVE SHOWS',
+        'tagline': 'Wintergreen Sessions & Live Concerts',
         'thumb': 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg',
-        'videos': ahoy_mix_vids
-    },
-    {
-        'number': '102',
-        'name': 'WINTERGREEN STUDIOS',
-        'tagline': 'Live Concerts & Studio Sessions',
-        'thumb': 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg',
         'videos': wintergreen_vids
     },
     {
+        'number': '102',
+        'name': 'MUSIC VIDEOS',
+        'tagline': 'Independent Music Videos & Visuals',
+        'thumb': 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/xPZpU3rY4qU.jpg',
+        'videos': music_vids
+    },
+    {
         'number': '103',
-        'name': 'AHOY RADIO 24/7',
-        'tagline': 'Continuous Indie Airplay',
-        'thumb': 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg',
-        'videos': radio_tracks
+        'name': 'FILMS & SKATE',
+        'tagline': 'Skate Tapes & Documentaries',
+        'thumb': 'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg',
+        'videos': skate_vids + other_vids
     },
     {
         'number': '104',
-        'name': 'MUSIC & CULTURE',
-        'tagline': 'Underground Videos & Skate Tapes',
-        'thumb': 'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg',
-        'videos': music_and_culture_vids
+        'name': 'THE MIX 24/7',
+        'tagline': '24/7 Round-Robin Eclectic Stream',
+        'thumb': 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg',
+        'videos': wintergreen_vids + skate_vids + music_vids + other_vids
     }
 ]
 
 channels_json = json.dumps(CHANNELS)
+ondemand_json = json.dumps(pure_videos)
+music_json = json.dumps(music_tracks)
+podcasts_json = json.dumps(podcast_shows)
 
 html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Ahoy TV — Apple TV Edition (#FF0060)</title>
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no" />
+  <title>AHOY TV — Unified Broadcast Edition</title>
   <style>
     :root {{
       --ahoy-accent: #FF0060;
-      --ahoy-accent-glow: rgba(255, 0, 96, 0.45);
-      --ahoy-accent-subtle: rgba(255, 0, 96, 0.16);
-      --apple-canvas: #05070B;
-      --apple-card: rgba(18, 22, 32, 0.72);
-      --apple-card-active: rgba(28, 34, 48, 0.88);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-highlight: rgba(255, 255, 255, 0.22);
+      --ahoy-accent-glow: rgba(255, 0, 96, 0.4);
+      --ahoy-accent-subtle: rgba(255, 0, 96, 0.15);
+      --ahoy-bg: #05070B;
+      --ahoy-card: rgba(18, 22, 32, 0.85);
+      --ahoy-card-active: rgba(28, 34, 48, 0.95);
+      --ahoy-border: rgba(255, 255, 255, 0.1);
+      --ahoy-border-active: rgba(255, 0, 96, 0.6);
       --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
     }}
 
@@ -122,381 +100,279 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     html, body {{
-      width: 100vw;
-      height: 100vh;
+      width: 1920px;
+      height: 1080px;
       overflow: hidden;
-      position: fixed;
-      inset: 0;
-      background: var(--apple-canvas);
+      background: var(--ahoy-bg);
       color: #FFFFFF;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-      padding: 22px 38px 18px 38px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }}
+
+    .app-container {{
+      width: 1920px;
+      height: 1080px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-    }}
-
-    /* APPLE AMBIENT LIGHTING MESH */
-    .ambient-mesh {{
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+      position: relative;
+      background: #000000;
       overflow: hidden;
     }}
-    .blob-accent {{
-      position: absolute;
-      top: -15%;
-      left: 20%;
-      width: 55vw;
-      height: 55vw;
-      background: radial-gradient(circle, rgba(255, 0, 96, 0.13) 0%, transparent 65%);
-      filter: blur(120px);
-    }}
-    .blob-deep {{
-      position: absolute;
-      bottom: -20%;
-      right: 15%;
-      width: 60vw;
-      height: 60vw;
-      background: radial-gradient(circle, rgba(140, 20, 80, 0.10) 0%, transparent 65%);
-      filter: blur(120px);
-    }}
 
-    /* LIQUID GLASS PILLS */
-    .liquid-pill {{
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(32px) saturate(190%);
-      -webkit-backdrop-filter: blur(32px) saturate(190%);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.45);
-      border-radius: 9999px;
-    }}
-
-    /* TOP BAR (Row 0) */
+    /* TOP BROADCAST BAR */
     .top-bar {{
-      position: relative;
-      z-index: 20;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      padding: 0 44px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 48px;
-      margin-bottom: 12px;
-      flex-shrink: 0;
+      z-index: 20;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+      pointer-events: auto;
     }}
-    .brand-wrap {{
+
+    .brand-section {{
       display: flex;
       align-items: center;
-      gap: 10px;
-    }}
-    .brand-pill {{
-      padding: 6px 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      gap: 12px;
     }}
     .logo-img {{
-      height: 22px;
+      height: 26px;
       width: auto;
       object-fit: contain;
     }}
     .brand-tv-mark {{
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
-      color: var(--ahoy-accent);
-      letter-spacing: -0.5px;
-      margin-left: 2px;
-    }}
-    .live-pill {{
-      padding: 5px 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 0, 96, 0.14);
-      border: 1px solid rgba(255, 0, 96, 0.4);
-    }}
-    .live-dot {{
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--ahoy-accent);
-      box-shadow: 0 0 10px var(--ahoy-accent);
-      animation: pulseDot 2s infinite ease-in-out;
-    }}
-    @keyframes pulseDot {{
-      0%, 100% {{ transform: scale(1); opacity: 1; }}
-      50% {{ transform: scale(1.35); opacity: 0.6; }}
-    }}
-    .live-label {{
-      font-size: 11px;
-      font-weight: 900;
-      color: #FFFFFF;
-      letter-spacing: 0.8px;
-    }}
-
-    .header-banner {{
-      padding: 6px 22px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13.5px;
-    }}
-    .header-channel {{
-      font-weight: 800;
       color: var(--ahoy-accent);
       letter-spacing: 0.5px;
-    }}
-    .header-divider {{
-      color: rgba(255, 255, 255, 0.25);
-    }}
-    .header-nowplaying {{
-      color: #FFFFFF;
-      font-weight: 600;
-      max-width: 480px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      text-transform: uppercase;
+      margin-left: -4px;
+      margin-top: 6px;
     }}
 
-    .top-actions {{
+    /* 4 CLEAN SECTIONS */
+    .section-nav {{
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      background: rgba(18, 22, 32, 0.7);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 999px;
+      padding: 4px 6px;
+      backdrop-filter: blur(20px);
     }}
-    .action-pill {{
-      padding: 6px 16px;
-      font-size: 11px;
-      font-weight: 800;
-      color: rgba(255, 255, 255, 0.7);
-      letter-spacing: 0.8px;
+    .nav-btn {{
+      background: transparent;
+      border: none;
+      color: #8E8E93;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      padding: 8px 18px;
+      border-radius: 999px;
       cursor: pointer;
       transition: all 0.2s var(--ease-apple);
     }}
-    .action-pill.active {{
-      color: var(--ahoy-accent);
-      border-color: rgba(255, 0, 96, 0.45);
-      background: rgba(255, 0, 96, 0.12);
+    .nav-btn.active {{
+      background: var(--ahoy-accent);
+      color: #FFFFFF;
+      box-shadow: 0 0 16px var(--ahoy-accent-glow);
+    }}
+    .nav-btn:hover:not(.active) {{
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
     }}
 
-    /* MAIN STAGE */
-    .main-stage {{
-      position: relative;
-      z-index: 10;
-      flex: 1;
+    .top-status {{
       display: flex;
-      flex-direction: column;
-      min-height: 0;
-      gap: 12px;
+      align-items: center;
+      gap: 16px;
+    }}
+    .live-badge {{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 0, 96, 0.15);
+      border: 1px solid rgba(255, 0, 96, 0.35);
+      border-radius: 999px;
+      padding: 5px 12px;
+    }}
+    .live-dot {{
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ahoy-accent);
+      animation: pulseLive 2s infinite ease-in-out;
+    }}
+    @keyframes pulseLive {{
+      0%, 100% {{ opacity: 1; transform: scale(1); }}
+      50% {{ opacity: 0.4; transform: scale(0.85); }}
+    }}
+    .live-text {{
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #FFFFFF;
+    }}
+    .btn-save {{
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8E8E93;
+      cursor: pointer;
+    }}
+    .btn-save.saved {{
+      background: rgba(255, 0, 96, 0.2);
+      border-color: var(--ahoy-accent);
+      color: #FFFFFF;
     }}
 
-    /* TOP BILLBOARD / HERO STAGE (Apple TV Top-Shelf) */
-    .billboard-container {{
-      flex: 1;
-      min-height: 0;
-      background: #000000;
-      border-radius: 18px;
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 24px 60px rgba(0, 0, 0, 0.8);
-      position: relative;
+    /* MAIN VIDEO HERO STAGE */
+    .hero-stage {{
+      position: absolute;
+      inset: 0;
+      z-index: 1;
       overflow: hidden;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
     }}
-
-    /* POSTER BACKDROP */
-    .billboard-backdrop {{
+    .hero-backdrop {{
       position: absolute;
       inset: 0;
       background-size: cover;
-      background-position: center center;
-      opacity: 0.95;
-      transition: background-image 0.4s var(--ease-apple), opacity 0.4s var(--ease-apple);
-      z-index: 1;
+      background-position: center;
+      filter: brightness(0.65) contrast(1.05);
+      transition: opacity 0.5s ease;
     }}
-    .billboard-vignette {{
+    .hero-vignette {{
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(5, 7, 11, 0.94) 0%, rgba(5, 7, 11, 0.55) 45%, rgba(5, 7, 11, 0.25) 100%),
-                  linear-gradient(0deg, rgba(5, 7, 11, 0.96) 0%, transparent 40%);
-      z-index: 2;
+      background: radial-gradient(circle at 60% 40%, rgba(0,0,0,0.1) 0%, rgba(5,7,11,0.85) 75%, #05070B 100%),
+                  linear-gradient(180deg, rgba(5,7,11,0.5) 0%, transparent 30%, transparent 60%, #05070B 100%);
     }}
-
-    /* VIDEO ELEMENT */
-    #media-element {{
+    video, audio {{
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 2;
-      opacity: 1;
-      transition: opacity 0.3s;
-    }}
-    #audio-element {{
-      display: none;
     }}
 
-    /* BILLBOARD HERO CONTENT (Apple TV Layout) */
-    .billboard-content {{
-      position: relative;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 30px 36px;
-      max-width: 840px;
+    /* HERO INFO OVERLAY */
+    .hero-info {{
+      position: absolute;
+      bottom: 270px;
+      left: 48px;
+      max-width: 820px;
+      z-index: 10;
+      transition: transform 0.4s var(--ease-apple), opacity 0.4s var(--ease-apple);
     }}
-
-    .hero-meta-row {{
+    .hero-tag-row {{
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 12px;
     }}
-    .tag-badge {{
-      background: rgba(255, 0, 96, 0.18);
-      border: 1px solid rgba(255, 0, 96, 0.45);
-      color: var(--ahoy-accent);
+    .hero-tag {{
+      background: var(--ahoy-accent);
+      color: #FFFFFF;
       font-size: 11px;
-      font-weight: 900;
-      padding: 3px 10px;
-      border-radius: 6px;
-      letter-spacing: 0.8px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
     }}
-    .spec-pills {{
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .hero-specs {{
       font-size: 11px;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.65);
-      background: rgba(0, 0, 0, 0.45);
-      padding: 3px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #8E8E93;
+      letter-spacing: 1px;
     }}
-
     .hero-title {{
-      font-size: 34px;
-      font-weight: 900;
-      color: #FFFFFF;
-      letter-spacing: -0.6px;
-      line-height: 1.15;
-      margin-bottom: 8px;
-      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 800px;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }}
+    .hero-host {{
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ahoy-accent);
+      margin-bottom: 10px;
     }}
     .hero-desc {{
-      font-size: 14.5px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.82);
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #C7C7CC;
       margin-bottom: 20px;
-      max-width: 700px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      max-width: 720px;
     }}
-
-    /* ACTION BUTTONS (Apple TV Liquid Glass Buttons with #FF0060 accent) */
     .hero-actions {{
       display: flex;
       align-items: center;
       gap: 12px;
     }}
-    .glass-btn {{
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 6px 18px rgba(0, 0, 0, 0.4);
-      border-radius: 12px;
-      padding: 10px 22px;
-      font-size: 13.5px;
-      font-weight: 800;
+    .action-btn {{
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.22s var(--ease-apple);
-    }}
-    .glass-btn.primary {{
-      background: var(--ahoy-accent);
-      color: #FFFFFF;
-      border-color: var(--ahoy-accent);
-      box-shadow: 0 0 25px var(--ahoy-accent-glow);
-    }}
-    .glass-btn.primary:hover, .glass-btn.primary.focused {{
-      background: #FFFFFF;
-      border-color: #FFFFFF;
-      color: #000000;
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
-    }}
-    .glass-btn:hover, .glass-btn.focused {{
-      background: rgba(255, 255, 255, 0.2);
-      border-color: var(--ahoy-accent);
-      transform: scale(1.05);
-      box-shadow: 0 0 22px var(--ahoy-accent-glow);
-    }}
-
-    /* UNMUTE PILL */
-    .unmute-pill {{
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      z-index: 10;
-      padding: 8px 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       font-size: 12px;
-      font-weight: 800;
-      color: #FFFFFF;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 10px 22px;
+      border-radius: 8px;
       cursor: pointer;
-      background: rgba(255, 0, 96, 0.18);
-      border-color: var(--ahoy-accent);
-      animation: pulseGlow 2.5s infinite;
+      backdrop-filter: blur(16px);
+      transition: all 0.2s var(--ease-apple);
     }}
-    @keyframes pulseGlow {{
-      0%, 100% {{ box-shadow: 0 0 15px rgba(255, 0, 96, 0.3); }}
-      50% {{ box-shadow: 0 0 32px rgba(255, 0, 96, 0.75); }}
+    .action-btn.primary {{
+      background: var(--ahoy-accent);
+      border-color: var(--ahoy-accent);
+      box-shadow: 0 0 20px var(--ahoy-accent-glow);
+    }}
+    .action-btn:hover, .action-btn.focused {{
+      transform: translateY(-2px);
+      border-color: var(--ahoy-accent);
+      box-shadow: 0 6px 20px rgba(255, 0, 96, 0.35);
     }}
 
-    /* RADIO 24/7 3D LIQUID GLASS STAGE */
-    .radio-stage {{
+    /* AUDIO / VINYL VISUALIZER STAGE */
+    .music-stage {{
       position: absolute;
-      inset: 0;
-      z-index: 3;
+      top: 140px;
+      right: 120px;
       display: none;
+      flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
-      padding-right: 70px;
-      pointer-events: none;
+      gap: 20px;
+      z-index: 10;
+    }}
+    .music-stage.active {{
+      display: flex;
     }}
     .vinyl-wrapper {{
-      position: relative;
       width: 220px;
       height: 220px;
-      perspective: 1000px;
-    }}
-    .vinyl-disc {{
-      width: 100%;
-      height: 100%;
+      position: relative;
       border-radius: 50%;
-      background: radial-gradient(circle, #252830 0%, #101217 60%, #06080b 100%);
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.85), inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle, #2C2C2E 20%, #1C1C1E 50%, #000000 70%);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 30px var(--ahoy-accent-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 3px solid #3A3A3C;
       animation: spinVinyl 12s linear infinite;
     }}
     @keyframes spinVinyl {{
@@ -504,205 +380,200 @@ html_content = f"""<!DOCTYPE html>
       to {{ transform: rotate(360deg); }}
     }}
     .vinyl-art {{
-      width: 96px;
-      height: 96px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      box-shadow: 0 0 14px rgba(0, 0, 0, 0.7);
-      border: 2px solid var(--ahoy-accent);
+      border: 2px solid #000000;
     }}
-    .visualizer-bars {{
-      position: absolute;
-      bottom: -35px;
-      left: 50%;
-      transform: translateX(-50%);
+    .visualizer-row {{
       display: flex;
       align-items: flex-end;
       gap: 5px;
-      height: 30px;
+      height: 36px;
     }}
     .viz-bar {{
       width: 4px;
       background: var(--ahoy-accent);
       border-radius: 2px;
-      animation: bounceBar 0.8s ease-in-out infinite alternate;
+      animation: bounceBar 1s infinite ease-in-out;
     }}
-    .viz-bar:nth-child(2) {{ height: 18px; animation-delay: 0.15s; background: #FFFFFF; }}
-    .viz-bar:nth-child(3) {{ height: 28px; animation-delay: 0.3s; background: var(--ahoy-accent); }}
-    .viz-bar:nth-child(4) {{ height: 14px; animation-delay: 0.45s; background: #FFFFFF; }}
-    .viz-bar:nth-child(5) {{ height: 22px; animation-delay: 0.2s; background: var(--ahoy-accent); }}
+    .viz-bar:nth-child(1) {{ height: 18px; animation-delay: 0.1s; }}
+    .viz-bar:nth-child(2) {{ height: 32px; animation-delay: 0.3s; }}
+    .viz-bar:nth-child(3) {{ height: 12px; animation-delay: 0.2s; }}
+    .viz-bar:nth-child(4) {{ height: 26px; animation-delay: 0.4s; }}
+    .viz-bar:nth-child(5) {{ height: 20px; animation-delay: 0.15s; }}
     @keyframes bounceBar {{
-      0% {{ height: 6px; }}
-      100% {{ height: 28px; }}
+      0%, 100% {{ transform: scaleY(0.4); }}
+      50% {{ transform: scaleY(1.0); }}
     }}
 
-    /* BOTTOM SHELF: 4 CHANNELS (APP.AHOY.OOO) */
-    .bottom-section {{
-      height: 180px;
-      flex-shrink: 0;
+    /* LOWER-THIRD COUCH GUIDE DOCK */
+    .guide-dock {{
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 250px;
+      background: linear-gradient(180deg, rgba(14, 18, 28, 0) 0%, rgba(8, 10, 16, 0.94) 20%, rgba(5, 7, 11, 0.98) 100%);
+      padding: 14px 44px 18px 44px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      justify-content: flex-end;
+      z-index: 15;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(28px);
+      transition: transform 0.35s var(--ease-apple), opacity 0.35s var(--ease-apple);
     }}
+    .guide-dock.hidden {{
+      transform: translateY(220px);
+      opacity: 0.05;
+    }}
+
     .shelf-header {{
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 4px;
+      margin-bottom: 12px;
     }}
     .shelf-title {{
       font-size: 13px;
       font-weight: 800;
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      color: #8E8E93;
       text-transform: uppercase;
     }}
     .shelf-meta {{
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--ahoy-accent);
+      letter-spacing: 1px;
     }}
 
-    /* 4 CHANNELS ROW */
-    .channels-row {{
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      height: 145px;
+    /* ITEMS CAROUSEL ROW */
+    .items-row {{
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 8px;
     }}
-    .channel-tile {{
-      background: var(--apple-card);
-      backdrop-filter: blur(28px) saturate(190%);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 1px var(--glass-highlight), 0 12px 28px rgba(0, 0, 0, 0.45);
-      border-radius: 16px;
-      padding: 15px;
+    .items-row::-webkit-scrollbar {{
+      display: none;
+    }}
+
+    .item-card {{
+      flex: 0 0 260px;
+      height: 146px;
+      background: var(--ahoy-card);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 10px;
+      overflow: hidden;
       cursor: pointer;
       position: relative;
-      overflow: hidden;
+      transition: all 0.22s var(--ease-apple);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.22s var(--ease-apple);
+      justify-content: flex-end;
+      padding: 14px;
     }}
-    .channel-tile-content {{
+    .item-card.active, .item-card:hover, .item-card.focused {{
+      border-color: var(--ahoy-accent);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 16px var(--ahoy-accent-glow);
+    }}
+    .item-thumb {{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.7);
+      transition: filter 0.2s ease;
+    }}
+    .item-card.active .item-thumb, .item-card:hover .item-thumb {{
+      filter: brightness(0.85);
+    }}
+    .item-gradient {{
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(5,7,11,0.92) 100%);
+    }}
+    .item-details {{
       position: relative;
       z-index: 2;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      justify-content: space-between;
     }}
-    .tile-top {{
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }}
-    .tile-number {{
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--ahoy-accent);
-      letter-spacing: -0.5px;
-    }}
-    .tile-badge {{
-      font-size: 9px;
-      font-weight: 900;
-      padding: 3px 8px;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.8);
-      letter-spacing: 0.6px;
-    }}
-    .channel-tile.active .tile-badge {{
-      background: rgba(255, 0, 96, 0.25);
-      color: var(--ahoy-accent);
-      border: 1px solid rgba(255, 0, 96, 0.5);
-    }}
-    .tile-info {{
-      margin-top: auto;
-    }}
-    .tile-name {{
-      font-size: 15.5px;
+    .item-badge {{
+      font-size: 10px;
       font-weight: 800;
+      color: var(--ahoy-accent);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }}
+    .item-title {{
+      font-size: 13px;
+      font-weight: 700;
       color: #FFFFFF;
-      letter-spacing: -0.2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 2px;
     }}
-    .tile-tagline {{
+    .item-sub {{
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.65);
-      margin-top: 3px;
+      font-weight: 500;
+      color: #8E8E93;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }}
 
-    .channel-tile.active {{
-      background: var(--apple-card-active);
-      border-color: rgba(255, 0, 96, 0.45);
-    }}
-    .channel-tile.focused {{
-      border-color: var(--ahoy-accent) !important;
-      transform: scale(1.03) translateY(-4px);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 28px var(--ahoy-accent-glow);
-    }}
-
-    /* BOTTOM CONTROLLER BAR */
-    .bottom-bar {{
-      position: relative;
-      z-index: 20;
-      height: 32px;
+    /* BOTTOM CONTROLLER HINTS */
+    .controller-bar {{
+      height: 28px;
       margin-top: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-shrink: 0;
-      padding: 0 4px;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.55);
+      font-size: 11px;
+      font-weight: 600;
+      color: #636366;
+      letter-spacing: 0.5px;
     }}
-    .key-hints {{
+    .hints-group {{
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }}
-    .key-badge {{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 800;
+    .key-tag {{
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
-      margin-right: 5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 4px;
+      font-size: 10px;
     }}
-    .status-text {{
-      font-size: 11px;
+    .controller-brand {{
+      color: #48484A;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.4);
-      letter-spacing: 0.5px;
     }}
 
     /* SCHEDULE DRAWER */
     .schedule-drawer {{
       position: absolute;
-      inset: 60px 38px 50px 38px;
-      background: rgba(8, 10, 16, 0.95);
-      backdrop-filter: blur(36px) saturate(200%);
-      -webkit-backdrop-filter: blur(36px) saturate(200%);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
+      inset: 80px 44px 50px 44px;
+      background: rgba(10, 13, 20, 0.96);
+      backdrop-filter: blur(36px);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 14px;
       z-index: 30;
       display: none;
       flex-direction: column;
-      padding: 24px 32px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+      padding: 24px 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
     }}
     .schedule-drawer.open {{
       display: flex;
@@ -711,375 +582,424 @@ html_content = f"""<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }}
     .drawer-title {{
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
-      color: #FFFFFF;
+      letter-spacing: 1px;
     }}
     .drawer-list {{
-      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       overflow-y: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
     }}
-    .sched-item {{
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
+    .drawer-item {{
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
       padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.18s var(--ease-apple);
     }}
-    .sched-item.playing {{
+    .drawer-item.active, .drawer-item:hover {{
       border-color: var(--ahoy-accent);
-      background: rgba(255, 0, 96, 0.14);
-    }}
-    .sched-item:hover, .sched-item.focused {{
-      border-color: var(--ahoy-accent);
-      background: rgba(255, 0, 96, 0.22);
-      transform: scale(1.01);
+      background: rgba(255, 0, 96, 0.15);
     }}
   </style>
 </head>
 <body>
-  <div class="ambient-mesh">
-    <div class="blob-accent"></div>
-    <div class="blob-deep"></div>
-  </div>
-
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="brand-wrap">
-      <div class="liquid-pill brand-pill">
+  <div class="app-container">
+    <!-- TOP BROADCAST BAR -->
+    <div class="top-bar">
+      <div class="brand-section">
         <img class="logo-img" src="{logo_base64}" alt="Ahoy" />
         <span class="brand-tv-mark">tv</span>
       </div>
-      <div class="liquid-pill live-pill">
-        <div class="live-dot"></div>
-        <span class="live-label">LIVE</span>
+
+      <!-- 4 CLEAN SECTIONS -->
+      <div class="section-nav">
+        <button class="nav-btn active" id="nav-channels" onclick="setSection('channels')">LIVE TV</button>
+        <button class="nav-btn" id="nav-ondemand" onclick="setSection('ondemand')">ON DEMAND</button>
+        <button class="nav-btn" id="nav-music" onclick="setSection('music')">MUSIC</button>
+        <button class="nav-btn" id="nav-podcasts" onclick="setSection('podcasts')">PODCASTS</button>
+      </div>
+
+      <div class="top-status">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          <span class="live-text" id="status-live">LIVE</span>
+        </div>
+        <button class="btn-save" id="btn-save" onclick="toggleSave()">[X] SAVE</button>
       </div>
     </div>
 
-    <div class="liquid-pill header-banner">
-      <span class="header-channel" id="header-channel">CH 101 • AHOY MIX</span>
-      <span class="header-divider">|</span>
-      <span class="header-nowplaying" id="header-nowplaying">Connecting to continuous broadcast...</span>
-    </div>
+    <!-- MAIN VIDEO STAGE -->
+    <div class="hero-stage">
+      <div class="hero-backdrop" id="hero-backdrop"></div>
+      <div class="hero-vignette"></div>
 
-    <div class="top-actions">
-      <div class="liquid-pill action-pill" id="schedule-pill" onclick="toggleScheduleDrawer()">[Y] SCHEDULE</div>
-      <div class="liquid-pill action-pill" id="save-indicator" onclick="toggleSaveCurrent()">[X] SAVE TO LIBRARY</div>
-    </div>
-  </div>
+      <video id="video-player" playsinline autoplay loop muted></video>
+      <audio id="audio-player"></audio>
 
-  <!-- MAIN STAGE -->
-  <div class="main-stage">
-    <!-- TOP BILLBOARD / HERO STAGE -->
-    <div class="billboard-container" id="billboard">
-      <div class="billboard-backdrop" id="billboard-backdrop"></div>
-      <div class="billboard-vignette"></div>
-
-      <!-- VIDEO ELEMENT WITH POSTER BACKDROP -->
-      <video id="media-element" playsinline autoplay muted loop></video>
-      <audio id="audio-element"></audio>
-
-      <!-- UNMUTE PILL -->
-      <div class="liquid-pill unmute-pill" id="unmute-banner" onclick="enableAudio()">
-        <span>🔊 Tap to Unmute Audio</span>
-      </div>
-
-      <!-- SPECIALIZED 3D LIQUID GLASS RADIO STAGE -->
-      <div class="radio-stage" id="radio-stage">
+      <!-- AUDIO VISUALIZER (WHEN IN MUSIC MODE) -->
+      <div class="music-stage" id="music-stage">
         <div class="vinyl-wrapper">
-          <div class="vinyl-disc">
-            <img class="vinyl-art" id="vinyl-art" src="" alt="Album Art" />
-          </div>
-          <div class="visualizer-bars">
-            <div class="viz-bar"></div>
-            <div class="viz-bar"></div>
-            <div class="viz-bar"></div>
-            <div class="viz-bar"></div>
-            <div class="viz-bar"></div>
-          </div>
+          <img class="vinyl-art" id="vinyl-art" src="" alt="Album Art" />
+        </div>
+        <div class="visualizer-row">
+          <div class="viz-bar"></div>
+          <div class="viz-bar"></div>
+          <div class="viz-bar"></div>
+          <div class="viz-bar"></div>
+          <div class="viz-bar"></div>
         </div>
       </div>
 
-      <!-- BILLBOARD HERO METADATA & ACTION BUTTONS -->
-      <div class="billboard-content">
-        <div class="hero-meta-row">
-          <span class="tag-badge" id="hero-tag">AHOY LIVE SHOW</span>
-          <div class="spec-pills">
-            <span>4K UHD</span>
-            <span>•</span>
-            <span>HDR10</span>
-            <span>•</span>
-            <span>DOLBY 5.1</span>
-            <span>•</span>
-            <span id="hero-status-pill">LIVE ON AIR</span>
-          </div>
+      <!-- HERO INFO -->
+      <div class="hero-info" id="hero-info">
+        <div class="hero-tag-row">
+          <span class="hero-tag" id="hero-tag">CH 101 • LIVE SHOWS</span>
+          <span class="hero-specs" id="hero-specs">4K UHD • STEREO BROADCAST</span>
         </div>
-
         <h1 class="hero-title" id="hero-title">Wintergreen Sessions</h1>
-        <p class="hero-desc" id="hero-desc">Live high-fidelity indie concert recordings and 24/7 continuous broadcast from the Ahoy studio.</p>
+        <div class="hero-host" id="hero-host">Continuous Indie Broadcast</div>
+        <p class="hero-desc" id="hero-desc">Synchronized independent broadcast streamed continuously from the Ahoy library.</p>
 
         <div class="hero-actions">
-          <button class="glass-btn primary" id="btn-play" onclick="togglePlay()">
-            <span id="play-icon">▶</span> <span id="play-text">Play Live</span>
-          </button>
-          <button class="glass-btn" id="btn-fullscreen" onclick="toggleFullscreen()">
-            <span>⛶ Fullscreen [A]</span>
-          </button>
-          <button class="glass-btn" id="btn-next" onclick="playNext()">
-            <span>⏭ Next Program</span>
-          </button>
-          <button class="glass-btn" id="btn-save" onclick="toggleSaveCurrent()">
-            <span>🔖 Bookmark</span>
-          </button>
+          <button class="action-btn primary" id="btn-play" onclick="togglePlayback()">PLAY</button>
+          <button class="action-btn" id="btn-fullscreen" onclick="toggleFullscreen()">FULLSCREEN [A]</button>
+          <button class="action-btn" id="btn-schedule" onclick="toggleSchedule()">SCHEDULE [Y]</button>
         </div>
       </div>
     </div>
 
-    <!-- BOTTOM SHELF: 4 CHANNELS (APP.AHOY.OOO) -->
-    <div class="bottom-section">
+    <!-- LOWER-THIRD COUCH GUIDE DOCK -->
+    <div class="guide-dock" id="guide-dock">
       <div class="shelf-header">
-        <span class="shelf-title">Curated Channels (4 Channels • app.ahoy.ooo)</span>
-        <span class="shelf-meta" id="channel-counter">CH 101 of 104</span>
+        <span class="shelf-title" id="shelf-title">CHANNELS</span>
+        <span class="shelf-meta" id="shelf-meta">CH 101 OF 104</span>
       </div>
 
-      <div class="channels-row" id="channels-row">
-        <!-- Rendered via JS -->
+      <div class="items-row" id="items-row"></div>
+
+      <div class="controller-bar">
+        <div class="hints-group">
+          <div><span class="key-tag">LT/RT</span> SECTIONS</div>
+          <div><span class="key-tag">LB/RB</span> CHANNELS</div>
+          <div><span class="key-tag">A</span> SELECT</div>
+          <div><span class="key-tag">B</span> GUIDE</div>
+          <div><span class="key-tag">X</span> SAVE</div>
+          <div><span class="key-tag">Y</span> SCHEDULE</div>
+        </div>
+        <div class="controller-brand">AHOY INDIE MEDIA • v0.3.0</div>
       </div>
     </div>
-  </div>
 
-  <!-- SCHEDULE DRAWER -->
-  <div class="schedule-drawer" id="schedule-drawer">
-    <div class="drawer-header">
-      <span class="drawer-title" id="drawer-title">Program Rotation</span>
-      <button class="glass-btn" onclick="toggleScheduleDrawer()">Close [B]</button>
+    <!-- SCHEDULE DRAWER -->
+    <div class="schedule-drawer" id="schedule-drawer">
+      <div class="drawer-header">
+        <span class="drawer-title" id="drawer-title">Channel Schedule</span>
+        <button class="action-btn" onclick="toggleSchedule()">CLOSE [B]</button>
+      </div>
+      <div class="drawer-list" id="drawer-list"></div>
     </div>
-    <div class="drawer-list" id="drawer-list"></div>
-  </div>
-
-  <!-- CONTROLLER NAVIGATION BAR -->
-  <div class="bottom-bar">
-    <div class="key-hints">
-      <span><span class="key-badge">◀▶</span> Surf Channels</span>
-      <span><span class="key-badge">▲▼</span> Select / Shelf</span>
-      <span><span class="key-badge">A</span> Play / Fullscreen</span>
-      <span><span class="key-badge">B</span> Close Guide</span>
-      <span><span class="key-badge">Y</span> Toggle Schedule</span>
-      <span><span class="key-badge">X</span> Bookmark</span>
-    </div>
-    <div class="status-text">AHOY INDIE MEDIA • APPLE TV LIQUID GLASS</div>
   </div>
 
   <script>
     const CHANNELS = {channels_json};
+    const ONDEMAND = {ondemand_json};
+    const MUSIC = {music_json};
+    const PODCASTS = {podcasts_json};
 
-    let selectedChannelIndex = 0;
-    let selectedProgramIndex = 0;
-    let currentFocusZone = 'channels'; // 'channels' | 'hero' | 'drawer'
-    let heroActionIndex = 0;
-    let playingChannel = null;
-    let playingIndex = 0;
+    let currentSection = 'channels';
+    let selectedChannel = 0;
+    let selectedIndex = 0;
+    let playingItem = null;
     let isPlaying = false;
     let isMuted = true;
+    let isDockVisible = true;
+    let dockTimer = null;
     let scheduleOpen = false;
 
     const savedIds = new Set(JSON.parse(localStorage.getItem('Ahoy_Saved_Ids') || '[]'));
 
-    // DOM Elements
-    const mediaEl = document.getElementById('media-element');
-    const audioEl = document.getElementById('audio-element');
-    const billboardBackdrop = document.getElementById('billboard-backdrop');
-    const radioStage = document.getElementById('radio-stage');
+    const videoEl = document.getElementById('video-player');
+    const audioEl = document.getElementById('audio-player');
+    const heroBackdrop = document.getElementById('hero-backdrop');
+    const musicStage = document.getElementById('music-stage');
     const vinylArt = document.getElementById('vinyl-art');
-    const unmuteBanner = document.getElementById('unmute-banner');
-
-    const headerChannel = document.getElementById('header-channel');
-    const headerNowplaying = document.getElementById('header-nowplaying');
-    const heroTag = document.getElementById('hero-tag');
-    const heroTitle = document.getElementById('hero-title');
-    const heroDesc = document.getElementById('hero-desc');
-    const heroStatusPill = document.getElementById('hero-status-pill');
-    const playText = document.getElementById('play-text');
-    const playIcon = document.getElementById('play-icon');
-    const saveIndicator = document.getElementById('save-indicator');
-    const channelCounter = document.getElementById('channel-counter');
-    const channelsRow = document.getElementById('channels-row');
-
+    const guideDock = document.getElementById('guide-dock');
     const scheduleDrawer = document.getElementById('schedule-drawer');
-    const drawerTitle = document.getElementById('drawer-title');
+
+    const heroTag = document.getElementById('hero-tag');
+    const heroSpecs = document.getElementById('hero-specs');
+    const heroTitle = document.getElementById('hero-title');
+    const heroHost = document.getElementById('hero-host');
+    const heroDesc = document.getElementById('hero-desc');
+    const btnPlay = document.getElementById('btn-play');
+    const btnSave = document.getElementById('btn-save');
+    const shelfTitle = document.getElementById('shelf-title');
+    const shelfMeta = document.getElementById('shelf-meta');
+    const itemsRow = document.getElementById('items-row');
     const drawerList = document.getElementById('drawer-list');
 
-    const heroButtons = [
-      document.getElementById('btn-play'),
-      document.getElementById('btn-fullscreen'),
-      document.getElementById('btn-next'),
-      document.getElementById('btn-save')
-    ];
+    function wakeDock() {{
+      isDockVisible = true;
+      guideDock.classList.remove('hidden');
+      clearTimeout(dockTimer);
+      dockTimer = setTimeout(() => {{
+        if (isPlaying && currentSection === 'channels' && !scheduleOpen) {{
+          isDockVisible = false;
+          guideDock.classList.add('hidden');
+        }}
+      }}, 6000);
+    }}
 
-    function renderChannels() {{
-      channelsRow.innerHTML = '';
-      CHANNELS.forEach((ch, idx) => {{
-        const tile = document.createElement('div');
-        const isActive = idx === selectedChannelIndex;
-        const isFocused = currentFocusZone === 'channels' && idx === selectedChannelIndex;
+    function setSection(sec) {{
+      currentSection = sec;
+      selectedIndex = 0;
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('nav-' + sec).classList.add('active');
+      renderShelf();
+      wakeDock();
+    }}
 
-        tile.className = 'channel-tile' + (isActive ? ' active' : '') + (isFocused ? ' focused' : '');
-        tile.innerHTML = `
-          <div class="channel-tile-content">
-            <div class="tile-top">
-              <span class="tile-number">${{ch.number}}</span>
-              <span class="tile-badge">${{isActive ? 'TUNED' : 'LIVE'}}</span>
+    function renderShelf() {{
+      itemsRow.innerHTML = '';
+      if (currentSection === 'channels') {{
+        shelfTitle.innerText = 'CHANNELS • 4 CANONICAL PILLARS';
+        shelfMeta.innerText = 'CH ' + CHANNELS[selectedChannel].number + ' OF 104';
+
+        CHANNELS.forEach((ch, idx) => {{
+          const card = document.createElement('div');
+          card.className = 'item-card' + (idx === selectedChannel ? ' active' : '');
+          card.innerHTML = `
+            <img class="item-thumb" src="${{ch.thumb}}" />
+            <div class="item-gradient"></div>
+            <div class="item-details">
+              <div class="item-badge">CH ${{ch.number}}</div>
+              <div class="item-title">${{ch.name}}</div>
+              <div class="item-sub">${{ch.tagline}}</div>
             </div>
-            <div class="tile-info">
-              <div class="tile-name">${{ch.name}}</div>
-              <div class="tile-tagline">${{ch.tagline}}</div>
+          `;
+          card.onclick = () => tuneChannel(idx);
+          itemsRow.appendChild(card);
+        }});
+      }} else if (currentSection === 'ondemand') {{
+        shelfTitle.innerText = 'ON DEMAND • ' + ONDEMAND.length + ' TITLES';
+        shelfMeta.innerText = 'INSTANT PLAYBACK';
+
+        ONDEMAND.forEach((v, idx) => {{
+          const card = document.createElement('div');
+          card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
+          card.innerHTML = `
+            <img class="item-thumb" src="${{v.thumbnail}}" />
+            <div class="item-gradient"></div>
+            <div class="item-details">
+              <div class="item-badge">${{v.category || 'VIDEO'}}</div>
+              <div class="item-title">${{v.title}}</div>
+              <div class="item-sub">${{v.duration || 'Full Feature'}}</div>
             </div>
-          </div>
-        `;
+          `;
+          card.onclick = () => playOnDemand(idx);
+          itemsRow.appendChild(card);
+        }});
+      }} else if (currentSection === 'music') {{
+        shelfTitle.innerText = 'AHOY MUSIC • ' + MUSIC.length + ' TRACKS';
+        shelfMeta.innerText = 'AUDIO BROADCAST';
 
-        tile.style.backgroundImage = `linear-gradient(180deg, rgba(14, 18, 28, 0.78) 0%, rgba(6, 8, 14, 0.96) 100%), url("${{ch.thumb}}")`;
-        tile.style.backgroundSize = 'cover';
-        tile.style.backgroundPosition = 'center';
+        MUSIC.forEach((m, idx) => {{
+          const card = document.createElement('div');
+          card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
+          const thumb = m.thumbnail || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
+          card.innerHTML = `
+            <img class="item-thumb" src="${{thumb}}" />
+            <div class="item-gradient"></div>
+            <div class="item-details">
+              <div class="item-badge">${{m.artist}}</div>
+              <div class="item-title">${{m.title}}</div>
+              <div class="item-sub">${{m.album || 'Single'}}</div>
+            </div>
+          `;
+          card.onclick = () => playMusicTrack(idx);
+          itemsRow.appendChild(card);
+        }});
+      }} else if (currentSection === 'podcasts') {{
+        shelfTitle.innerText = 'PODCASTS • ' + PODCASTS.length + ' SERIES';
+        shelfMeta.innerText = 'TALK & CULTURE';
 
-        tile.onclick = () => {{
-          currentFocusZone = 'channels';
-          tuneChannel(idx);
-        }};
-
-        channelsRow.appendChild(tile);
-      }});
-
-      channelCounter.innerText = `CH ${{CHANNELS[selectedChannelIndex].number}} of 104`;
+        PODCASTS.forEach((p, idx) => {{
+          const card = document.createElement('div');
+          card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
+          card.innerHTML = `
+            <img class="item-thumb" src="${{p.thumbnail}}" />
+            <div class="item-gradient"></div>
+            <div class="item-details">
+              <div class="item-badge">PODCAST SERIES</div>
+              <div class="item-title">${{p.title}}</div>
+              <div class="item-sub">${{p.episodes.length}} Episodes</div>
+            </div>
+          `;
+          card.onclick = () => openPodcastShow(idx);
+          itemsRow.appendChild(card);
+        }});
+      }}
     }}
 
     function tuneChannel(idx) {{
-      selectedChannelIndex = idx;
-      selectedProgramIndex = 0;
-      renderChannels();
+      selectedChannel = idx;
+      renderShelf();
       const ch = CHANNELS[idx];
-      if (ch.videos.length > 0) {{
-        playItem(ch, 0);
-      }}
-      renderDrawer();
-      updateFocus();
+      if (!ch.videos || ch.videos.length === 0) return;
+
+      // Pluto TV Live UTC Sync
+      const nowSec = Math.floor(Date.now() / 1000);
+      const totalCycle = ch.videos.length * 900;
+      const cycleSec = nowSec % totalCycle;
+      const vidIdx = Math.floor(cycleSec / 900) % ch.videos.length;
+      const seekSec = cycleSec % 900;
+
+      const vid = ch.videos[vidIdx];
+      playVideoItem(vid, seekSec, `CH ${{ch.number}} • ${{ch.name}}`, 'LIVE BROADCAST');
     }}
 
-    function playItem(ch, idx) {{
-      playingChannel = ch;
-      playingIndex = idx;
-      const item = ch.videos[idx];
-      if (!item) return;
+    function playOnDemand(idx) {{
+      selectedIndex = idx;
+      renderShelf();
+      const v = ONDEMAND[idx];
+      playVideoItem(v, 0, v.category || 'ON DEMAND', 'ON DEMAND');
+    }}
 
-      const thumb = item.thumbnail || ch.thumb;
-      billboardBackdrop.style.backgroundImage = `url("${{thumb}}")`;
+    function playVideoItem(item, startSec, tag, status) {{
+      playingItem = item;
+      musicStage.classList.remove('active');
+      audioEl.pause();
 
-      headerChannel.innerText = `CH ${{ch.number}} • ${{ch.name}}`;
-      headerNowplaying.innerText = `${{item.title}} (${{item.host || 'Ahoy'}})`;
+      videoEl.style.display = 'block';
+      heroBackdrop.style.backgroundImage = `url("${{item.thumbnail}}")`;
 
-      heroTag.innerText = ch.number === '103' ? 'AHOY RADIO 24/7' : 'AHOY LIVE BROADCAST';
+      heroTag.innerText = tag;
+      heroSpecs.innerText = item.duration ? `${{item.duration}} • STEREO` : 'HD • STEREO';
       heroTitle.innerText = item.title;
-      heroDesc.innerText = item.description || `${{item.title}} performing live on Ahoy Indie Media. Continuous broadcast on ${{ch.name}}.`;
-      heroStatusPill.innerText = `ON AIR • ${{item.host || 'Ahoy'}}`;
+      heroHost.innerText = item.host || 'Ahoy';
+      heroDesc.innerText = item.description || 'Continuous independent video stream from the Ahoy library.';
 
-      updateSaveBadge();
+      videoEl.src = item.url;
+      videoEl.currentTime = startSec || 0;
+      videoEl.muted = isMuted;
+      videoEl.play().then(() => {{
+        isPlaying = true;
+        btnPlay.innerText = 'PAUSE';
+      }}).catch(() => {{
+        isPlaying = false;
+        btnPlay.innerText = 'PLAY';
+      }});
 
-      if (item.category === 'radio' || (item.url && item.url.endsWith('.mp3'))) {{
-        // RADIO MODE
-        mediaEl.pause();
-        mediaEl.style.opacity = '0';
-        radioStage.style.display = 'flex';
-        vinylArt.src = thumb;
-
-        audioEl.src = item.url;
-        audioEl.muted = isMuted;
-        audioEl.play().then(() => {{
-          isPlaying = true;
-          updatePlayBtn();
-        }}).catch(() => {{
-          isPlaying = false;
-          updatePlayBtn();
-        }});
-      }} else {{
-        // VIDEO MODE
-        audioEl.pause();
-        radioStage.style.display = 'none';
-        mediaEl.style.opacity = '1';
-        mediaEl.poster = thumb;
-        mediaEl.src = item.url;
-        mediaEl.muted = isMuted;
-        mediaEl.play().then(() => {{
-          isPlaying = true;
-          updatePlayBtn();
-        }}).catch(() => {{
-          isPlaying = false;
-          updatePlayBtn();
-          unmuteBanner.style.display = 'flex';
-        }});
-      }}
-
-      renderDrawer();
+      updateSaveStatus();
+      wakeDock();
     }}
 
-    function enableAudio() {{
-      isMuted = false;
-      mediaEl.muted = false;
-      audioEl.muted = false;
-      mediaEl.play().catch(() => {{}});
-      audioEl.play().catch(() => {{}});
-      unmuteBanner.style.display = 'none';
-      isPlaying = true;
-      updatePlayBtn();
+    function playMusicTrack(idx) {{
+      selectedIndex = idx;
+      renderShelf();
+      const m = MUSIC[idx];
+      playingItem = m;
+
+      videoEl.pause();
+      videoEl.style.display = 'none';
+      musicStage.classList.add('active');
+
+      const thumb = m.thumbnail || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
+      vinylArt.src = thumb;
+      heroBackdrop.style.backgroundImage = `url("${{thumb}}")`;
+
+      heroTag.innerText = 'AHOY MUSIC';
+      heroSpecs.innerText = 'STEREO HIGH-FIDELITY';
+      heroTitle.innerText = m.title;
+      heroHost.innerText = m.artist;
+      heroDesc.innerText = `Album: ${{m.album || 'Single'}} • Indie airplay from New Haven, CT.`;
+
+      audioEl.src = m.stream_url;
+      audioEl.muted = isMuted;
+      audioEl.play().then(() => {{
+        isPlaying = true;
+        btnPlay.innerText = 'PAUSE';
+      }}).catch(() => {{
+        isPlaying = false;
+        btnPlay.innerText = 'PLAY';
+      }});
+
+      updateSaveStatus();
+      wakeDock();
     }}
 
-    function togglePlay() {{
-      const isRadio = playingChannel && playingChannel.number === '103';
-      const player = isRadio ? audioEl : mediaEl;
+    function openPodcastShow(idx) {{
+      const p = PODCASTS[idx];
+      shelfTitle.innerText = p.title + ' • EPISODES';
+      shelfMeta.innerText = p.episodes.length + ' EPISODES';
+      itemsRow.innerHTML = '';
 
-      if (isMuted) {{
-        enableAudio();
-        return;
-      }}
+      p.episodes.forEach((ep, epIdx) => {{
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <img class="item-thumb" src="${{ep.thumbnail || p.thumbnail}}" />
+          <div class="item-gradient"></div>
+          <div class="item-details">
+            <div class="item-badge">EPISODE</div>
+            <div class="item-title">${{ep.title}}</div>
+            <div class="item-sub">${{ep.date || 'Ahoy Podcast'}}</div>
+          </div>
+        `;
+        card.onclick = () => {{
+          playingItem = ep;
+          videoEl.pause();
+          videoEl.style.display = 'none';
+          musicStage.classList.add('active');
+          vinylArt.src = ep.thumbnail || p.thumbnail;
+          heroBackdrop.style.backgroundImage = `url("${{ep.thumbnail || p.thumbnail}}")`;
 
+          heroTag.innerText = p.title;
+          heroSpecs.innerText = ep.duration || 'PODCAST AUDIO';
+          heroTitle.innerText = ep.title;
+          heroHost.innerText = p.title;
+          heroDesc.innerText = ep.description || p.description;
+
+          audioEl.src = ep.audio_url;
+          audioEl.muted = isMuted;
+          audioEl.play().then(() => {{
+            isPlaying = true;
+            btnPlay.innerText = 'PAUSE';
+          }}).catch(() => {{
+            isPlaying = false;
+            btnPlay.innerText = 'PLAY';
+          }});
+
+          updateSaveStatus();
+          wakeDock();
+        }};
+        itemsRow.appendChild(card);
+      }});
+    }}
+
+    function togglePlayback() {{
+      const player = (videoEl.style.display === 'none') ? audioEl : videoEl;
       if (player.paused) {{
         player.play().catch(() => {{}});
         isPlaying = true;
+        btnPlay.innerText = 'PAUSE';
       }} else {{
         player.pause();
         isPlaying = false;
-      }}
-      updatePlayBtn();
-    }}
-
-    function updatePlayBtn() {{
-      if (isPlaying) {{
-        playIcon.innerText = '❚❚';
-        playText.innerText = 'Pause';
-      }} else {{
-        playIcon.innerText = '▶';
-        playText.innerText = 'Play Live';
+        btnPlay.innerText = 'PLAY';
       }}
     }}
-
-    function playNext() {{
-      if (!playingChannel) return;
-      const nextIdx = (playingIndex + 1) % playingChannel.videos.length;
-      playItem(playingChannel, nextIdx);
-    }}
-
-    mediaEl.onended = playNext;
-    audioEl.onended = playNext;
 
     function toggleFullscreen() {{
       if (!document.fullscreenElement) {{
@@ -1089,175 +1009,115 @@ html_content = f"""<!DOCTYPE html>
       }}
     }}
 
-    function toggleSaveCurrent() {{
-      if (!playingChannel) return;
-      const item = playingChannel.videos[playingIndex];
-      if (!item) return;
-
-      if (savedIds.has(item.id)) {{
-        savedIds.delete(item.id);
-      }} else {{
-        savedIds.add(item.id);
-      }}
-      localStorage.setItem('Ahoy_Saved_Ids', JSON.stringify(Array.from(savedIds)));
-      updateSaveBadge();
-    }}
-
-    function updateSaveBadge() {{
-      if (!playingChannel) return;
-      const item = playingChannel.videos[playingIndex];
-      const isSaved = item && savedIds.has(item.id);
-      if (isSaved) {{
-        saveIndicator.innerText = '★ SAVED IN LIBRARY';
-        saveIndicator.classList.add('active');
-      }} else {{
-        saveIndicator.innerText = '[X] SAVE TO LIBRARY';
-        saveIndicator.classList.remove('active');
-      }}
-    }}
-
-    function toggleScheduleDrawer() {{
+    function toggleSchedule() {{
       scheduleOpen = !scheduleOpen;
       if (scheduleOpen) {{
         scheduleDrawer.classList.add('open');
-        currentFocusZone = 'drawer';
-        renderDrawer();
+        const ch = CHANNELS[selectedChannel];
+        document.getElementById('drawer-title').innerText = `CH ${{ch.number}} • ${{ch.name}} SCHEDULE`;
+        drawerList.innerHTML = '';
+        ch.videos.forEach((v, i) => {{
+          const item = document.createElement('div');
+          item.className = 'drawer-item';
+          item.innerHTML = `
+            <div>
+              <div style="font-weight:700;font-size:14px;">${{v.title}}</div>
+              <div style="font-size:12px;color:#8E8E93;">${{v.host || 'Ahoy'}}</div>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--ahoy-accent);">${{v.duration || '15:00'}}</div>
+          `;
+          item.onclick = () => {{
+            playVideoItem(v, 0, `CH ${{ch.number}} • ${{ch.name}}`, 'SCHEDULE SELECTION');
+            toggleSchedule();
+          }};
+          drawerList.appendChild(item);
+        }});
       }} else {{
         scheduleDrawer.classList.remove('open');
-        currentFocusZone = 'channels';
       }}
-      updateFocus();
     }}
 
-    function renderDrawer() {{
-      if (!playingChannel) return;
-      drawerTitle.innerText = `${{playingChannel.name}} • SCHEDULE (${{playingChannel.videos.length}} ROTATIONS)`;
-      drawerList.innerHTML = '';
-      playingChannel.videos.forEach((vid, idx) => {{
-        const item = document.createElement('div');
-        const isCurrent = idx === playingIndex;
-        item.className = 'sched-item' + (isCurrent ? ' playing' : '');
-        item.innerHTML = `
-          <div>
-            <div style="font-weight: 700; font-size: 14px; color: #FFF;">${{vid.title}}</div>
-            <div style="font-size: 12px; color: rgba(255,255,255,0.6);">${{vid.host || 'Ahoy'}}</div>
-          </div>
-          <span style="font-size: 11px; font-weight: 900; color: ${{isCurrent ? 'var(--ahoy-accent)' : 'rgba(255,255,255,0.5)'}};">
-            ${{isCurrent ? 'PLAYING NOW' : 'ON AIR'}}
-          </span>
-        `;
-        item.onclick = () => {{
-          playItem(playingChannel, idx);
-          toggleScheduleDrawer();
-        }};
-        drawerList.appendChild(item);
-      }});
+    function toggleSave() {{
+      if (!playingItem) return;
+      const id = playingItem.id || playingItem.title;
+      if (savedIds.has(id)) {{
+        savedIds.delete(id);
+      }} else {{
+        savedIds.add(id);
+      }}
+      localStorage.setItem('Ahoy_Saved_Ids', JSON.stringify(Array.from(savedIds)));
+      updateSaveStatus();
     }}
 
-    function updateFocus() {{
-      // Update channel tiles focus
-      const tiles = channelsRow.querySelectorAll('.channel-tile');
-      tiles.forEach((t, idx) => {{
-        if (currentFocusZone === 'channels' && idx === selectedChannelIndex) {{
-          t.classList.add('focused');
-        }} else {{
-          t.classList.remove('focused');
-        }}
-      }});
-
-      // Update hero buttons focus
-      heroButtons.forEach((btn, idx) => {{
-        if (currentFocusZone === 'hero' && idx === heroActionIndex) {{
-          btn.classList.add('focused');
-        }} else {{
-          btn.classList.remove('focused');
-        }}
-      }});
+    function updateSaveStatus() {{
+      if (!playingItem) return;
+      const id = playingItem.id || playingItem.title;
+      if (savedIds.has(id)) {{
+        btnSave.innerText = '[X] SAVED';
+        btnSave.classList.add('saved');
+      }} else {{
+        btnSave.innerText = '[X] SAVE';
+        btnSave.classList.remove('saved');
+      }}
     }}
 
-    // KEYBOARD & GAMEPAD CONTROLLER NAVIGATION
+    // KEYBOARD & GAMEPAD CONTROLS
     window.addEventListener('keydown', (e) => {{
-      if (scheduleOpen) {{
-        if (e.key === 'Escape' || e.key === 'b' || e.key === 'B') {{
-          toggleScheduleDrawer();
-          return;
-        }}
-      }}
-
-      switch(e.key) {{
+      wakeDock();
+      switch (e.key) {{
+        case '1': setSection('channels'); break;
+        case '2': setSection('ondemand'); break;
+        case '3': setSection('music'); break;
+        case '4': setSection('podcasts'); break;
+        case 'Tab':
+          e.preventDefault();
+          const sections = ['channels', 'ondemand', 'music', 'podcasts'];
+          const nextSec = sections[(sections.indexOf(currentSection) + 1) % sections.length];
+          setSection(nextSec);
+          break;
         case 'ArrowLeft':
-          if (currentFocusZone === 'channels') {{
-            selectedChannelIndex = (selectedChannelIndex - 1 + CHANNELS.length) % CHANNELS.length;
-            tuneChannel(selectedChannelIndex);
-          }} else if (currentFocusZone === 'hero') {{
-            heroActionIndex = (heroActionIndex - 1 + heroButtons.length) % heroButtons.length;
-            updateFocus();
+          if (currentSection === 'channels') {{
+            selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
+            tuneChannel(selectedChannel);
           }}
           break;
-
         case 'ArrowRight':
-          if (currentFocusZone === 'channels') {{
-            selectedChannelIndex = (selectedChannelIndex + 1) % CHANNELS.length;
-            tuneChannel(selectedChannelIndex);
-          }} else if (currentFocusZone === 'hero') {{
-            heroActionIndex = (heroActionIndex + 1) % heroButtons.length;
-            updateFocus();
+          if (currentSection === 'channels') {{
+            selectedChannel = (selectedChannel + 1) % CHANNELS.length;
+            tuneChannel(selectedChannel);
           }}
           break;
-
-        case 'ArrowUp':
-          if (currentFocusZone === 'channels') {{
-            currentFocusZone = 'hero';
-            updateFocus();
-          }}
-          break;
-
-        case 'ArrowDown':
-          if (currentFocusZone === 'hero') {{
-            currentFocusZone = 'channels';
-            updateFocus();
-          }}
-          break;
-
         case 'Enter':
+        case ' ':
         case 'a':
         case 'A':
-          if (currentFocusZone === 'hero') {{
-            heroButtons[heroActionIndex].click();
-          }} else if (currentFocusZone === 'channels') {{
-            tuneChannel(selectedChannelIndex);
-          }}
+          togglePlayback();
           break;
-
-        case 'x':
-        case 'X':
-          toggleSaveCurrent();
-          break;
-
-        case 'y':
-        case 'Y':
-          toggleScheduleDrawer();
-          break;
-
-        case 'PageUp':
-        case '[':
-          selectedChannelIndex = (selectedChannelIndex - 1 + CHANNELS.length) % CHANNELS.length;
-          tuneChannel(selectedChannelIndex);
-          break;
-
-        case 'PageDown':
-        case ']':
-          selectedChannelIndex = (selectedChannelIndex + 1) % CHANNELS.length;
-          tuneChannel(selectedChannelIndex);
-          break;
-
         case 'b':
         case 'B':
-          if (scheduleOpen) toggleScheduleDrawer();
+          if (scheduleOpen) toggleSchedule();
           else {{
-            currentFocusZone = 'channels';
-            updateFocus();
+            isDockVisible = !isDockVisible;
+            guideDock.classList.toggle('hidden', !isDockVisible);
           }}
+          break;
+        case 'x':
+        case 'X':
+          toggleSave();
+          break;
+        case 'y':
+        case 'Y':
+          toggleSchedule();
+          break;
+        case 'PageUp':
+        case '[':
+          selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
+          tuneChannel(selectedChannel);
+          break;
+        case 'PageDown':
+        case ']':
+          selectedChannel = (selectedChannel + 1) % CHANNELS.length;
+          tuneChannel(selectedChannel);
           break;
       }}
     }});
@@ -1280,43 +1140,43 @@ html_content = f"""<!DOCTYPE html>
         checkBtn(13, 'ArrowDown');
         checkBtn(14, 'ArrowLeft');
         checkBtn(15, 'ArrowRight');
-        checkBtn(4, 'PageUp');
-        checkBtn(5, 'PageDown');
-        checkBtn(0, 'A');
-        checkBtn(1, 'B');
-        checkBtn(2, 'X');
-        checkBtn(3, 'Y');
+        checkBtn(4, 'PageUp');    // LB
+        checkBtn(5, 'PageDown');  // RB
+        checkBtn(6, 'Tab');       // LT (Cycle Section)
+        checkBtn(7, 'Tab');       // RT (Cycle Section)
+        checkBtn(0, 'A');         // [A]
+        checkBtn(1, 'B');         // [B]
+        checkBtn(2, 'X');         // [X]
+        checkBtn(3, 'Y');         // [Y]
       }}
       requestAnimationFrame(pollGamepad);
     }}
     window.addEventListener('gamepadconnected', () => requestAnimationFrame(pollGamepad));
     requestAnimationFrame(pollGamepad);
 
-    // Initial boot
+    // Initial load: Channel 101
     tuneChannel(0);
   </script>
 </body>
 </html>
 """
 
-# Synchronize across all targets:
-# 1. AhoyXbox/Web/index.html
-target_xbox = root / 'AhoyXbox/Web/index.html'
-target_xbox.parent.mkdir(parents=True, exist_ok=True)
-with open(target_xbox, 'w', encoding='utf-8') as f:
-    f.write(html_content)
-print(f"Updated {target_xbox}")
+# Write to target paths
+for path in [root / 'AhoyXbox/Web/index.html', root / 'dist/store_assets/tv_app_preview.html', Path('/Users/agworkywork/.gemini/antigravity/brain/16a4042b-c7c9-4978-be35-735909a8ed76/ahoy_tv_frontend.html')]:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    print(f'Wrote: {path}')
 
-# 2. dist/store_assets/tv_app_preview.html
-target_dist = root / 'dist/store_assets/tv_app_preview.html'
-target_dist.parent.mkdir(parents=True, exist_ok=True)
-with open(target_dist, 'w', encoding='utf-8') as f:
-    f.write(html_content)
-print(f"Updated {target_dist}")
-
-# 3. Artifact for user browser preview
-target_art = Path('/Users/agworkywork/.gemini/antigravity/brain/16a4042b-c7c9-4978-be35-735909a8ed76/ahoy_tv_frontend.html')
-target_art.parent.mkdir(parents=True, exist_ok=True)
-with open(target_art, 'w', encoding='utf-8') as f:
-    f.write(html_content)
-print(f"Updated {target_art}")
+# Render 1080p preview screenshot
+try:
+    chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    preview_png = root / 'dist/store_assets/v0.3.0_preview.png'
+    target_html = root / 'dist/store_assets/tv_app_preview.html'
+    subprocess.run([chrome, '--headless', '--disable-gpu', '--window-size=1920,1080', f'--screenshot={preview_png}', f'file://{target_html}'], check=True)
+    
+    brain_preview = Path('/Users/agworkywork/.gemini/antigravity/brain/16a4042b-c7c9-4978-be35-735909a8ed76/v0.3.0_preview.png')
+    brain_preview.write_bytes(preview_png.read_bytes())
+    print('Rendered and copied 1080p preview screenshot successfully')
+except Exception as e:
+    print('Screenshot note:', e)
