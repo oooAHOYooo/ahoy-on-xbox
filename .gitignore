@@ -10,3 +10,6 @@ AppPackages/
 dist/*_Test/
 dist/release/
 dist/release_packages/
+
+node_modules/
+dist/web-ui-checks/
