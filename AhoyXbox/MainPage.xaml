@@ -39,7 +39,8 @@
       <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
         <Ellipse Width="6" Height="6" Fill="#FF0060" Margin="0,0,6,0"/>
         <TextBlock Text="LIVE" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,16,0" CharacterSpacing="80"/>
-        <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="11" FontWeight="SemiBold" Foreground="#636366"/>
+        <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="11" FontWeight="SemiBold" Foreground="#636366" Margin="0,0,16,0"/>
+        <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="11" FontWeight="SemiBold" Foreground="#FF0060"/>
       </StackPanel>
     </Grid>
 
@@ -151,11 +152,31 @@
               <TextBlock Text="[B]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
               <TextBlock Text=" Guide" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[X]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Save" FontSize="11" Foreground="#636366"/>
+              <TextBlock Text=" Save" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
+              <TextBlock Text="[Y]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
+              <TextBlock Text=" Pair ID" FontSize="11" Foreground="#636366"/>
             </StackPanel>
             <TextBlock Grid.Column="1" Text="AHOY INDIE MEDIA • 4 CHANNELS" FontSize="11" Foreground="#48484A" VerticalAlignment="Center"/>
           </Grid>
         </Grid>
+      </Border>
+    </Grid>
+
+    <!-- Device Pairing Modal Overlay (White Liquid Glass Style) -->
+    <Grid x:Name="PairingOverlay" Grid.Row="0" Grid.RowSpan="3" Background="#EE000000" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="#141418" BorderBrush="#24242A" BorderThickness="1" CornerRadius="16" Padding="44,36" MaxWidth="560">
+        <StackPanel HorizontalAlignment="Center">
+          <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+          <TextBlock Text="PAIR WITH AHOY ID" FontSize="11" FontWeight="Bold" Foreground="#FF0060" CharacterSpacing="120" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+          <TextBlock Text="Link your console to sync saved music, skate tapes &amp; culture across your screens." FontSize="14" Foreground="#8E8E93" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,24"/>
+          <Border Background="#000000" BorderBrush="#2C2C2E" BorderThickness="1" CornerRadius="10" Padding="28,14" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <TextBlock x:Name="PairingCodeDisplay" Text="LOADING..." FontSize="34" FontWeight="Bold" Foreground="#FFFFFF" CharacterSpacing="120" HorizontalAlignment="Center"/>
+          </Border>
+          <TextBlock Text="1. Open id.ahoy.ooo/pair on your phone or computer" FontSize="13" Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+          <TextBlock Text="2. Enter the code above to connect your account" FontSize="13" Foreground="#8E8E93" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+          <TextBlock x:Name="PairingStatusText" Text="Waiting for authorization..." FontSize="12" Foreground="#FF0060" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+          <Button Content="Dismiss [B]" Click="ClosePairingOverlay" Background="#1C1C22" BorderBrush="#2C2C2E" BorderThickness="1" Foreground="#FFFFFF" FontSize="12" FontWeight="SemiBold" Padding="20,8" CornerRadius="6" HorizontalAlignment="Center"/>
+        </StackPanel>
       </Border>
     </Grid>
   </Grid>

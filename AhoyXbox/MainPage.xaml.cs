@@ -14,6 +14,8 @@ namespace AhoyXbox
     public static class SavedStore
     {
         private const string Key = "Ahoy_Saved_Ids";
+        private const string TokenKey = "Ahoy_Id_Token";
+        private const string HandleKey = "Ahoy_Id_Handle";
         private static readonly HashSet<string> savedIds = new HashSet<string>();
 
         static SavedStore()
@@ -30,6 +32,52 @@ namespace AhoyXbox
             catch { }
         }
 
+        public static string AccessToken
+        {
+            get
+            {
+                try
+                {
+                    var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                    return settings.Values.TryGetValue(TokenKey, out var val) && val is string s ? s : null;
+                }
+                catch { return null; }
+            }
+            set
+            {
+                try
+                {
+                    var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                    settings.Values[TokenKey] = value;
+                }
+                catch { }
+            }
+        }
+
+        public static string AccountHandle
+        {
+            get
+            {
+                try
+                {
+                    var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                    return settings.Values.TryGetValue(HandleKey, out var val) && val is string s ? s : null;
+                }
+                catch { return null; }
+            }
+            set
+            {
+                try
+                {
+                    var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                    settings.Values[HandleKey] = value;
+                }
+                catch { }
+            }
+        }
+
+        public static bool IsPaired => !string.IsNullOrEmpty(AccessToken);
+
         public static bool Contains(string id) => !string.IsNullOrEmpty(id) && savedIds.Contains(id);
 
         public static bool Toggle(string id)
@@ -42,7 +90,62 @@ namespace AhoyXbox
                 settings.Values[Key] = string.Join(",", savedIds);
             }
             catch { }
+
+            // Sync with AHOY ID if paired
+            if (IsPaired)
+            {
+                _ = SyncToggleAsync(id);
+            }
+
             return added;
+        }
+
+        public static async System.Threading.Tasks.Task SyncLibraryAsync()
+        {
+            var token = AccessToken;
+            if (string.IsNullOrEmpty(token)) return;
+            try
+            {
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", token);
+                    var resp = await client.GetAsync(new Uri("https://id.ahoy.ooo/api/v1/me/library"));
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        var text = await resp.Content.ReadAsStringAsync();
+                        var root = JsonObject.Parse(text);
+                        if (root.ContainsKey("items"))
+                        {
+                            var items = root.GetNamedArray("items");
+                            foreach (var item in items)
+                            {
+                                savedIds.Add(item.GetString());
+                            }
+                            var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                            settings.Values[Key] = string.Join(",", savedIds);
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private static async System.Threading.Tasks.Task SyncToggleAsync(string itemId)
+        {
+            var token = AccessToken;
+            if (string.IsNullOrEmpty(token)) return;
+            try
+            {
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", token);
+                    var payload = new JsonObject();
+                    payload.SetNamedValue("itemId", JsonValue.CreateStringValue(itemId));
+                    var content = new Windows.Web.Http.HttpStringContent(payload.Stringify(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
+                    await client.PostAsync(new Uri("https://id.ahoy.ooo/api/v1/me/library/toggle"), content);
+                }
+            }
+            catch { }
         }
     }
 
@@ -74,6 +177,8 @@ namespace AhoyXbox
     {
         private readonly MediaPlayer media = new MediaPlayer();
         private readonly DispatcherTimer guideTimer = new DispatcherTimer();
+        private readonly DispatcherTimer pairingPollTimer = new DispatcherTimer();
+        private string currentDeviceCode = null;
         private Channel playingChannel;
         private int playingIndex;
 
@@ -86,6 +191,10 @@ namespace AhoyXbox
             Loaded += LoadCatalog;
             Unloaded += Cleanup;
             SystemNavigationManager.GetForCurrentView().BackRequested += Back;
+
+            UpdateAccountIndicator();
+            pairingPollTimer.Interval = TimeSpan.FromSeconds(5);
+            pairingPollTimer.Tick += PollPairingStatus;
 
             guideTimer.Interval = TimeSpan.FromSeconds(6);
             guideTimer.Tick += (s, e) => {
@@ -104,12 +213,18 @@ namespace AhoyXbox
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadY || e.Key == Windows.System.VirtualKey.Y)
                 {
-                    Player.IsFullWindow = !Player.IsFullWindow;
-                    if (!Player.IsFullWindow) WakeGuide();
+                    WakeGuide();
+                    OpenPairingOverlay();
+                    e.Handled = true;
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadB || e.Key == Windows.System.VirtualKey.B)
                 {
-                    if (Player.IsFullWindow)
+                    if (PairingOverlay != null && PairingOverlay.Visibility == Visibility.Visible)
+                    {
+                        ClosePairingOverlay();
+                        e.Handled = true;
+                    }
+                    else if (Player.IsFullWindow)
                     {
                         Player.IsFullWindow = false;
                         WakeGuide();
@@ -270,6 +385,7 @@ namespace AhoyXbox
                 Channels.ItemsSource = channels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
+                _ = SavedStore.SyncLibraryAsync();
 
                 // Auto-Play Channel 101 immediately (Pluto TV live clock sync)
                 playingChannel = channels[0];
@@ -427,6 +543,135 @@ namespace AhoyXbox
                     PlayCurrent(0);
                 }
             });
+        }
+
+        private void OpenPairingOverlay()
+        {
+            if (PairingOverlay == null) return;
+            PairingOverlay.Visibility = Visibility.Visible;
+            StartPairingFlow();
+        }
+
+        private void ClosePairingOverlay(object sender = null, RoutedEventArgs e = null)
+        {
+            pairingPollTimer.Stop();
+            if (PairingOverlay != null)
+            {
+                PairingOverlay.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void StartPairingFlow()
+        {
+            PairingCodeDisplay.Text = "REQUESTING...";
+            PairingStatusText.Text = "Contacting id.ahoy.ooo...";
+            try
+            {
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    var req = new JsonObject();
+                    req.SetNamedValue("client_id", JsonValue.CreateStringValue("app.ahoy.xbox"));
+                    var content = new Windows.Web.Http.HttpStringContent(req.Stringify(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
+                    var resp = await client.PostAsync(new Uri("https://id.ahoy.ooo/api/v1/auth/device/code"), content);
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        var text = await resp.Content.ReadAsStringAsync();
+                        var data = JsonObject.Parse(text);
+                        currentDeviceCode = data.GetNamedString("device_code", "");
+                        var userCode = data.GetNamedString("user_code", "");
+                        PairingCodeDisplay.Text = userCode;
+                        PairingStatusText.Text = "Waiting for authorization on phone or browser...";
+
+                        pairingPollTimer.Interval = TimeSpan.FromSeconds(5);
+                        pairingPollTimer.Start();
+                    }
+                    else
+                    {
+                        PairingCodeDisplay.Text = "ERROR";
+                        PairingStatusText.Text = "Could not reach id.ahoy.ooo. Press [B] to close.";
+                    }
+                }
+            }
+            catch
+            {
+                PairingCodeDisplay.Text = "OFFLINE";
+                PairingStatusText.Text = "Check network connection. Press [B] to close.";
+            }
+        }
+
+        private async void PollPairingStatus(object sender, object e)
+        {
+            if (string.IsNullOrEmpty(currentDeviceCode)) return;
+            try
+            {
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    var req = new JsonObject();
+                    req.SetNamedValue("client_id", JsonValue.CreateStringValue("app.ahoy.xbox"));
+                    req.SetNamedValue("device_code", JsonValue.CreateStringValue(currentDeviceCode));
+                    var content = new Windows.Web.Http.HttpStringContent(req.Stringify(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json");
+                    var resp = await client.PostAsync(new Uri("https://id.ahoy.ooo/api/v1/auth/device/token"), content);
+                    var text = await resp.Content.ReadAsStringAsync();
+                    var data = JsonObject.Parse(text);
+
+                    if (resp.IsSuccessStatusCode && data.ContainsKey("access_token"))
+                    {
+                        pairingPollTimer.Stop();
+                        var token = data.GetNamedString("access_token");
+                        SavedStore.AccessToken = token;
+
+                        string handle = null;
+                        if (data.ContainsKey("account"))
+                        {
+                            var acct = data.GetNamedObject("account");
+                            if (acct.ContainsKey("handle") && acct.GetNamedValue("handle").ValueType == JsonValueType.String)
+                                handle = acct.GetNamedString("handle");
+                            else if (acct.ContainsKey("displayName") && acct.GetNamedValue("displayName").ValueType == JsonValueType.String)
+                                handle = acct.GetNamedString("displayName");
+                            else if (acct.ContainsKey("ahoyId"))
+                                handle = acct.GetNamedString("ahoyId");
+                        }
+                        SavedStore.AccountHandle = handle;
+                        UpdateAccountIndicator();
+
+                        PairingStatusText.Text = $"Paired successfully with {handle ?? "AHOY ID"}!";
+                        await SavedStore.SyncLibraryAsync();
+
+                        var closeTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+                        closeTimer.Tick += (s, args) => {
+                            closeTimer.Stop();
+                            ClosePairingOverlay();
+                        };
+                        closeTimer.Start();
+                    }
+                    else if (data.ContainsKey("error"))
+                    {
+                        var err = data.GetNamedString("error");
+                        if (err == "expired_token" || err == "access_denied")
+                        {
+                            pairingPollTimer.Stop();
+                            PairingStatusText.Text = "Code expired or denied. Reopen [Y] to retry.";
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void UpdateAccountIndicator()
+        {
+            if (AccountIndicator == null) return;
+            if (SavedStore.IsPaired)
+            {
+                var h = SavedStore.AccountHandle;
+                AccountIndicator.Text = !string.IsNullOrEmpty(h) ? $"[Y] @{h.Replace("@", "")}" : "[Y] PAIRED";
+                AccountIndicator.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 52, 199, 89));
+            }
+            else
+            {
+                AccountIndicator.Text = "[Y] PAIR ID";
+                AccountIndicator.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 96));
+            }
         }
 
         private void Back(object sender, BackRequestedEventArgs e)
