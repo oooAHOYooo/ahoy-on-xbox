@@ -76,7 +76,7 @@ html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AHOY TV — Unified Broadcast Edition</title>
   <style>
     :root {{
@@ -89,6 +89,9 @@ html_content = f"""<!DOCTYPE html>
       --ahoy-border: rgba(255, 255, 255, 0.1);
       --ahoy-border-active: rgba(255, 0, 96, 0.6);
       --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+      --header-height: 76px;
+      --page-gutter: clamp(18px, 2.3vw, 44px);
+      --dock-height: clamp(210px, 31vh, 286px);
     }}
 
     * {{
@@ -100,8 +103,9 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     html, body {{
-      width: 1920px;
-      height: 1080px;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       background: var(--ahoy-bg);
       color: #FFFFFF;
@@ -109,8 +113,9 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     .app-container {{
-      width: 1920px;
-      height: 1080px;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -120,17 +125,20 @@ html_content = f"""<!DOCTYPE html>
 
     /* TOP BROADCAST BAR */
     .top-bar {{
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 72px;
-      padding: 0 44px;
+      height: var(--header-height);
+      padding: 0 var(--page-gutter);
+      gap: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 20;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+      background: rgba(8, 10, 16, 0.97);
+      border-bottom: 1px solid var(--ahoy-border);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
       pointer-events: auto;
     }}
 
@@ -237,7 +245,7 @@ html_content = f"""<!DOCTYPE html>
     /* MAIN VIDEO HERO STAGE */
     .hero-stage {{
       position: absolute;
-      inset: 0;
+      inset: var(--header-height) 0 0;
       z-index: 1;
       overflow: hidden;
     }}
@@ -266,9 +274,9 @@ html_content = f"""<!DOCTYPE html>
     /* HERO INFO OVERLAY */
     .hero-info {{
       position: absolute;
-      bottom: 270px;
-      left: 48px;
-      max-width: 820px;
+      bottom: calc(var(--dock-height) + 20px);
+      left: var(--page-gutter);
+      max-width: min(58vw, 820px);
       z-index: 10;
       transition: transform 0.4s var(--ease-apple), opacity 0.4s var(--ease-apple);
     }}
@@ -295,12 +303,16 @@ html_content = f"""<!DOCTYPE html>
       letter-spacing: 1px;
     }}
     .hero-title {{
-      font-size: 44px;
+      font-size: clamp(26px, 3.1vw, 44px);
       font-weight: 800;
       letter-spacing: -0.5px;
       line-height: 1.1;
       margin-bottom: 10px;
       text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }}
     .hero-host {{
       font-size: 17px;
@@ -351,8 +363,8 @@ html_content = f"""<!DOCTYPE html>
     /* AUDIO / VINYL VISUALIZER STAGE */
     .music-stage {{
       position: absolute;
-      top: 140px;
-      right: 120px;
+      top: clamp(24px, 7vh, 100px);
+      right: clamp(24px, 6vw, 120px);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -414,9 +426,9 @@ html_content = f"""<!DOCTYPE html>
       bottom: 0;
       left: 0;
       right: 0;
-      height: 250px;
+      height: var(--dock-height);
       background: linear-gradient(180deg, rgba(14, 18, 28, 0) 0%, rgba(8, 10, 16, 0.94) 20%, rgba(5, 7, 11, 0.98) 100%);
-      padding: 14px 44px 18px 44px;
+      padding: 14px var(--page-gutter) 18px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -426,8 +438,9 @@ html_content = f"""<!DOCTYPE html>
       transition: transform 0.35s var(--ease-apple), opacity 0.35s var(--ease-apple);
     }}
     .guide-dock.hidden {{
-      transform: translateY(220px);
-      opacity: 0.05;
+      transform: translateY(100%);
+      opacity: 0;
+      pointer-events: none;
     }}
 
     .shelf-header {{
@@ -453,6 +466,8 @@ html_content = f"""<!DOCTYPE html>
     /* ITEMS CAROUSEL ROW */
     .items-row {{
       display: flex;
+      flex: 1;
+      min-height: 0;
       gap: 16px;
       overflow-x: auto;
       scroll-behavior: smooth;
@@ -463,8 +478,12 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     .item-card {{
-      flex: 0 0 260px;
-      height: 146px;
+      flex: 0 0 clamp(180px, 18vw, 260px);
+      height: 100%;
+      min-height: 100px;
+      color: inherit;
+      font-family: inherit;
+      text-align: left;
       background: var(--ahoy-card);
       border: 1px solid var(--ahoy-border);
       border-radius: 10px;
@@ -477,7 +496,7 @@ html_content = f"""<!DOCTYPE html>
       justify-content: flex-end;
       padding: 14px;
     }}
-    .item-card.active, .item-card:hover, .item-card.focused {{
+    .item-card.active, .item-card:hover, .item-card.focused, .item-card:focus-visible {{
       border-color: var(--ahoy-accent);
       transform: translateY(-4px) scale(1.02);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 16px var(--ahoy-accent-glow);
@@ -561,6 +580,32 @@ html_content = f"""<!DOCTYPE html>
       font-weight: 700;
     }}
 
+    .nav-btn:focus-visible, .action-btn:focus-visible, .btn-save:focus-visible {{
+      outline: 2px solid #FFFFFF;
+      outline-offset: 3px;
+    }}
+    @media (max-width: 900px) {{
+      .controller-brand {{ display: none; }}
+      .hints-group {{ gap: 8px; }}
+    }}
+    @media (max-width: 780px) {{
+      :root {{ --header-height: 116px; }}
+      .top-bar {{ flex-wrap: wrap; align-content: space-between; gap: 10px; padding: 12px var(--page-gutter); }}
+      .section-nav {{ order: 3; width: 100%; }}
+      .nav-btn {{ flex: 1; padding: 8px 4px; font-size: 11px; letter-spacing: 0.5px; white-space: nowrap; }}
+      .top-status {{ gap: 8px; }}
+      .hero-info {{ max-width: calc(100vw - 2 * var(--page-gutter)); }}
+      .music-stage.active {{ display: none; }}
+      .hero-desc {{ -webkit-line-clamp: 1; }}
+      .shelf-title, .shelf-meta {{ font-size: 10px; letter-spacing: 0.5px; }}
+      .controller-bar {{ display: none; }}
+    }}
+    @media (max-height: 620px) {{
+      .hero-desc {{ display: none; }}
+      .vinyl-wrapper {{ width: 150px; height: 150px; }}
+      .hero-info {{ bottom: calc(var(--dock-height) + 12px); }}
+    }}
+
     /* SCHEDULE DRAWER */
     .schedule-drawer {{
       position: absolute;
@@ -623,12 +668,12 @@ html_content = f"""<!DOCTYPE html>
       </div>
 
       <!-- 4 CLEAN SECTIONS -->
-      <div class="section-nav">
-        <button class="nav-btn active" id="nav-channels" onclick="setSection('channels')">LIVE TV</button>
-        <button class="nav-btn" id="nav-ondemand" onclick="setSection('ondemand')">ON DEMAND</button>
-        <button class="nav-btn" id="nav-music" onclick="setSection('music')">MUSIC</button>
-        <button class="nav-btn" id="nav-podcasts" onclick="setSection('podcasts')">PODCASTS</button>
-      </div>
+      <nav class="section-nav" aria-label="Media sections">
+        <button class="nav-btn active" id="nav-channels" aria-pressed="true" onclick="setSection('channels')">LIVE TV</button>
+        <button class="nav-btn" id="nav-ondemand" aria-pressed="false" onclick="setSection('ondemand')">ON DEMAND</button>
+        <button class="nav-btn" id="nav-music" aria-pressed="false" onclick="setSection('music')">MUSIC</button>
+        <button class="nav-btn" id="nav-podcasts" aria-pressed="false" onclick="setSection('podcasts')">PODCASTS</button>
+      </nav>
 
       <div class="top-status">
         <div class="live-badge">
@@ -680,7 +725,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
 
     <!-- LOWER-THIRD COUCH GUIDE DOCK -->
-    <div class="guide-dock" id="guide-dock">
+    <section class="guide-dock" id="guide-dock" aria-labelledby="shelf-title">
       <div class="shelf-header">
         <span class="shelf-title" id="shelf-title">CHANNELS</span>
         <span class="shelf-meta" id="shelf-meta">CH 101 OF 104</span>
@@ -699,7 +744,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <div class="controller-brand">AHOY INDIE MEDIA • v0.3.0</div>
       </div>
-    </div>
+    </section>
 
     <!-- SCHEDULE DRAWER -->
     <div class="schedule-drawer" id="schedule-drawer">
@@ -724,7 +769,6 @@ html_content = f"""<!DOCTYPE html>
     let isPlaying = false;
     let isMuted = true;
     let isDockVisible = true;
-    let dockTimer = null;
     let scheduleOpen = false;
 
     const savedIds = new Set(JSON.parse(localStorage.getItem('Ahoy_Saved_Ids') || '[]'));
@@ -752,21 +796,21 @@ html_content = f"""<!DOCTYPE html>
     function wakeDock() {{
       isDockVisible = true;
       guideDock.classList.remove('hidden');
-      clearTimeout(dockTimer);
-      dockTimer = setTimeout(() => {{
-        if (isPlaying && currentSection === 'channels' && !scheduleOpen) {{
-          isDockVisible = false;
-          guideDock.classList.add('hidden');
-        }}
-      }}, 6000);
+      // Navigation and the catalog remain available until the viewer explicitly hides the guide.
     }}
 
     function setSection(sec) {{
+      if (!['channels', 'ondemand', 'music', 'podcasts'].includes(sec)) return;
       currentSection = sec;
+      if (scheduleOpen) {{ scheduleOpen = false; scheduleDrawer.classList.remove('open'); }}
       selectedIndex = 0;
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => {{
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', String(b.id === 'nav-' + sec));
+      }});
       document.getElementById('nav-' + sec).classList.add('active');
       renderShelf();
+      itemsRow.scrollLeft = 0;
       wakeDock();
     }}
 
@@ -777,10 +821,11 @@ html_content = f"""<!DOCTYPE html>
         shelfMeta.innerText = 'CH ' + CHANNELS[selectedChannel].number + ' OF 104';
 
         CHANNELS.forEach((ch, idx) => {{
-          const card = document.createElement('div');
+          const card = document.createElement('button');
+          card.type = 'button';
           card.className = 'item-card' + (idx === selectedChannel ? ' active' : '');
           card.innerHTML = `
-            <img class="item-thumb" src="${{ch.thumb}}" />
+            <img class="item-thumb" alt="" src="${{ch.thumb}}" />
             <div class="item-gradient"></div>
             <div class="item-details">
               <div class="item-badge">CH ${{ch.number}}</div>
@@ -796,10 +841,11 @@ html_content = f"""<!DOCTYPE html>
         shelfMeta.innerText = 'INSTANT PLAYBACK';
 
         ONDEMAND.forEach((v, idx) => {{
-          const card = document.createElement('div');
+          const card = document.createElement('button');
+          card.type = 'button';
           card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
           card.innerHTML = `
-            <img class="item-thumb" src="${{v.thumbnail}}" />
+            <img class="item-thumb" alt="" src="${{v.thumbnail}}" />
             <div class="item-gradient"></div>
             <div class="item-details">
               <div class="item-badge">${{v.category || 'VIDEO'}}</div>
@@ -815,11 +861,12 @@ html_content = f"""<!DOCTYPE html>
         shelfMeta.innerText = 'AUDIO BROADCAST';
 
         MUSIC.forEach((m, idx) => {{
-          const card = document.createElement('div');
+          const card = document.createElement('button');
+          card.type = 'button';
           card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
           const thumb = m.thumbnail || 'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg';
           card.innerHTML = `
-            <img class="item-thumb" src="${{thumb}}" />
+            <img class="item-thumb" alt="" src="${{thumb}}" />
             <div class="item-gradient"></div>
             <div class="item-details">
               <div class="item-badge">${{m.artist}}</div>
@@ -835,10 +882,11 @@ html_content = f"""<!DOCTYPE html>
         shelfMeta.innerText = 'TALK & CULTURE';
 
         PODCASTS.forEach((p, idx) => {{
-          const card = document.createElement('div');
+          const card = document.createElement('button');
+          card.type = 'button';
           card.className = 'item-card' + (idx === selectedIndex ? ' active' : '');
           card.innerHTML = `
-            <img class="item-thumb" src="${{p.thumbnail}}" />
+            <img class="item-thumb" alt="" src="${{p.thumbnail}}" />
             <div class="item-gradient"></div>
             <div class="item-details">
               <div class="item-badge">PODCAST SERIES</div>
@@ -852,7 +900,8 @@ html_content = f"""<!DOCTYPE html>
       }}
     }}
 
-    function tuneChannel(idx) {{
+    function tuneChannel(idx, userInitiated = true) {{
+      if (userInitiated) isMuted = false;
       selectedChannel = idx;
       renderShelf();
       const ch = CHANNELS[idx];
@@ -870,14 +919,21 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function playOnDemand(idx) {{
+      isMuted = false;
       selectedIndex = idx;
       renderShelf();
       const v = ONDEMAND[idx];
       playVideoItem(v, 0, v.category || 'ON DEMAND', 'ON DEMAND');
     }}
 
+    function setPlaybackStatus(label) {{
+      document.getElementById('status-live').innerText = label;
+      document.querySelector('.live-dot').style.display = label === 'LIVE TV' ? 'block' : 'none';
+    }}
+
     function playVideoItem(item, startSec, tag, status) {{
       playingItem = item;
+      setPlaybackStatus(status === 'LIVE BROADCAST' ? 'LIVE TV' : status === 'ON DEMAND' ? 'ON DEMAND' : 'VIDEO');
       musicStage.classList.remove('active');
       audioEl.pause();
 
@@ -906,10 +962,12 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function playMusicTrack(idx) {{
+      isMuted = false;
       selectedIndex = idx;
       renderShelf();
       const m = MUSIC[idx];
       playingItem = m;
+      setPlaybackStatus('MUSIC');
 
       videoEl.pause();
       videoEl.style.display = 'none';
@@ -946,10 +1004,11 @@ html_content = f"""<!DOCTYPE html>
       itemsRow.innerHTML = '';
 
       p.episodes.forEach((ep, epIdx) => {{
-        const card = document.createElement('div');
+        const card = document.createElement('button');
+          card.type = 'button';
         card.className = 'item-card';
         card.innerHTML = `
-          <img class="item-thumb" src="${{ep.thumbnail || p.thumbnail}}" />
+          <img class="item-thumb" alt="" src="${{ep.thumbnail || p.thumbnail}}" />
           <div class="item-gradient"></div>
           <div class="item-details">
             <div class="item-badge">EPISODE</div>
@@ -958,7 +1017,9 @@ html_content = f"""<!DOCTYPE html>
           </div>
         `;
         card.onclick = () => {{
+          isMuted = false;
           playingItem = ep;
+          setPlaybackStatus('PODCAST');
           videoEl.pause();
           videoEl.style.display = 'none';
           musicStage.classList.add('active');
@@ -990,6 +1051,8 @@ html_content = f"""<!DOCTYPE html>
 
     function togglePlayback() {{
       const player = (videoEl.style.display === 'none') ? audioEl : videoEl;
+      isMuted = false;
+      player.muted = false;
       if (player.paused) {{
         player.play().catch(() => {{}});
         isPlaying = true;
@@ -1064,6 +1127,28 @@ html_content = f"""<!DOCTYPE html>
     // KEYBOARD & GAMEPAD CONTROLS
     window.addEventListener('keydown', (e) => {{
       wakeDock();
+      const focused = document.activeElement;
+      const nativeButton = e.target instanceof HTMLElement && e.target.closest('button');
+      if ((e.key === 'Enter' || e.key === ' ') && nativeButton) return;
+      if (e.key === 'Tab' && e.isTrusted) return;
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && focused?.classList.contains('nav-btn')) {{
+        e.preventDefault();
+        const nav = Array.from(document.querySelectorAll('.nav-btn'));
+        const next = (nav.indexOf(focused) + (e.key === 'ArrowRight' ? 1 : -1) + nav.length) % nav.length;
+        nav[next].click(); nav[next].focus(); return;
+      }}
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && focused?.classList.contains('item-card')) {{
+        e.preventDefault();
+        const cards = Array.from(itemsRow.querySelectorAll('.item-card'));
+        const next = Math.max(0, Math.min(cards.length - 1, cards.indexOf(focused) + (e.key === 'ArrowRight' ? 1 : -1)));
+        cards[next]?.focus(); return;
+      }}
+      if (e.key === 'ArrowDown' && !scheduleOpen) {{
+        e.preventDefault(); itemsRow.querySelector('.item-card')?.focus(); return;
+      }}
+      if (e.key === 'ArrowUp' && !scheduleOpen) {{
+        e.preventDefault(); document.getElementById('nav-' + currentSection).focus(); return;
+      }}
       switch (e.key) {{
         case '1': setSection('channels'); break;
         case '2': setSection('ondemand'); break;
@@ -1091,7 +1176,9 @@ html_content = f"""<!DOCTYPE html>
         case ' ':
         case 'a':
         case 'A':
-          togglePlayback();
+          e.preventDefault();
+          if (focused?.matches('button')) focused.click();
+          else togglePlayback();
           break;
         case 'b':
         case 'B':
@@ -1155,7 +1242,7 @@ html_content = f"""<!DOCTYPE html>
     requestAnimationFrame(pollGamepad);
 
     // Initial load: Channel 101
-    tuneChannel(0);
+    tuneChannel(0, false);
   </script>
 </body>
 </html>
