@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no" />
-  <title>AHOY TV — Unified Broadcast Edition</title>
+  <title>AHOY TV — Xbox Preview Emulator</title>
   <style>
     :root {
       --ahoy-accent: #FF0060;
@@ -26,8 +26,8 @@
     }
 
     html, body {
-      width: 1920px;
-      height: 1080px;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
       background: var(--ahoy-bg);
       color: #FFFFFF;
@@ -35,8 +35,8 @@
     }
 
     .app-container {
-      width: 1920px;
-      height: 1080px;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -537,6 +537,136 @@
       border-color: var(--ahoy-accent);
       background: rgba(255, 0, 96, 0.15);
     }
+
+    /* FLOATING XBOX CONTROLLER HUD */
+    .xbox-hud {
+      position: fixed;
+      top: 84px;
+      right: 28px;
+      width: 290px;
+      background: rgba(18, 22, 32, 0.94);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      z-index: 100;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+    }
+    .hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hud-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #8E8E93;
+    }
+    .hud-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hud-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hud-btn:hover, .hud-btn:active {
+      background: var(--ahoy-accent);
+      border-color: var(--ahoy-accent);
+      transform: scale(0.96);
+    }
+    .hud-btn.trigger {
+      flex: 1;
+      font-size: 10px;
+      background: rgba(255, 0, 96, 0.15);
+      border-color: rgba(255, 0, 96, 0.3);
+      color: #FF0060;
+    }
+    .hud-btn.shoulder {
+      flex: 1;
+      font-size: 10px;
+    }
+    .main-controls {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-around;
+    }
+    .dpad-grid, .abxy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 32px);
+      grid-template-rows: repeat(3, 32px);
+      gap: 4px;
+    }
+    .hud-btn.dpad {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+    }
+    .hud-btn.abxy {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 12px;
+    }
+    .hud-btn.btn-a { background: #107C10; border-color: #107C10; }
+    .hud-btn.btn-b { background: #E81123; border-color: #E81123; }
+    .hud-btn.btn-x { background: #0078D7; border-color: #0078D7; }
+    .hud-btn.btn-y { background: #FFB900; border-color: #FFB900; color: #000; }
+    .hud-hints {
+      font-size: 10px;
+      color: #636366;
+      line-height: 1.4;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* TOAST FEEDBACK */
+    .hud-toast {
+      position: fixed;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(18, 22, 32, 0.96);
+      border: 1px solid var(--ahoy-accent);
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 10px 24px;
+      border-radius: 999px;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s var(--ease-apple);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--ahoy-accent-glow);
+    }
+    .hud-toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -561,7 +691,7 @@
           <div class="live-dot"></div>
           <span class="live-text" id="status-live">LIVE</span>
         </div>
-        <button class="btn-save" id="btn-save" onclick="toggleSave()">[X] SAVE</button>
+        <button class="btn-save" id="btn-save" onclick="handleBtn('X')">[X] SAVE</button>
       </div>
     </div>
 
@@ -598,9 +728,9 @@
         <p class="hero-desc" id="hero-desc">Synchronized independent broadcast streamed continuously from the Ahoy library.</p>
 
         <div class="hero-actions">
-          <button class="action-btn primary" id="btn-play" onclick="togglePlayback()">PLAY</button>
+          <button class="action-btn primary" id="btn-play" onclick="handleBtn('A')">PLAY</button>
           <button class="action-btn" id="btn-fullscreen" onclick="toggleFullscreen()">FULLSCREEN [A]</button>
-          <button class="action-btn" id="btn-schedule" onclick="toggleSchedule()">SCHEDULE [Y]</button>
+          <button class="action-btn" id="btn-schedule" onclick="handleBtn('Y')">SCHEDULE [Y]</button>
         </div>
       </div>
     </div>
@@ -623,7 +753,7 @@
           <div><span class="key-tag">X</span> SAVE</div>
           <div><span class="key-tag">Y</span> SCHEDULE</div>
         </div>
-        <div class="controller-brand">AHOY INDIE MEDIA • v0.3.0</div>
+        <div class="controller-brand">AHOY INDIE MEDIA • v0.3.1</div>
       </div>
     </div>
 
@@ -631,10 +761,56 @@
     <div class="schedule-drawer" id="schedule-drawer">
       <div class="drawer-header">
         <span class="drawer-title" id="drawer-title">Channel Schedule</span>
-        <button class="action-btn" onclick="toggleSchedule()">CLOSE [B]</button>
+        <button class="action-btn" onclick="handleBtn('B')">CLOSE [B]</button>
       </div>
       <div class="drawer-list" id="drawer-list"></div>
     </div>
+
+    <!-- FLOATING XBOX CONTROLLER HUD -->
+    <div class="xbox-hud" id="xbox-hud">
+      <div class="hud-header">
+        <span class="hud-title">XBOX CONTROLLER EMULATOR</span>
+      </div>
+      <div class="hud-body">
+        <div class="hud-row">
+          <button class="hud-btn trigger" onclick="handleBtn('LT')">LT</button>
+          <button class="hud-btn shoulder" onclick="handleBtn('LB')">LB</button>
+          <div style="flex:1;"></div>
+          <button class="hud-btn shoulder" onclick="handleBtn('RB')">RB</button>
+          <button class="hud-btn trigger" onclick="handleBtn('RT')">RT</button>
+        </div>
+        <div class="hud-row main-controls">
+          <div class="dpad-grid">
+            <div></div>
+            <button class="hud-btn dpad" onclick="handleBtn('Up')">▲</button>
+            <div></div>
+            <button class="hud-btn dpad" onclick="handleBtn('Left')">◀</button>
+            <div></div>
+            <button class="hud-btn dpad" onclick="handleBtn('Right')">▶</button>
+            <div></div>
+            <button class="hud-btn dpad" onclick="handleBtn('Down')">▼</button>
+            <div></div>
+          </div>
+          <div class="abxy-grid">
+            <div></div>
+            <button class="hud-btn abxy btn-y" onclick="handleBtn('Y')">Y</button>
+            <div></div>
+            <button class="hud-btn abxy btn-x" onclick="handleBtn('X')">X</button>
+            <div></div>
+            <button class="hud-btn abxy btn-b" onclick="handleBtn('B')">B</button>
+            <div></div>
+            <button class="hud-btn abxy btn-a" onclick="handleBtn('A')">A</button>
+            <div></div>
+          </div>
+        </div>
+        <div class="hud-hints">
+          Click buttons to test Xbox behavior, or use Keyboard (1-4, Arrows, Enter, B, X, Y).
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST FEEDBACK -->
+    <div class="hud-toast" id="hud-toast"></div>
   </div>
 
   <script>
@@ -650,7 +826,6 @@
     let isPlaying = false;
     let isMuted = true;
     let isDockVisible = true;
-    let dockTimer = null;
     let scheduleOpen = false;
 
     const savedIds = new Set(JSON.parse(localStorage.getItem('Ahoy_Saved_Ids') || '[]'));
@@ -675,25 +850,31 @@
     const itemsRow = document.getElementById('items-row');
     const drawerList = document.getElementById('drawer-list');
 
-    function wakeDock() {
-      isDockVisible = true;
-      guideDock.classList.remove('hidden');
-      clearTimeout(dockTimer);
-      dockTimer = setTimeout(() => {
-        if (isPlaying && currentSection === 'channels' && !scheduleOpen) {
-          isDockVisible = false;
-          guideDock.classList.add('hidden');
-        }
-      }, 6000);
+    function showToast(msg) {
+      const t = document.getElementById('hud-toast');
+      t.innerText = msg;
+      t.classList.add('visible');
+      clearTimeout(t.timer);
+      t.timer = setTimeout(() => t.classList.remove('visible'), 2800);
     }
 
     function setSection(sec) {
       currentSection = sec;
       selectedIndex = 0;
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('nav-' + sec).classList.add('active');
+      const activeBtn = document.getElementById('nav-' + sec);
+      if (activeBtn) activeBtn.classList.add('active');
       renderShelf();
-      wakeDock();
+
+      if (sec === 'channels') {
+        tuneChannel(selectedChannel);
+      } else if (sec === 'ondemand') {
+        playOnDemand(0);
+      } else if (sec === 'music') {
+        playMusicTrack(0);
+      } else if (sec === 'podcasts') {
+        openPodcastShow(0);
+      }
     }
 
     function renderShelf() {
@@ -719,7 +900,7 @@
         });
       } else if (currentSection === 'ondemand') {
         shelfTitle.innerText = 'ON DEMAND • ' + ONDEMAND.length + ' TITLES';
-        shelfMeta.innerText = 'INSTANT PLAYBACK';
+        shelfMeta.innerText = 'INSTANT PLAYBACK (START AT 0:00)';
 
         ONDEMAND.forEach((v, idx) => {
           const card = document.createElement('div');
@@ -784,7 +965,6 @@
       const ch = CHANNELS[idx];
       if (!ch.videos || ch.videos.length === 0) return;
 
-      // Pluto TV Live UTC Sync
       const nowSec = Math.floor(Date.now() / 1000);
       const totalCycle = ch.videos.length * 900;
       const cycleSec = nowSec % totalCycle;
@@ -828,7 +1008,6 @@
       });
 
       updateSaveStatus();
-      wakeDock();
     }
 
     function playMusicTrack(idx) {
@@ -862,7 +1041,6 @@
       });
 
       updateSaveStatus();
-      wakeDock();
     }
 
     function openPodcastShow(idx) {
@@ -908,7 +1086,6 @@
           });
 
           updateSaveStatus();
-          wakeDock();
         };
         itemsRow.appendChild(card);
       });
@@ -987,9 +1164,65 @@
       }
     }
 
-    // KEYBOARD & GAMEPAD CONTROLS
+    function handleBtn(btn) {
+      switch (btn) {
+        case 'LT':
+        case 'RT':
+          const secs = ['channels', 'ondemand', 'music', 'podcasts'];
+          const delta = (btn === 'RT') ? 1 : secs.length - 1;
+          const nextSec = secs[(secs.indexOf(currentSection) + delta) % secs.length];
+          setSection(nextSec);
+          showToast(`[${btn}] Section: ${nextSec.toUpperCase()}`);
+          break;
+        case 'LB':
+          selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
+          tuneChannel(selectedChannel);
+          showToast(`[LB] Channel ${CHANNELS[selectedChannel].number} • ${CHANNELS[selectedChannel].name}`);
+          break;
+        case 'RB':
+          selectedChannel = (selectedChannel + 1) % CHANNELS.length;
+          tuneChannel(selectedChannel);
+          showToast(`[RB] Channel ${CHANNELS[selectedChannel].number} • ${CHANNELS[selectedChannel].name}`);
+          break;
+        case 'A':
+          togglePlayback();
+          showToast(`[A] PLAY / PAUSE TOGGLED`);
+          break;
+        case 'B':
+          if (scheduleOpen) {
+            toggleSchedule();
+            showToast(`[B] Schedule drawer closed. (App stays open!)`);
+          } else {
+            isDockVisible = !isDockVisible;
+            guideDock.classList.toggle('hidden', !isDockVisible);
+            showToast(`[B] Guide dock toggled. (App stays open!)`);
+          }
+          break;
+        case 'X':
+          toggleSave();
+          showToast(`[X] Bookmark / Library updated`);
+          break;
+        case 'Y':
+          toggleSchedule();
+          showToast(`[Y] Schedule Drawer toggled`);
+          break;
+        case 'Left':
+          if (currentSection === 'channels') {
+            selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
+            tuneChannel(selectedChannel);
+          }
+          break;
+        case 'Right':
+          if (currentSection === 'channels') {
+            selectedChannel = (selectedChannel + 1) % CHANNELS.length;
+            tuneChannel(selectedChannel);
+          }
+          break;
+      }
+    }
+
+    // KEYBOARD CONTROLS
     window.addEventListener('keydown', (e) => {
-      wakeDock();
       switch (e.key) {
         case '1': setSection('channels'); break;
         case '2': setSection('ondemand'); break;
@@ -997,53 +1230,36 @@
         case '4': setSection('podcasts'); break;
         case 'Tab':
           e.preventDefault();
-          const sections = ['channels', 'ondemand', 'music', 'podcasts'];
-          const nextSec = sections[(sections.indexOf(currentSection) + 1) % sections.length];
-          setSection(nextSec);
+          handleBtn('RT');
           break;
-        case 'ArrowLeft':
-          if (currentSection === 'channels') {
-            selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
-            tuneChannel(selectedChannel);
-          }
-          break;
-        case 'ArrowRight':
-          if (currentSection === 'channels') {
-            selectedChannel = (selectedChannel + 1) % CHANNELS.length;
-            tuneChannel(selectedChannel);
-          }
-          break;
+        case 'ArrowLeft': handleBtn('Left'); break;
+        case 'ArrowRight': handleBtn('Right'); break;
         case 'Enter':
         case ' ':
         case 'a':
         case 'A':
-          togglePlayback();
+          handleBtn('A');
           break;
+        case 'Escape':
         case 'b':
         case 'B':
-          if (scheduleOpen) toggleSchedule();
-          else {
-            isDockVisible = !isDockVisible;
-            guideDock.classList.toggle('hidden', !isDockVisible);
-          }
+          handleBtn('B');
           break;
         case 'x':
         case 'X':
-          toggleSave();
+          handleBtn('X');
           break;
         case 'y':
         case 'Y':
-          toggleSchedule();
+          handleBtn('Y');
           break;
         case 'PageUp':
         case '[':
-          selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
-          tuneChannel(selectedChannel);
+          handleBtn('LB');
           break;
         case 'PageDown':
         case ']':
-          selectedChannel = (selectedChannel + 1) % CHANNELS.length;
-          tuneChannel(selectedChannel);
+          handleBtn('RB');
           break;
       }
     });
@@ -1054,26 +1270,26 @@
       const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
       const gp = gamepads[0];
       if (gp) {
-        const checkBtn = (btnIndex, keyName) => {
+        const checkBtn = (btnIndex, actionName) => {
           const isPressed = gp.buttons[btnIndex] && gp.buttons[btnIndex].pressed;
           if (isPressed && !lastPadButtons[btnIndex]) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: keyName }));
+            handleBtn(actionName);
           }
           lastPadButtons[btnIndex] = isPressed;
         };
 
-        checkBtn(12, 'ArrowUp');
-        checkBtn(13, 'ArrowDown');
-        checkBtn(14, 'ArrowLeft');
-        checkBtn(15, 'ArrowRight');
-        checkBtn(4, 'PageUp');    // LB
-        checkBtn(5, 'PageDown');  // RB
-        checkBtn(6, 'Tab');       // LT (Cycle Section)
-        checkBtn(7, 'Tab');       // RT (Cycle Section)
-        checkBtn(0, 'A');         // [A]
-        checkBtn(1, 'B');         // [B]
-        checkBtn(2, 'X');         // [X]
-        checkBtn(3, 'Y');         // [Y]
+        checkBtn(12, 'Up');
+        checkBtn(13, 'Down');
+        checkBtn(14, 'Left');
+        checkBtn(15, 'Right');
+        checkBtn(4, 'LB');
+        checkBtn(5, 'RB');
+        checkBtn(6, 'LT');
+        checkBtn(7, 'RT');
+        checkBtn(0, 'A');
+        checkBtn(1, 'B');
+        checkBtn(2, 'X');
+        checkBtn(3, 'Y');
       }
       requestAnimationFrame(pollGamepad);
     }

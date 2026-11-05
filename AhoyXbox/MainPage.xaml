@@ -28,11 +28,15 @@
         <TextBlock Text="tv" FontSize="14" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="6,0,0,1"/>
       </StackPanel>
 
-      <!-- Center Active Channel OSD -->
+      <!-- Center Active Channel OSD & Section Tabs -->
       <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock x:Name="HeaderChannel" Text="CH 101 • LIVE SHOWS" FontSize="13" FontWeight="Bold" Foreground="#FF0060" Margin="0,0,12,0" CharacterSpacing="60"/>
-        <TextBlock Text="•" FontSize="13" Foreground="#3A3A3C" Margin="0,0,12,0"/>
-        <TextBlock x:Name="HeaderNowPlaying" Text="Connecting..." FontSize="13" Foreground="#8E8E93" TextTrimming="CharacterEllipsis" MaxWidth="480"/>
+        <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
+        <Button x:Name="TabOnDemand" Content="ON DEMAND" Click="TabOnDemand_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
+        <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
+        <Button x:Name="TabPodcasts" Content="PODCASTS" Click="TabPodcasts_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,16,0"/>
+        <TextBlock x:Name="HeaderChannel" Text="CH 101 • LIVE SHOWS" FontSize="12" FontWeight="Bold" Foreground="#FF0060" Margin="0,0,8,0" VerticalAlignment="Center"/>
+        <TextBlock Text="•" FontSize="12" Foreground="#3A3A3C" Margin="0,0,8,0" VerticalAlignment="Center"/>
+        <TextBlock x:Name="HeaderNowPlaying" Text="Connecting..." FontSize="12" Foreground="#8E8E93" TextTrimming="CharacterEllipsis" MaxWidth="280" VerticalAlignment="Center"/>
       </StackPanel>
 
       <!-- Right Live Pip -->
@@ -143,14 +147,16 @@
               <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-              <TextBlock Text="▲/▼" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Surf" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
+              <TextBlock Text="LT/RT" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
+              <TextBlock Text=" Section" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="LB/RB" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
               <TextBlock Text=" Switch CH" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
+              <TextBlock Text="▲/▼" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
+              <TextBlock Text=" Surf" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[A]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
               <TextBlock Text=" Fullscreen" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[B]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Guide" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
+              <TextBlock Text=" Back / Guide" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[X]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
               <TextBlock Text=" Save" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
               <TextBlock Text="[Y]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>

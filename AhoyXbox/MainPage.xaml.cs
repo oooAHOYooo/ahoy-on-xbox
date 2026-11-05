@@ -8,9 +8,18 @@ using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace AhoyXbox
 {
+    public enum AppSection
+    {
+        Channels,
+        OnDemand,
+        Music,
+        Podcasts
+    }
+
     public static class SavedStore
     {
         private const string Key = "Ahoy_Saved_Ids";
@@ -179,8 +188,21 @@ namespace AhoyXbox
         private readonly DispatcherTimer guideTimer = new DispatcherTimer();
         private readonly DispatcherTimer pairingPollTimer = new DispatcherTimer();
         private string currentDeviceCode = null;
+
+        private AppSection currentSection = AppSection.Channels;
+        private readonly List<Channel> allChannels = new List<Channel>();
+        private readonly List<Video> onDemandVideos = new List<Video>();
+        private readonly List<Video> musicTracks = new List<Video>();
+        private readonly List<Video> podcastEpisodes = new List<Video>();
+
         private Channel playingChannel;
         private int playingIndex;
+        private Video currentPlayingVideo;
+
+        private readonly SolidColorBrush accentBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 96));
+        private readonly SolidColorBrush inactiveBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 28, 28, 34));
+        private readonly SolidColorBrush whiteBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 255, 255));
+        private readonly SolidColorBrush grayBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 142, 142, 147));
 
         public MainPage()
         {
@@ -190,13 +212,16 @@ namespace AhoyXbox
             media.MediaFailed += Failed;
             Loaded += LoadCatalog;
             Unloaded += Cleanup;
+
+            // Handle Xbox OS back navigation (B button / system back)
             SystemNavigationManager.GetForCurrentView().BackRequested += Back;
 
             UpdateAccountIndicator();
             pairingPollTimer.Interval = TimeSpan.FromSeconds(5);
             pairingPollTimer.Tick += PollPairingStatus;
 
-            guideTimer.Interval = TimeSpan.FromSeconds(6);
+            // Big-screen TV guide timer: 60s idle timeout so guide stays comfortably visible
+            guideTimer.Interval = TimeSpan.FromSeconds(60);
             guideTimer.Tick += (s, e) => {
                 guideTimer.Stop();
                 if (GuideDock != null && !Player.IsFullWindow)
@@ -219,35 +244,24 @@ namespace AhoyXbox
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadB || e.Key == Windows.System.VirtualKey.B)
                 {
-                    if (PairingOverlay != null && PairingOverlay.Visibility == Visibility.Visible)
-                    {
-                        ClosePairingOverlay();
-                        e.Handled = true;
-                    }
-                    else if (Player.IsFullWindow)
-                    {
-                        Player.IsFullWindow = false;
-                        WakeGuide();
-                        e.Handled = true;
-                    }
-                    else if (GuideDock != null)
-                    {
-                        if (GuideDock.Visibility == Visibility.Visible)
-                        {
-                            GuideDock.Visibility = Visibility.Collapsed;
-                            guideTimer.Stop();
-                        }
-                        else
-                        {
-                            WakeGuide();
-                        }
-                        e.Handled = true;
-                    }
+                    // NEVER CLOSE APP ON B BUTTON
+                    e.Handled = true;
+                    HandleBackNavigation();
+                }
+                else if (e.Key == Windows.System.VirtualKey.GamepadRightTrigger)
+                {
+                    CycleSection(1);
+                    e.Handled = true;
+                }
+                else if (e.Key == Windows.System.VirtualKey.GamepadLeftTrigger)
+                {
+                    CycleSection(-1);
+                    e.Handled = true;
                 }
                 else if (e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
                 {
                     WakeGuide();
-                    if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
+                    if (currentSection == AppSection.Channels && Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
                     {
                         Channels.SelectedIndex = (Channels.SelectedIndex + 1) % chs.Count;
                         e.Handled = true;
@@ -256,17 +270,82 @@ namespace AhoyXbox
                 else if (e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
                 {
                     WakeGuide();
-                    if (Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
+                    if (currentSection == AppSection.Channels && Channels.ItemsSource is System.Collections.IList chs && chs.Count > 0)
                     {
                         Channels.SelectedIndex = (Channels.SelectedIndex - 1 + chs.Count) % chs.Count;
                         e.Handled = true;
                     }
+                }
+                else if (e.Key == Windows.System.VirtualKey.Number1)
+                {
+                    SetSection(AppSection.Channels);
+                    e.Handled = true;
+                }
+                else if (e.Key == Windows.System.VirtualKey.Number2)
+                {
+                    SetSection(AppSection.OnDemand);
+                    e.Handled = true;
+                }
+                else if (e.Key == Windows.System.VirtualKey.Number3)
+                {
+                    SetSection(AppSection.Music);
+                    e.Handled = true;
+                }
+                else if (e.Key == Windows.System.VirtualKey.Number4)
+                {
+                    SetSection(AppSection.Podcasts);
+                    e.Handled = true;
                 }
                 else
                 {
                     WakeGuide();
                 }
             };
+        }
+
+        private void CycleSection(int direction)
+        {
+            var sections = new[] { AppSection.Channels, AppSection.OnDemand, AppSection.Music, AppSection.Podcasts };
+            int idx = Array.IndexOf(sections, currentSection);
+            int next = (idx + direction + sections.Length) % sections.Length;
+            SetSection(sections[next]);
+        }
+
+        private void HandleBackNavigation()
+        {
+            // 1. Close pairing overlay if open
+            if (PairingOverlay != null && PairingOverlay.Visibility == Visibility.Visible)
+            {
+                ClosePairingOverlay();
+                return;
+            }
+
+            // 2. Exit fullscreen if in fullscreen
+            if (Player.IsFullWindow)
+            {
+                Player.IsFullWindow = false;
+                WakeGuide();
+                return;
+            }
+
+            // 3. Return to Live TV if in another section (On Demand / Music / Podcasts)
+            if (currentSection != AppSection.Channels)
+            {
+                SetSection(AppSection.Channels);
+                return;
+            }
+
+            // 4. Wake guide if collapsed
+            if (GuideDock != null && GuideDock.Visibility != Visibility.Visible)
+            {
+                WakeGuide();
+                return;
+            }
+
+            // 5. Already at root Live TV with guide visible:
+            // NEVER let OS terminate app. Guide user gracefully.
+            Status.Text = "Press the Xbox Guide button on your controller to exit to Dashboard.";
+            WakeGuide();
         }
 
         private void WakeGuide()
@@ -277,6 +356,80 @@ namespace AhoyXbox
             }
             guideTimer.Stop();
             guideTimer.Start();
+        }
+
+        // Section Navigation Button Click Handlers
+        private void TabChannels_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Channels);
+        private void TabOnDemand_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.OnDemand);
+        private void TabMusic_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Music);
+        private void TabPodcasts_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Podcasts);
+
+        public void SetSection(AppSection sec)
+        {
+            currentSection = sec;
+
+            // Highlight active tab pill
+            TabChannels.Background = sec == AppSection.Channels ? accentBrush : inactiveBrush;
+            TabChannels.Foreground = sec == AppSection.Channels ? whiteBrush : grayBrush;
+
+            TabOnDemand.Background = sec == AppSection.OnDemand ? accentBrush : inactiveBrush;
+            TabOnDemand.Foreground = sec == AppSection.OnDemand ? whiteBrush : grayBrush;
+
+            TabMusic.Background = sec == AppSection.Music ? accentBrush : inactiveBrush;
+            TabMusic.Foreground = sec == AppSection.Music ? whiteBrush : grayBrush;
+
+            TabPodcasts.Background = sec == AppSection.Podcasts ? accentBrush : inactiveBrush;
+            TabPodcasts.Foreground = sec == AppSection.Podcasts ? whiteBrush : grayBrush;
+
+            switch (sec)
+            {
+                case AppSection.Channels:
+                    Channels.Visibility = Visibility.Visible;
+                    Channels.ItemsSource = allChannels;
+                    if (playingChannel == null && allChannels.Count > 0)
+                    {
+                        playingChannel = allChannels[0];
+                    }
+                    if (playingChannel != null)
+                    {
+                        Programs.ItemsSource = playingChannel.Videos;
+                        GuideHeader.Text = $"{playingChannel.Name.ToUpperInvariant()} • SCHEDULE";
+                        PlayCurrent();
+                    }
+                    break;
+
+                case AppSection.OnDemand:
+                    Channels.Visibility = Visibility.Collapsed;
+                    GuideHeader.Text = $"ON DEMAND • {onDemandVideos.Count} INDIE FILMS & SHOWS";
+                    Programs.ItemsSource = onDemandVideos;
+                    if (onDemandVideos.Count > 0)
+                    {
+                        PlayVideo(onDemandVideos[0]);
+                    }
+                    break;
+
+                case AppSection.Music:
+                    Channels.Visibility = Visibility.Collapsed;
+                    GuideHeader.Text = $"MUSIC • {musicTracks.Count} AHOY RADIO & INDIE TRACKS";
+                    Programs.ItemsSource = musicTracks;
+                    if (musicTracks.Count > 0)
+                    {
+                        PlayVideo(musicTracks[0]);
+                    }
+                    break;
+
+                case AppSection.Podcasts:
+                    Channels.Visibility = Visibility.Collapsed;
+                    GuideHeader.Text = $"PODCASTS • {podcastEpisodes.Count} ORIGINAL EPISODES";
+                    Programs.ItemsSource = podcastEpisodes;
+                    if (podcastEpisodes.Count > 0)
+                    {
+                        PlayVideo(podcastEpisodes[0]);
+                    }
+                    break;
+            }
+
+            WakeGuide();
         }
 
         private async void LoadCatalog(object sender, RoutedEventArgs e)
@@ -309,6 +462,8 @@ namespace AhoyXbox
             try
             {
                 var root = JsonObject.Parse(json);
+
+                // 1. Parse On Demand Videos
                 var rawVideos = root.GetNamedArray("videos").Select(value => {
                     var row = value.GetObject();
                     var rawThumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "";
@@ -338,57 +493,94 @@ namespace AhoyXbox
                     };
                 }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
 
+                onDemandVideos.Clear();
+                onDemandVideos.AddRange(rawVideos);
+
+                // 2. Parse Channels
                 var liveShowsVids = rawVideos.Where(v => v.Category == "live show" || v.Tags.Contains("wintergreen-sessions") || v.Tags.Contains("live") || v.Title.ToLowerInvariant().Contains("whatnot")).ToList();
                 var musicVids = rawVideos.Where(v => v.Tags.Contains("music-video") || v.Tags.Contains("music") || v.Category == "music").ToList();
                 var filmVids = rawVideos.Where(v => v.Category == "film" || v.Category == "skating" || v.Tags.Contains("skating") || v.Tags.Contains("short-film")).ToList();
                 var miscVids = rawVideos;
 
-                // Load Radio Tracks into Music
-                try
+                allChannels.Clear();
+                allChannels.Add(new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Concerts", Videos = liveShowsVids });
+                allChannels.Add(new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres & Soundscapes", Videos = musicVids });
+                allChannels.Add(new Channel { Number = "103", Name = "Films & Skate", Tagline = "Skate Tapes & Documentaries", Videos = filmVids });
+                allChannels.Add(new Channel { Number = "104", Name = "The Mix 24/7", Tagline = "24/7 Round-Robin Eclectic Stream", Videos = miscVids });
+
+                // 3. Parse Music Tracks
+                musicTracks.Clear();
+                if (root.ContainsKey("music"))
                 {
-                    var musicFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/music.json"));
-                    var musicJson = await FileIO.ReadTextAsync(musicFile);
-                    var musicRoot = JsonObject.Parse(musicJson);
-                    if (musicRoot.ContainsKey("tracks"))
+                    var musicArray = root.GetNamedArray("music");
+                    foreach (var val in musicArray)
                     {
-                        var musicArray = musicRoot.GetNamedArray("tracks");
-                        var radioTracks = musicArray.Select(t => {
-                            var row = t.GetObject();
-                            var cover = row.ContainsKey("cover_art") ? row.GetNamedString("cover_art", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
-                            string trackDuration = row.ContainsKey("duration") ? row.GetNamedString("duration", "") : "";
-                            string trackAlbum = row.ContainsKey("album") ? row.GetNamedString("album", "") : "";
-                            return new Video {
-                                Id = row.GetNamedString("track_id", Guid.NewGuid().ToString()),
-                                Title = row.GetNamedString("title", "Untitled Track"),
-                                Host = row.GetNamedString("artist", "Ahoy Music"),
-                                Description = !string.IsNullOrEmpty(trackAlbum) ? $"Album: {trackAlbum}" : "Ahoy Radio 24/7",
-                                Duration = trackDuration,
-                                Url = row.GetNamedString("audio_url", ""),
-                                Thumbnail = cover,
-                                Category = "music",
-                                Tags = new List<string> { "music", "audio" }
-                            };
-                        }).Where(v => Uri.TryCreate(v.Url, UriKind.Absolute, out var uri) && uri.Scheme == "https").ToList();
-                        musicVids.AddRange(radioTracks);
+                        var row = val.GetObject();
+                        var thumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
+                        string artist = row.ContainsKey("artist") ? row.GetNamedString("artist", "Ahoy Music") : "Ahoy Music";
+                        string album = row.ContainsKey("album") ? row.GetNamedString("album", "") : "";
+                        int durSec = row.ContainsKey("duration_seconds") ? (int)row.GetNamedNumber("duration_seconds", 0) : 0;
+                        string durStr = durSec > 0 ? $"{durSec / 60}:{durSec % 60:D2}" : "";
+
+                        musicTracks.Add(new Video {
+                            Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
+                            Title = row.GetNamedString("title", "Untitled Track"),
+                            Host = artist,
+                            Description = !string.IsNullOrEmpty(album) ? $"Album: {album}" : "Ahoy Music Airplay",
+                            Duration = durStr,
+                            Url = row.GetNamedString("stream_url", ""),
+                            Thumbnail = thumb,
+                            Category = "music",
+                            Tags = new List<string> { "music", "audio" }
+                        });
                     }
                 }
-                catch { }
 
-                var channels = new List<Channel>
+                // 4. Parse Podcasts
+                podcastEpisodes.Clear();
+                if (root.ContainsKey("podcasts"))
                 {
-                    new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Concerts", Videos = liveShowsVids },
-                    new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres & Soundscapes", Videos = musicVids },
-                    new Channel { Number = "103", Name = "Films", Tagline = "Skate Tapes & Documentaries", Videos = filmVids },
-                    new Channel { Number = "104", Name = "Misc", Tagline = "24/7 Mix & Curations", Videos = miscVids }
-                };
+                    var podcastsArray = root.GetNamedArray("podcasts");
+                    foreach (var pVal in podcastsArray)
+                    {
+                        var pRow = pVal.GetObject();
+                        string showTitle = pRow.GetNamedString("title", "Podcast");
+                        string showThumb = pRow.ContainsKey("thumbnail") ? pRow.GetNamedString("thumbnail", "") : "";
 
-                Channels.ItemsSource = channels;
+                        if (pRow.ContainsKey("episodes"))
+                        {
+                            var epArray = pRow.GetNamedArray("episodes");
+                            foreach (var epVal in epArray)
+                            {
+                                var epRow = epVal.GetObject();
+                                string epThumb = epRow.ContainsKey("thumbnail") ? epRow.GetNamedString("thumbnail", "") : showThumb;
+                                if (!string.IsNullOrEmpty(epThumb) && epThumb.StartsWith("/"))
+                                    epThumb = "https://app.ahoy.ooo" + epThumb;
+
+                                podcastEpisodes.Add(new Video {
+                                    Id = epRow.GetNamedString("id", Guid.NewGuid().ToString()),
+                                    Title = epRow.GetNamedString("title", "Episode"),
+                                    Host = showTitle,
+                                    Description = epRow.ContainsKey("description") ? epRow.GetNamedString("description", "") : "",
+                                    Duration = epRow.ContainsKey("duration") ? epRow.GetNamedString("duration", "") : "",
+                                    Url = epRow.GetNamedString("audio_url", ""),
+                                    Thumbnail = epThumb,
+                                    Category = "podcast",
+                                    Tags = new List<string> { "podcast", "audio" }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Initialize Channels view
+                Channels.ItemsSource = allChannels;
                 Channels.SelectedIndex = 0;
                 Channels.Focus(FocusState.Programmatic);
                 _ = SavedStore.SyncLibraryAsync();
 
                 // Auto-Play Channel 101 immediately (Pluto TV live clock sync)
-                playingChannel = channels[0];
+                playingChannel = allChannels[0];
                 var (initIdx, initOffset) = GetLiveSyncPosition(playingChannel);
                 playingIndex = initIdx;
                 Programs.ItemsSource = playingChannel.Videos;
@@ -438,7 +630,7 @@ namespace AhoyXbox
 
         private void ChannelChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Channels.SelectedItem is Channel channel)
+            if (currentSection == AppSection.Channels && Channels.SelectedItem is Channel channel)
             {
                 Programs.ItemsSource = channel.Videos;
                 GuideHeader.Text = $"{channel.Name.ToUpperInvariant()} • SCHEDULE ({channel.Videos.Count} IN ROTATION)";
@@ -462,17 +654,27 @@ namespace AhoyXbox
 
         private void PlayClicked(object sender, ItemClickEventArgs e)
         {
-            if (!(Channels.SelectedItem is Channel channel) || !(e.ClickedItem is Video video)) return;
-            playingChannel = channel;
-            playingIndex = channel.Videos.IndexOf(video);
-            if (playingIndex < 0) playingIndex = 0;
-            PlayCurrent(0);
+            if (e.ClickedItem is Video video)
+            {
+                if (currentSection == AppSection.Channels && Channels.SelectedItem is Channel channel)
+                {
+                    playingChannel = channel;
+                    playingIndex = channel.Videos.IndexOf(video);
+                    if (playingIndex < 0) playingIndex = 0;
+                    PlayCurrent(0);
+                }
+                else
+                {
+                    PlayVideo(video);
+                }
+            }
         }
 
         private void PlayCurrent(double seekSeconds = 0)
         {
             if (playingChannel == null || playingChannel.Videos.Count == 0) return;
             var video = playingChannel.Videos[playingIndex];
+            currentPlayingVideo = video;
             NowPlaying.Text = video.Title;
             HeaderChannel.Text = $"CH {playingChannel.Number} • {playingChannel.Name.ToUpperInvariant()}";
             HeaderNowPlaying.Text = $"{video.Title} ({video.Host})";
@@ -499,10 +701,46 @@ namespace AhoyXbox
             }
         }
 
+        private void PlayVideo(Video video)
+        {
+            if (video == null) return;
+            currentPlayingVideo = video;
+            NowPlaying.Text = video.Title;
+
+            string secLabel = currentSection switch
+            {
+                AppSection.OnDemand => "ON DEMAND",
+                AppSection.Music => "AHOY MUSIC",
+                AppSection.Podcasts => "PODCAST",
+                _ => "AHOY TV"
+            };
+
+            HeaderChannel.Text = secLabel;
+            HeaderNowPlaying.Text = $"{video.Title} • {video.Host}";
+            Status.Text = $"{video.Title} · {video.Host} · Independent Media";
+            UpdateSaveStatus(video.Id);
+
+            try
+            {
+                if (!string.IsNullOrEmpty(video.Thumbnail))
+                {
+                    Player.PosterSource = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(video.Thumbnail));
+                }
+                media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
+                media.Play();
+                WakeGuide();
+            }
+            catch (Exception)
+            {
+                Status.Text = "Stream connecting...";
+            }
+        }
+
         private void ToggleSaveCurrent()
         {
             Video target = null;
             if (Programs.SelectedItem is Video sel) target = sel;
+            else if (currentPlayingVideo != null) target = currentPlayingVideo;
             else if (playingChannel != null && playingChannel.Videos.Count > playingIndex) target = playingChannel.Videos[playingIndex];
 
             if (target != null)
@@ -522,14 +760,40 @@ namespace AhoyXbox
         private void FullscreenClicked(object sender, RoutedEventArgs e)
         {
             Player.IsFullWindow = !Player.IsFullWindow;
+            if (Player.IsFullWindow && GuideDock != null)
+            {
+                GuideDock.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                WakeGuide();
+            }
         }
 
         private async void Ended(MediaPlayer sender, object args)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                if (playingChannel == null || playingChannel.Videos.Count == 0) return;
-                playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
-                PlayCurrent(0);
+                if (currentSection == AppSection.Channels)
+                {
+                    if (playingChannel == null || playingChannel.Videos.Count == 0) return;
+                    playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
+                    PlayCurrent(0);
+                }
+                else if (currentSection == AppSection.OnDemand && onDemandVideos.Count > 0)
+                {
+                    int nextIdx = (onDemandVideos.IndexOf(currentPlayingVideo) + 1) % onDemandVideos.Count;
+                    PlayVideo(onDemandVideos[nextIdx]);
+                }
+                else if (currentSection == AppSection.Music && musicTracks.Count > 0)
+                {
+                    int nextIdx = (musicTracks.IndexOf(currentPlayingVideo) + 1) % musicTracks.Count;
+                    PlayVideo(musicTracks[nextIdx]);
+                }
+                else if (currentSection == AppSection.Podcasts && podcastEpisodes.Count > 0)
+                {
+                    int nextIdx = (podcastEpisodes.IndexOf(currentPlayingVideo) + 1) % podcastEpisodes.Count;
+                    PlayVideo(podcastEpisodes[nextIdx]);
+                }
             });
         }
 
@@ -537,7 +801,7 @@ namespace AhoyXbox
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 Status.Text = "Stream reconnecting...";
-                if (playingChannel != null && playingChannel.Videos.Count > 0)
+                if (currentSection == AppSection.Channels && playingChannel != null && playingChannel.Videos.Count > 0)
                 {
                     playingIndex = (playingIndex + 1) % playingChannel.Videos.Count;
                     PlayCurrent(0);
@@ -670,17 +934,16 @@ namespace AhoyXbox
             else
             {
                 AccountIndicator.Text = "[Y] PAIR ID";
-                AccountIndicator.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 96));
+                AccountIndicator.Foreground = accentBrush;
             }
         }
 
         private void Back(object sender, BackRequestedEventArgs e)
         {
-            if (Player.IsFullWindow)
-            {
-                Player.IsFullWindow = false;
-                e.Handled = true;
-            }
+            // CRITICAL: NEVER ALLOW e.Handled TO BE FALSE ON XBOX
+            // If false, Xbox OS will terminate the application to Dashboard
+            e.Handled = true;
+            HandleBackNavigation();
         }
 
         private void Cleanup(object sender, RoutedEventArgs e)
