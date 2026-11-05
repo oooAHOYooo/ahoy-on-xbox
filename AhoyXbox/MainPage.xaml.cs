@@ -707,13 +707,22 @@ namespace AhoyXbox
             currentPlayingVideo = video;
             NowPlaying.Text = video.Title;
 
-            string secLabel = currentSection switch
+            string secLabel = "AHOY TV";
+            switch (currentSection)
             {
-                AppSection.OnDemand => "ON DEMAND",
-                AppSection.Music => "AHOY MUSIC",
-                AppSection.Podcasts => "PODCAST",
-                _ => "AHOY TV"
-            };
+                case AppSection.OnDemand:
+                    secLabel = "ON DEMAND";
+                    break;
+                case AppSection.Music:
+                    secLabel = "AHOY MUSIC";
+                    break;
+                case AppSection.Podcasts:
+                    secLabel = "PODCAST";
+                    break;
+                default:
+                    secLabel = "AHOY TV";
+                    break;
+            }
 
             HeaderChannel.Text = secLabel;
             HeaderNowPlaying.Text = $"{video.Title} • {video.Host}";
