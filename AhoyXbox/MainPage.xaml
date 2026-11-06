@@ -4,172 +4,126 @@
       Background="#000000"
       XYFocusKeyboardNavigation="Enabled">
 
-  <Grid Margin="36,24,36,20">
-    <Grid.RowDefinitions>
-      <!-- Top OSD Bar -->
-      <RowDefinition Height="Auto"/>
-      <!-- Main Video Canvas -->
-      <RowDefinition Height="*"/>
-      <!-- Lower-Third Subtle TV Guide -->
-      <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+  <Grid Background="#000000">
+    <!-- Full-bleed live stage, matching the Fire TV home composition. -->
+    <MediaPlayerElement x:Name="Player" AreTransportControlsEnabled="True" AutoPlay="True" Stretch="UniformToFill"/>
+    <Rectangle Fill="#66000000" IsHitTestVisible="False">
+      <Rectangle.Opacity>0.4</Rectangle.Opacity>
+    </Rectangle>
+    <Grid IsHitTestVisible="False" VerticalAlignment="Bottom" Height="560">
+      <Grid.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+          <GradientStop Color="#00000000" Offset="0"/>
+          <GradientStop Color="#B3000000" Offset="0.48"/>
+          <GradientStop Color="#F5000000" Offset="1"/>
+        </LinearGradientBrush>
+      </Grid.Background>
+    </Grid>
 
-    <!-- Top OSD: Minimal Network Watermark & Live Pip -->
-    <Grid Grid.Row="0" Margin="0,0,0,12">
+    <!-- Broadcast header -->
+    <Grid VerticalAlignment="Top" Height="76" Margin="42,0" Background="#99000000">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-
-      <!-- Brand Watermark -->
       <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="22" Stretch="Uniform" VerticalAlignment="Center" Opacity="0.85"/>
+        <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="24" Stretch="Uniform" VerticalAlignment="Center"/>
         <TextBlock Text="tv" FontSize="14" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="6,0,0,1"/>
       </StackPanel>
-
-      <!-- Center Active Channel OSD & Section Tabs -->
       <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
-        <Button x:Name="TabOnDemand" Content="ON DEMAND" Click="TabOnDemand_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
-        <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,6,0"/>
-        <Button x:Name="TabPodcasts" Content="PODCASTS" Click="TabPodcasts_Click" Background="#1C1C22" Foreground="#8E8E93" FontWeight="SemiBold" FontSize="11" CornerRadius="4" Padding="10,4" Margin="0,0,16,0"/>
-        <TextBlock x:Name="HeaderChannel" Text="CH 101 • LIVE SHOWS" FontSize="12" FontWeight="Bold" Foreground="#FF0060" Margin="0,0,8,0" VerticalAlignment="Center"/>
-        <TextBlock Text="•" FontSize="12" Foreground="#3A3A3C" Margin="0,0,8,0" VerticalAlignment="Center"/>
-        <TextBlock x:Name="HeaderNowPlaying" Text="Connecting..." FontSize="12" Foreground="#8E8E93" TextTrimming="CharacterEllipsis" MaxWidth="280" VerticalAlignment="Center"/>
+        <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
+        <Button x:Name="TabOnDemand" Content="ON DEMAND" Click="TabOnDemand_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
+        <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
+        <Button x:Name="TabPodcasts" Content="PODCASTS" Click="TabPodcasts_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8"/>
       </StackPanel>
-
-      <!-- Right Live Pip -->
       <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-        <Ellipse Width="6" Height="6" Fill="#FF0060" Margin="0,0,6,0"/>
+        <Ellipse Width="7" Height="7" Fill="#FF0060" Margin="0,0,7,0"/>
         <TextBlock Text="LIVE" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,16,0" CharacterSpacing="80"/>
-        <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="11" FontWeight="SemiBold" Foreground="#636366" Margin="0,0,16,0"/>
+        <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="11" FontWeight="SemiBold" Foreground="#96969D" Margin="0,0,14,0"/>
         <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="11" FontWeight="SemiBold" Foreground="#FF0060"/>
       </StackPanel>
     </Grid>
 
-    <!-- Main Video Stage: Cinematic Canvas -->
-    <Grid Grid.Row="1" Margin="0,0,0,14">
-      <Border Background="#000000" CornerRadius="10" BorderBrush="#1C1C1E" BorderThickness="1">
-        <Grid>
-          <MediaPlayerElement x:Name="Player" AreTransportControlsEnabled="True" AutoPlay="True"/>
+    <!-- Program details sit directly over the live picture. -->
+    <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="48,0,0,260" MaxWidth="800" IsHitTestVisible="True">
+      <TextBlock x:Name="HeaderChannel" Text="CH 101 · LIVE SHOWS" FontSize="12" FontWeight="Bold" Foreground="#FF4D90" CharacterSpacing="120"/>
+      <TextBlock x:Name="NowPlaying" Text="Live Broadcast" FontSize="38" FontWeight="Black" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" MaxLines="2" Margin="0,8,0,0"/>
+      <TextBlock x:Name="HeaderNowPlaying" Text="Connecting..." FontSize="17" FontWeight="Bold" Foreground="#FF0060" TextTrimming="CharacterEllipsis" MaxWidth="720" Margin="0,4,0,0"/>
+      <TextBlock x:Name="Status" Text="Continuous independent stream · Next program queues automatically" FontSize="14" Foreground="#DDFFFFFF" TextWrapping="Wrap" MaxWidth="650" MaxHeight="42" Margin="0,8,0,0"/>
+      <Button Content="Fullscreen  [A]" Click="FullscreenClicked" Background="#FF0060" BorderBrush="#FF0060" Foreground="#FFFFFF" FontSize="12" FontWeight="Bold" Padding="18,9" CornerRadius="6" HorizontalAlignment="Left" Margin="0,14,0,0"/>
+    </StackPanel>
 
-          <!-- Minimal Floating Stream Title Tag -->
-          <Grid VerticalAlignment="Bottom" Background="#B3000000" Padding="18,10">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel VerticalAlignment="Center">
-              <TextBlock x:Name="NowPlaying" Text="Live Broadcast" FontSize="20" FontWeight="SemiBold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
-              <TextBlock x:Name="Status" Text="Continuous independent stream · Next program queues automatically" FontSize="12" Foreground="#8E8E93" Margin="0,2,0,0"/>
-            </StackPanel>
-            <Button Grid.Column="1" Content="Fullscreen [A]" Click="FullscreenClicked" Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1" Foreground="#FFFFFF" FontSize="11" FontWeight="SemiBold" Padding="12,5" CornerRadius="6" VerticalAlignment="Center"/>
-          </Grid>
-        </Grid>
-      </Border>
+    <!-- Fire TV style lower channel shelf; program list remains available in other sections. -->
+    <Border x:Name="GuideDock" VerticalAlignment="Bottom" Height="224" Background="#D9000000" Padding="42,10,42,12">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="24"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="22"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0">
+        <TextBlock Text="CHANNELS · 4 CANONICAL PILLARS" FontSize="10" FontWeight="Bold" Foreground="#8E8E93" CharacterSpacing="100" VerticalAlignment="Center"/>
+        <TextBlock x:Name="GuideHeader" Text="SCHEDULE • ON NOW &amp; UP NEXT" FontSize="10" FontWeight="Bold" Foreground="#FF0060" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+      </Grid>
+      <ListView x:Name="Channels" Grid.Row="1" SelectionChanged="ChannelChanged" IsItemClickEnabled="True" ItemClick="ChannelClicked" SelectionMode="Single"
+                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+        <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <Setter Property="Width" Value="250"/><Setter Property="Height" Value="154"/>
+            <Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+          </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Border Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="18" Padding="14,10">
+              <Grid>
+                <Image Source="{Binding Artwork}" Stretch="UniformToFill" Opacity="0.82"/>
+                <Rectangle IsHitTestVisible="False">
+                  <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                      <GradientStop Color="#00111118" Offset="0.25"/>
+                      <GradientStop Color="#EE0B0D16" Offset="1"/>
+                    </LinearGradientBrush>
+                  </Rectangle.Fill>
+                </Rectangle>
+                <StackPanel VerticalAlignment="Bottom">
+                  <TextBlock FontSize="10" FontWeight="Bold" Foreground="#FF4D90" CharacterSpacing="100"><Run Text="CH "/><Run Text="{Binding Number}"/></TextBlock>
+                  <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
+                  <TextBlock Text="{Binding Tagline}" FontSize="11" Foreground="#B5B5BB" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      <ListView x:Name="Programs" Grid.Row="1" Visibility="Collapsed" MaxHeight="154" IsItemClickEnabled="True" ItemClick="PlayClicked" SelectionMode="Single"
+                Background="Transparent" BorderThickness="0" Padding="0" ScrollViewer.HorizontalScrollMode="Enabled"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+        <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
+        <ListView.ItemContainerStyle><Style TargetType="ListViewItem"><Setter Property="Width" Value="250"/><Setter Property="Height" Value="154"/><Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/></Style></ListView.ItemContainerStyle>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Border Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="18" Padding="14,10">
+              <StackPanel VerticalAlignment="Bottom">
+                <TextBlock Text="{Binding DurationLabel}" FontSize="10" FontWeight="Bold" Foreground="#FF4D90"/>
+                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
+                <TextBlock Text="{Binding Host}" FontSize="11" Foreground="#B5B5BB" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      <TextBlock Grid.Row="2" Text="D-pad Browse     A Select     B Guide     X Save     Y Pair ID" FontSize="10" Foreground="#77777D" VerticalAlignment="Center"/>
     </Grid>
+    </Border>
 
-    <!-- Lower-Third Subtle TV Guide (Exactly 4 Canonical Channels) -->
-    <Grid x:Name="GuideDock" Grid.Row="2">
-      <Border Background="#141418" BorderBrush="#24242A" BorderThickness="1" CornerRadius="12" Padding="14,10">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-
-          <!-- Guide Header Row -->
-          <Grid Grid.Row="0" Margin="6,0,6,6">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="220"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="CHANNELS" FontSize="11" FontWeight="Bold" Foreground="#636366" CharacterSpacing="80"/>
-            <TextBlock x:Name="GuideHeader" Grid.Column="1" Text="SCHEDULE • ON NOW &amp; UP NEXT" FontSize="11" FontWeight="Bold" Foreground="#636366" CharacterSpacing="80"/>
-          </Grid>
-
-          <!-- Split: 4 Channels on Left, Program Schedule on Right -->
-          <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="220"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- 4 Channels List -->
-            <ListView x:Name="Channels" Grid.Column="0" Margin="0,0,14,0" SelectionChanged="ChannelChanged" IsItemClickEnabled="False">
-              <ListView.ItemTemplate>
-                <DataTemplate>
-                  <Border Margin="0,2" Padding="10,8" Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="6">
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="32"/>
-                        <ColumnDefinition Width="*"/>
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Text="{Binding Number}" FontSize="13" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Center"/>
-                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Foreground="#FFFFFF"/>
-                        <TextBlock Text="{Binding Tagline}" FontSize="10" Foreground="#8E8E93"/>
-                      </StackPanel>
-                    </Grid>
-                  </Border>
-                </DataTemplate>
-              </ListView.ItemTemplate>
-            </ListView>
-
-            <!-- Programs Schedule on Active Channel -->
-            <ListView x:Name="Programs" Grid.Column="1" MaxHeight="140" IsItemClickEnabled="True" ItemClick="PlayClicked" SelectionMode="Single">
-              <ListView.ItemTemplate>
-                <DataTemplate>
-                  <Border Margin="0,2" Padding="12,8" Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="6">
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                      </Grid.ColumnDefinitions>
-                      <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Medium" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{Binding Host}" FontSize="11" Foreground="#8E8E93"/>
-                      </StackPanel>
-                      <TextBlock Grid.Column="1" Text="{Binding DurationLabel}" FontSize="10" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    </Grid>
-                  </Border>
-                </DataTemplate>
-              </ListView.ItemTemplate>
-            </ListView>
-          </Grid>
-
-          <!-- Subtle Controller Hints Line -->
-          <Grid Grid.Row="2" Margin="6,8,6,0">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-              <TextBlock Text="LT/RT" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Section" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="LB/RB" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Switch CH" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="▲/▼" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Surf" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="[A]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Fullscreen" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="[B]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Back / Guide" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="[X]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Save" FontSize="11" Foreground="#636366" Margin="0,0,14,0"/>
-              <TextBlock Text="[Y]" FontSize="11" FontWeight="Bold" Foreground="#8E8E93"/>
-              <TextBlock Text=" Pair ID" FontSize="11" Foreground="#636366"/>
-            </StackPanel>
-            <TextBlock Grid.Column="1" Text="AHOY INDIE MEDIA • 4 CHANNELS" FontSize="11" Foreground="#48484A" VerticalAlignment="Center"/>
-          </Grid>
-        </Grid>
-      </Border>
-    </Grid>
-
-    <!-- Device Pairing Modal Overlay (White Liquid Glass Style) -->
-    <Grid x:Name="PairingOverlay" Grid.Row="0" Grid.RowSpan="3" Background="#EE000000" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <!-- Xbox account pairing remains a platform-specific overlay. -->
+    <Grid x:Name="PairingOverlay" Background="#EE000000" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
       <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="#141418" BorderBrush="#24242A" BorderThickness="1" CornerRadius="16" Padding="44,36" MaxWidth="560">
         <StackPanel HorizontalAlignment="Center">
           <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,16"/>

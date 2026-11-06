@@ -9,10 +9,10 @@
       --ahoy-accent: #FF0060;
       --ahoy-accent-glow: rgba(255, 0, 96, 0.4);
       --ahoy-accent-subtle: rgba(255, 0, 96, 0.15);
-      --ahoy-bg: #05070B;
-      --ahoy-card: rgba(18, 22, 32, 0.85);
-      --ahoy-card-active: rgba(28, 34, 48, 0.95);
-      --ahoy-border: rgba(255, 255, 255, 0.1);
+      --ahoy-bg: #000000;
+      --ahoy-card: rgba(20, 20, 24, 0.92);
+      --ahoy-card-active: rgba(28, 28, 34, 0.98);
+      --ahoy-border: rgba(255, 255, 255, 0.12);
       --ahoy-border-active: rgba(255, 0, 96, 0.6);
       --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -84,33 +84,34 @@
     .section-nav {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(18, 22, 32, 0.7);
-      border: 1px solid var(--ahoy-border);
-      border-radius: 999px;
-      padding: 4px 6px;
-      backdrop-filter: blur(20px);
+      gap: 5px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
     }
     .nav-btn {
-      background: transparent;
-      border: none;
+      background: #1C1C22;
+      border: 1px solid rgba(42, 42, 50, 0.9);
       color: #8E8E93;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1.2px;
-      padding: 8px 18px;
-      border-radius: 999px;
+      letter-spacing: 0.5px;
+      padding: 8px 14px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s var(--ease-apple);
     }
     .nav-btn.active {
       background: var(--ahoy-accent);
       color: #FFFFFF;
-      box-shadow: 0 0 16px var(--ahoy-accent-glow);
+      border-color: var(--ahoy-accent);
+      box-shadow: none;
     }
     .nav-btn:hover:not(.active) {
       color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.08);
+      background: #252029;
+      border-color: var(--ahoy-accent);
     }
 
     .top-status {
@@ -178,8 +179,8 @@
     .hero-vignette {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 60% 40%, rgba(0,0,0,0.1) 0%, rgba(5,7,11,0.85) 75%, #05070B 100%),
-                  linear-gradient(180deg, rgba(5,7,11,0.5) 0%, transparent 30%, transparent 60%, #05070B 100%);
+      background: radial-gradient(circle at 60% 40%, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 75%, #000000 100%),
+                  linear-gradient(180deg, rgba(0,0,0,0.58) 0%, transparent 30%, transparent 60%, #000000 100%);
     }
     video, audio {
       position: absolute;
@@ -251,14 +252,14 @@
       gap: 12px;
     }
     .action-btn {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: #1C1C22;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 1px;
       padding: 10px 22px;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       backdrop-filter: blur(16px);
       transition: all 0.2s var(--ease-apple);
@@ -341,14 +342,14 @@
       left: 0;
       right: 0;
       height: 250px;
-      background: linear-gradient(180deg, rgba(14, 18, 28, 0) 0%, rgba(8, 10, 16, 0.94) 20%, rgba(5, 7, 11, 0.98) 100%);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(8, 8, 10, 0.94) 20%, rgba(0, 0, 0, 0.99) 100%);
       padding: 14px 44px 18px 44px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       z-index: 15;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(28px);
+      backdrop-filter: blur(18px);
       transition: transform 0.35s var(--ease-apple), opacity 0.35s var(--ease-apple);
     }
     .guide-dock.hidden {
@@ -389,11 +390,11 @@
     }
 
     .item-card {
-      flex: 0 0 260px;
-      height: 146px;
+      flex: 0 0 250px;
+      height: 154px;
       background: var(--ahoy-card);
       border: 1px solid var(--ahoy-border);
-      border-radius: 10px;
+      border-radius: 18px;
       overflow: hidden;
       cursor: pointer;
       position: relative;
@@ -405,8 +406,8 @@
     }
     .item-card.active, .item-card:hover, .item-card.focused {
       border-color: var(--ahoy-accent);
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 16px var(--ahoy-accent-glow);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65), 0 0 16px rgba(255, 0, 96, 0.3);
     }
     .item-thumb {
       position: absolute;
@@ -423,7 +424,7 @@
     .item-gradient {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(5,7,11,0.92) 100%);
+      background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(11,13,22,0.94) 100%);
     }
     .item-details {
       position: relative;
@@ -544,7 +545,7 @@
       top: 84px;
       right: 28px;
       width: 290px;
-      background: rgba(18, 22, 32, 0.94);
+      background: rgba(20, 20, 24, 0.96);
       border: 1px solid var(--ahoy-border);
       border-radius: 16px;
       padding: 14px 16px;
@@ -649,7 +650,7 @@
       top: 90px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
-      background: rgba(18, 22, 32, 0.96);
+      background: rgba(20, 20, 24, 0.98);
       border: 1px solid var(--ahoy-accent);
       color: #FFFFFF;
       font-size: 13px;

@@ -179,6 +179,7 @@ namespace AhoyXbox
         public string Name { get; set; }
         public string Tagline { get; set; }
         public List<Video> Videos { get; set; }
+        public Windows.UI.Xaml.Media.ImageSource Artwork { get; set; }
         public string CountLabel => Videos.Count + " in rotation";
     }
 
@@ -224,7 +225,7 @@ namespace AhoyXbox
             guideTimer.Interval = TimeSpan.FromSeconds(60);
             guideTimer.Tick += (s, e) => {
                 guideTimer.Stop();
-                if (GuideDock != null && !Player.IsFullWindow)
+                if (GuideDock != null && !Player.IsFullWindow && currentSection != AppSection.Channels)
                 {
                     GuideDock.Visibility = Visibility.Collapsed;
                 }
@@ -358,6 +359,14 @@ namespace AhoyXbox
             guideTimer.Start();
         }
 
+        private static Windows.UI.Xaml.Media.ImageSource ChannelArtwork(List<Video> videos)
+        {
+            var thumbnail = videos?.FirstOrDefault(v => !string.IsNullOrEmpty(v.Thumbnail))?.Thumbnail;
+            if (string.IsNullOrEmpty(thumbnail)) return null;
+            try { return new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(thumbnail)); }
+            catch { return null; }
+        }
+
         // Section Navigation Button Click Handlers
         private void TabChannels_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Channels);
         private void TabOnDemand_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.OnDemand);
@@ -385,6 +394,7 @@ namespace AhoyXbox
             {
                 case AppSection.Channels:
                     Channels.Visibility = Visibility.Visible;
+                    Programs.Visibility = Visibility.Collapsed;
                     Channels.ItemsSource = allChannels;
                     if (playingChannel == null && allChannels.Count > 0)
                     {
@@ -400,6 +410,7 @@ namespace AhoyXbox
 
                 case AppSection.OnDemand:
                     Channels.Visibility = Visibility.Collapsed;
+                    Programs.Visibility = Visibility.Visible;
                     GuideHeader.Text = $"ON DEMAND • {onDemandVideos.Count} INDIE FILMS & SHOWS";
                     Programs.ItemsSource = onDemandVideos;
                     if (onDemandVideos.Count > 0)
@@ -410,6 +421,7 @@ namespace AhoyXbox
 
                 case AppSection.Music:
                     Channels.Visibility = Visibility.Collapsed;
+                    Programs.Visibility = Visibility.Visible;
                     GuideHeader.Text = $"MUSIC • {musicTracks.Count} AHOY RADIO & INDIE TRACKS";
                     Programs.ItemsSource = musicTracks;
                     if (musicTracks.Count > 0)
@@ -420,6 +432,7 @@ namespace AhoyXbox
 
                 case AppSection.Podcasts:
                     Channels.Visibility = Visibility.Collapsed;
+                    Programs.Visibility = Visibility.Visible;
                     GuideHeader.Text = $"PODCASTS • {podcastEpisodes.Count} ORIGINAL EPISODES";
                     Programs.ItemsSource = podcastEpisodes;
                     if (podcastEpisodes.Count > 0)
@@ -503,10 +516,10 @@ namespace AhoyXbox
                 var miscVids = rawVideos;
 
                 allChannels.Clear();
-                allChannels.Add(new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Concerts", Videos = liveShowsVids });
-                allChannels.Add(new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres & Soundscapes", Videos = musicVids });
-                allChannels.Add(new Channel { Number = "103", Name = "Films & Skate", Tagline = "Skate Tapes & Documentaries", Videos = filmVids });
-                allChannels.Add(new Channel { Number = "104", Name = "The Mix 24/7", Tagline = "24/7 Round-Robin Eclectic Stream", Videos = miscVids });
+                allChannels.Add(new Channel { Number = "101", Name = "Live Shows", Tagline = "Wintergreen Sessions & Concerts", Videos = liveShowsVids, Artwork = ChannelArtwork(liveShowsVids) });
+                allChannels.Add(new Channel { Number = "102", Name = "Music Videos", Tagline = "Premieres & Soundscapes", Videos = musicVids, Artwork = ChannelArtwork(musicVids) });
+                allChannels.Add(new Channel { Number = "103", Name = "Films & Skate", Tagline = "Skate Tapes & Documentaries", Videos = filmVids, Artwork = ChannelArtwork(filmVids) });
+                allChannels.Add(new Channel { Number = "104", Name = "The Mix 24/7", Tagline = "24/7 Round-Robin Eclectic Stream", Videos = miscVids, Artwork = ChannelArtwork(miscVids) });
 
                 // 3. Parse Music Tracks
                 musicTracks.Clear();
@@ -632,16 +645,15 @@ namespace AhoyXbox
         {
             if (currentSection == AppSection.Channels && Channels.SelectedItem is Channel channel)
             {
-                Programs.ItemsSource = channel.Videos;
                 GuideHeader.Text = $"{channel.Name.ToUpperInvariant()} • SCHEDULE ({channel.Videos.Count} IN ROTATION)";
-
-                // Instant Channel Surfing: Switching channels immediately tunes with clock sync
+                HeaderChannel.Text = $"CH {channel.Number} • {channel.Name.ToUpperInvariant()}";
                 if (channel.Videos.Count > 0)
                 {
-                    playingChannel = channel;
-                    var (syncIdx, syncOffset) = GetLiveSyncPosition(channel);
-                    playingIndex = syncIdx;
-                    PlayCurrent(syncOffset);
+                    var (previewIndex, _) = GetLiveSyncPosition(channel);
+                    var preview = channel.Videos[previewIndex];
+                    NowPlaying.Text = preview.Title;
+                    HeaderNowPlaying.Text = $"{preview.Title} ({preview.Host})";
+                    Status.Text = $"{channel.Name} · {preview.Host} · Select to tune";
                 }
                 else
                 {
@@ -649,6 +661,18 @@ namespace AhoyXbox
                     Status.Text = "Empty queue. Press [X] on any video to add it.";
                     HeaderNowPlaying.Text = "Empty Queue";
                 }
+            }
+        }
+
+        private void ChannelClicked(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Channel channel && channel.Videos.Count > 0)
+            {
+                playingChannel = channel;
+                var (syncIdx, syncOffset) = GetLiveSyncPosition(channel);
+                playingIndex = syncIdx;
+                Programs.ItemsSource = channel.Videos;
+                PlayCurrent(syncOffset);
             }
         }
 

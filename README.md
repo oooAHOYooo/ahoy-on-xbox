@@ -2,6 +2,8 @@
 
 Native UWP media-app starter for a controller-driven, big-screen Ahoy experience.
 
+Xbox and Fire TV follow the same screen and interaction contract while using native controls on each platform. See [the shared TV UI contract](docs/TV-UI-CONTRACT.md).
+
 ## Included
 
 - TV layout with directional focus navigation and native playback controls.
