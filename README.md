@@ -4,6 +4,34 @@ Native UWP media-app starter for a controller-driven, big-screen Ahoy experience
 
 Xbox and Fire TV follow the same screen and interaction contract while using native controls on each platform. See [the shared TV UI contract](docs/TV-UI-CONTRACT.md).
 
+## Current handoff
+
+The current engineering state, timestamped session notes, changed files, verification limits, and next-day work queue are in [the November 6, 2026 handoff](docs/HANDOFF-2026-11-06.md). The older [Tuesday launch playbook](docs/HANDOFF-TUESDAY.md) is retained as a historical planning document and is not the current build or release status.
+
+## UI preview
+
+- [Controller-oriented UI preview fragment](docs/xbox-ui-preview.html) shows the Xbox screen and a clickable controller simulator. Focus the preview and use arrow keys to browse; Enter selects; `X` saves; `Y` opens the account pairing example; `B` closes it. The on-screen controller buttons provide the same actions.
+- [Browser prototype](AhoyXbox/Web/index.html) is a standalone HTML mockup for desktop preview and interaction experiments. It is not packaged into the native UWP app.
+- The shipped Xbox UI source is [MainPage.xaml](AhoyXbox/MainPage.xaml) with behavior in [MainPage.xaml.cs](AhoyXbox/MainPage.xaml.cs). The HTML preview demonstrates the shared layout; it does not replace compiling and running the native application.
+
+## Shared TV interface
+
+Xbox and Fire TV share the same user-facing sections, layout hierarchy, content-card behavior, and Ahoy color tokens. Each implementation remains native: WinUI/UWP controls and Xbox controller events on Xbox; Android TV views and Fire TV remote events on Fire TV. The shared contract is also present at `../ahoy-on-tv/docs/TV-UI-CONTRACT.md` in a sibling checkout. Keep the two copies synchronized when changing that contract.
+
+**Verification snapshot — November 6, 2026, 3:54:07 PM EST / 20:54:07 UTC:** native Xbox layout alignment is recorded in commit `d4ded582e6c41bafe4fc1fdaa5caf2a9624b8799`. XAML structure and the HTML preview script were checked, but the native app has not been compiled or run on Windows/Xbox in this session. The HTML prototype and preview are visual aids, not an Xbox package and not a Microsoft Store connection.
+
+| Shared action | Xbox mapping | Fire TV mapping |
+| --- | --- | --- |
+| Browse | D-pad / left stick; shoulder buttons move channels | D-pad |
+| Change section | Triggers or the four header tabs | Header tabs / supported navigation controls |
+| Select | A / focused control activation | Select / OK |
+| Back / Guide | B | Back |
+| Save | X | Not currently implemented as an account-synced action |
+| Account pairing | Y opens the Xbox pairing overlay | Not currently implemented |
+| Fullscreen | On-screen Fullscreen action | Native playback/guide behavior |
+
+Focus on a live channel updates the hero preview; selecting it tunes the channel. Keep this separation consistent in both clients so browsing a card does not unexpectedly interrupt playback.
+
 ## Included
 
 - TV layout with directional focus navigation and native playback controls.

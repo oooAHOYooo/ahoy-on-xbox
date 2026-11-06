@@ -6,6 +6,8 @@
 **Primary Repository:** [github.com/oooAHOYooo/ahoy-on-xbox](https://github.com/oooAHOYooo/ahoy-on-xbox)  
 **Main Targets:** Microsoft Store (Windows 10/11 & Xbox Series X/S / Xbox One) + Web/Raspberry Pi OTA Kiosks
 
+> **Historical planning snapshot.** This document describes the November 3, 2026 launch-planning assumptions and is not the current engineering or Store status. It includes past dates, package paths, submission claims, and checklists that must be independently verified before acting on them. For the current Xbox / Fire TV UI state, exact next steps, and verification limits, use [HANDOFF-2026-11-06.md](HANDOFF-2026-11-06.md), prepared November 6, 2026 at 3:54 PM EST.
+
 ---
 
 ## Direct Instructions for the Next Agent

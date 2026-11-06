@@ -1,0 +1,116 @@
+<div id="xbox-preview" tabindex="0" aria-label="Ahoy Xbox interface preview">
+  <style>
+    #xbox-preview{--xp-pink:#ff0060;--xp-charcoal:#141418;--xp-card:#1c1c22;--xp-muted:#96969d;color:#fff;font:14px/1.35 "Segoe UI",Arial,sans-serif;max-width:1280px;margin:0 auto}
+    #xbox-preview *{box-sizing:border-box}
+    #xbox-preview button{font:inherit;color:inherit;cursor:pointer}
+    #xbox-preview .xp-screen{position:relative;aspect-ratio:16/9;min-height:500px;overflow:hidden;background:#08090c;border:1px solid #292930;border-radius:12px;isolation:isolate}
+    #xbox-preview .xp-picture{position:absolute;inset:0;z-index:-2;background:radial-gradient(ellipse at 69% 35%,#73563f 0%,#392b2a 24%,#17151a 56%,#050609 100%);transition:background .45s ease}
+    #xbox-preview .xp-picture:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 69% 38%,transparent 0 18%,rgba(0,0,0,.35) 54%,#000 100%),linear-gradient(180deg,rgba(0,0,0,.65),transparent 27%,transparent 48%,#000 100%)}
+    #xbox-preview .xp-art-shape{position:absolute;right:15%;top:13%;width:29%;height:48%;opacity:.55;filter:blur(1px);background:linear-gradient(145deg,rgba(255,203,145,.45),rgba(255,0,96,.08) 50%,transparent);clip-path:polygon(50% 0,100% 100%,0 100%)}
+    #xbox-preview .xp-top{position:absolute;inset:0 0 auto;height:13%;min-height:58px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 3.5%;background:linear-gradient(#000b,transparent)}
+    #xbox-preview .xp-brand{font-weight:900;letter-spacing:.08em;font-size:clamp(15px,2vw,24px)}
+    #xbox-preview .xp-brand small{color:var(--xp-pink);font-size:.62em;margin-left:4px;vertical-align:baseline}
+    #xbox-preview .xp-tabs{display:flex;gap:5px;justify-content:center}
+    #xbox-preview .xp-tab{border:1px solid #2a2a32;background:#1c1c22;border-radius:6px;padding:9px 15px;font-size:clamp(9px,1vw,12px);font-weight:800;letter-spacing:.05em;color:#a0a0a7;transition:.16s}
+    #xbox-preview .xp-tab[aria-selected=true]{background:var(--xp-pink);border-color:var(--xp-pink);color:#fff}
+    #xbox-preview .xp-tab:focus-visible,#xbox-preview .xp-card:focus-visible,#xbox-preview .xp-remote button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    #xbox-preview .xp-status{justify-self:end;display:flex;align-items:center;gap:12px;font-size:11px;font-weight:800;letter-spacing:.08em}
+    #xbox-preview .xp-live{display:flex;align-items:center;gap:6px}#xbox-preview .xp-live i{width:7px;height:7px;border-radius:50%;background:var(--xp-pink);box-shadow:0 0 12px var(--xp-pink)}
+    #xbox-preview .xp-account{color:var(--xp-pink)}
+    #xbox-preview .xp-hero{position:absolute;left:4%;bottom:31%;width:min(61%,720px);text-shadow:0 2px 18px #000}
+    #xbox-preview .xp-eyebrow{color:#ff4d90;font-weight:900;font-size:clamp(9px,1vw,12px);letter-spacing:.15em}
+    #xbox-preview .xp-title{font-size:clamp(25px,4vw,48px);line-height:1.03;font-weight:900;margin:8px 0 5px;max-width:760px}
+    #xbox-preview .xp-subtitle{color:var(--xp-pink);font-weight:800;font-size:clamp(12px,1.5vw,18px)}
+    #xbox-preview .xp-description{color:#dedee2;font-size:clamp(10px,1.05vw,14px);margin-top:8px;max-width:620px}
+    #xbox-preview .xp-action{margin-top:14px;border:1px solid var(--xp-pink);border-radius:6px;background:var(--xp-pink);padding:9px 16px;font-size:11px;font-weight:900;letter-spacing:.03em}
+    #xbox-preview .xp-shelf{position:absolute;inset:auto 0 0;padding:10px 3.5% 11px;background:linear-gradient(180deg,transparent,#000d 20%,#000 100%)}
+    #xbox-preview .xp-shelf-head{height:22px;display:flex;align-items:center;justify-content:space-between;color:#96969d;font-size:10px;font-weight:900;letter-spacing:.12em}
+    #xbox-preview .xp-shelf-head b{color:var(--xp-pink);letter-spacing:.04em}
+    #xbox-preview .xp-cards{display:flex;gap:12px;overflow:hidden;padding:5px 3px 8px}
+    #xbox-preview .xp-card{position:relative;flex:1 1 0;min-width:0;height:clamp(82px,13vw,154px);border:1px solid #ffffff25;border-radius:12px;overflow:hidden;text-align:left;padding:0;background:#17171c;transition:transform .16s,border-color .16s,box-shadow .16s}
+    #xbox-preview .xp-card[aria-current=true]{border:2px solid var(--xp-pink);transform:scale(1.035);box-shadow:0 0 18px #ff006050}
+    #xbox-preview .xp-card:before{content:"";position:absolute;inset:0;background:var(--art);transition:filter .2s}
+    #xbox-preview .xp-card:after{content:"";position:absolute;inset:20% 0 0;background:linear-gradient(transparent,#0b0d16f2)}
+    #xbox-preview .xp-glyph{position:absolute;right:10%;top:5%;font-size:clamp(30px,6vw,76px);font-weight:900;color:#ffffff48;transform:rotate(-12deg)}
+    #xbox-preview .xp-card-copy{position:absolute;z-index:1;bottom:9px;left:11px;right:8px;display:grid;gap:2px}
+    #xbox-preview .xp-card-copy small{color:#ff77a9;font-size:9px;font-weight:900;letter-spacing:.1em}
+    #xbox-preview .xp-card-copy strong{font-size:clamp(10px,1.2vw,14px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #xbox-preview .xp-card-copy span{color:#c3c3ca;font-size:clamp(8px,.9vw,11px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #xbox-preview .xp-hints{display:flex;gap:15px;align-items:center;color:#888891;font-size:10px}
+    #xbox-preview .xp-hints kbd{font:800 9px "Segoe UI",sans-serif;background:#ffffff20;color:#fff;border-radius:3px;padding:2px 5px;margin-right:3px}
+    #xbox-preview .xp-toast{position:absolute;top:16%;left:50%;transform:translate(-50%,-8px);padding:9px 16px;border:1px solid var(--xp-pink);border-radius:20px;background:#141418f5;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap}
+    #xbox-preview .xp-toast.on{opacity:1;transform:translate(-50%,0)}
+    #xbox-preview .xp-pair{position:absolute;inset:0;display:none;place-items:center;background:#000c;z-index:5}
+    #xbox-preview .xp-pair.on{display:grid}#xbox-preview .xp-pair-card{width:min(430px,80%);padding:30px;text-align:center;border:1px solid #33333a;border-radius:16px;background:#141418}
+    #xbox-preview .xp-pair-card b{display:block;color:var(--xp-pink);letter-spacing:.15em;font-size:11px;margin-bottom:12px}#xbox-preview .xp-pair-card strong{font-size:29px;letter-spacing:.12em}
+    #xbox-preview .xp-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:9px 3px 0;color:#7e7e86;font-size:11px}
+    #xbox-preview .xp-controls strong{color:#d9d9de;font-size:11px;letter-spacing:.03em}
+    #xbox-preview .xp-remote{display:flex;align-items:center;gap:6px}
+    #xbox-preview .xp-remote button{border:1px solid #33333c;background:#1c1c22;border-radius:6px;padding:6px 10px;font-weight:900;color:#ddd}
+    #xbox-preview .xp-remote button[data-key="A"]{background:#176b28;border-color:#267b37}
+    #xbox-preview .xp-remote button[data-key="B"]{background:#98242c;border-color:#b32b35}
+    #xbox-preview .xp-remote button[data-key="X"]{background:#1764a2;border-color:#267cbb}
+    #xbox-preview .xp-remote button[data-key="Y"]{background:#d69b11;border-color:#e8ae24;color:#17130a}
+    @media(max-width:760px){#xbox-preview .xp-screen{min-height:400px}#xbox-preview .xp-top{grid-template-columns:auto 1fr auto;padding:0 3%}#xbox-preview .xp-tabs{gap:2px}#xbox-preview .xp-tab{padding:7px 6px!important;font-size:8px!important}#xbox-preview .xp-status{gap:5px;font-size:8px}#xbox-preview .xp-status .xp-account{display:none}#xbox-preview .xp-hero{width:75%;bottom:32%}#xbox-preview .xp-description{display:none}#xbox-preview .xp-card-copy{left:6px;bottom:6px}#xbox-preview .xp-hints{gap:7px!important;font-size:8px!important}#xbox-preview .xp-controls{flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){#xbox-preview *{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+  <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use arrow keys to browse; Enter to select.">
+    <div class="xp-picture" id="xp-picture"><div class="xp-art-shape"></div></div>
+    <header class="xp-top">
+      <div class="xp-brand">AHOY<small>TV</small></div>
+      <nav class="xp-tabs" aria-label="Sections">
+        <button class="xp-tab" data-tab="0" aria-selected="true">LIVE TV</button><button class="xp-tab" data-tab="1" aria-selected="false">ON DEMAND</button><button class="xp-tab" data-tab="2" aria-selected="false">MUSIC</button><button class="xp-tab" data-tab="3" aria-selected="false">PODCASTS</button>
+      </nav>
+      <div class="xp-status"><span class="xp-live"><i></i>LIVE</span><span id="xp-save">[X] SAVE</span><span class="xp-account">[Y] PAIR ID</span></div>
+    </header>
+    <main class="xp-hero" aria-live="polite"><div class="xp-eyebrow" id="xp-eyebrow">CH 101 · LIVE SHOWS</div><div class="xp-title" id="xp-title">The Wintergreen Sessions</div><div class="xp-subtitle" id="xp-subtitle">Live Broadcast · Ahoy TV</div><div class="xp-description" id="xp-description">Independent culture, live sessions, and stories from the Ahoy community. Select a channel card to tune in.</div><button class="xp-action" id="xp-play">▶ &nbsp; WATCH NOW &nbsp; [A]</button></main>
+    <section class="xp-shelf" aria-label="Channel shelf"><div class="xp-shelf-head"><span id="xp-shelf-label">CHANNELS · 4 CANONICAL PILLARS</span><b id="xp-shelf-status">CHANNEL 101 SELECTED</b></div><div class="xp-cards" id="xp-cards"></div><div class="xp-hints"><span><kbd>← →</kbd> Browse</span><span><kbd>A</kbd> Select</span><span><kbd>B</kbd> Guide</span><span><kbd>X</kbd> Save</span><span><kbd>Y</kbd> Account</span></div></section>
+    <div class="xp-toast" id="xp-toast" role="status"></div>
+    <div class="xp-pair" id="xp-pair" role="dialog" aria-modal="true" aria-label="Ahoy account pairing"><div class="xp-pair-card"><b>AHOY ID · XBOX</b><strong>PAIR YOUR ACCOUNT</strong><p>Enter code <b style="font-size:20px;letter-spacing:.2em">AHOY-24</b> at id.ahoy.ooo/pair</p><button class="xp-tab" id="xp-close-pair">CLOSE&nbsp; [B]</button></div></div>
+  </section>
+  <div class="xp-controls"><strong>Controller simulator</strong><span>Click a card, use arrow keys, or tap a button:</span><div class="xp-remote"><button data-key="←" aria-label="Navigate left">◀</button><button data-key="→" aria-label="Navigate right">▶</button><button data-key="A" aria-label="A select">A</button><button data-key="B" aria-label="B back">B</button><button data-key="X" aria-label="X save">X</button><button data-key="Y" aria-label="Y account">Y</button></div></div>
+  <script>
+    (()=>{
+      const root=document.getElementById('xbox-preview');if(!root)return;
+      const sections=['LIVE TV','ON DEMAND','MUSIC','PODCASTS'];
+      const channels=[
+        {no:'101',name:'Live Shows',line:'Wintergreen Sessions & Concerts',title:'The Wintergreen Sessions',sub:'Live Broadcast · Ahoy TV',description:'Independent culture, live sessions, and stories from the Ahoy community.',art:'linear-gradient(135deg,#584335,#bd7952 42%,#201d22 75%)',hero:'#bd7952',glyph:'W'},
+        {no:'102',name:'Music Videos',line:'Premieres & Soundscapes',title:'Ahoy Music Video Rotation',sub:'Music · Independent artists',description:'A continuous mix of music videos, new releases, and soundscapes.',art:'linear-gradient(135deg,#16384a,#267c91 40%,#161b25 78%)',hero:'#267c91',glyph:'♫'},
+        {no:'103',name:'Films & Skate',line:'Skate Tapes & Documentaries',title:'Skate Tapes & Stories',sub:'Films · Ahoy Originals',description:'Skateboarding, documentary, and independent film from the Ahoy collection.',art:'linear-gradient(135deg,#4d3e72,#a66f9c 45%,#20202a 78%)',hero:'#a66f9c',glyph:'03'},
+        {no:'104',name:'The Mix 24/7',line:'24/7 Round-Robin Eclectic Stream',title:'The Ahoy Mix',sub:'Always on · Mixed culture',description:'A round-robin blend of independent music, film, and culture.',art:'linear-gradient(135deg,#59522b,#b09a3b 42%,#23221a 78%)',hero:'#b09a3b',glyph:'24'}
+      ];
+      const cards=root.querySelector('#xp-cards'),tabs=[...root.querySelectorAll('.xp-tab[data-tab]')];let selected=0,section=0,saved=false,timer;
+      const say=message=>{const t=root.querySelector('#xp-toast');t.textContent=message;t.classList.add('on');clearTimeout(timer);timer=setTimeout(()=>t.classList.remove('on'),1600)};
+      function render(){
+        const data=channels[selected];cards.innerHTML='';
+        channels.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='xp-card';b.setAttribute('aria-current',i===selected?'true':'false');b.setAttribute('aria-label',`Channel ${c.no}, ${c.name}`);b.style.setProperty('--art',c.art);b.innerHTML=`<span class="xp-glyph" aria-hidden="true">${c.glyph}</span><span class="xp-card-copy"><small>CH ${c.no}</small><strong>${c.name}</strong><span>${c.line}</span></span>`;b.addEventListener('click',()=>{selected=i;update();tune()});cards.append(b)});
+        root.querySelector('#xp-eyebrow').textContent=`CH ${data.no} · ${data.name.toUpperCase()}`;
+        root.querySelector('#xp-title').textContent=data.title;
+        root.querySelector('#xp-subtitle').textContent=data.sub;
+        root.querySelector('#xp-description').textContent=data.description;
+        root.querySelector('#xp-shelf-status').textContent=`CHANNEL ${data.no} SELECTED`;
+        root.querySelector('#xp-picture').style.background=`radial-gradient(ellipse at 69% 35%,${data.hero} 0%,#241f24 38%,#08090c 82%)`;
+        root.querySelector('#xp-shelf-label').textContent=section===0?'CHANNELS · 4 CANONICAL PILLARS':`${sections[section]} · AHOY LIBRARY`;
+        tabs.forEach((t,i)=>t.setAttribute('aria-selected',i===section?'true':'false'));
+      }
+      function update(){render()}
+      function tune(){say(`Tuning to CH ${channels[selected].no} · ${channels[selected].name}`)}
+      function act(key){
+        if(key==='ArrowRight'||key==='→'){selected=(selected+1)%channels.length;update()}
+        else if(key==='ArrowLeft'||key==='←'){selected=(selected-1+channels.length)%channels.length;update()}
+        else if(key==='ArrowUp'){section=(section+sections.length-1)%sections.length;update()}
+        else if(key==='ArrowDown'){section=(section+1)%sections.length;update()}
+        else if(key==='Enter'||key===' '||key==='a'||key==='A'){tune()}
+        else if(key==='x'||key==='X'){saved=!saved;root.querySelector('#xp-save').textContent=saved?'[X] SAVED':'[X] SAVE';say(saved?'Saved to your library':'Removed from your library')}
+        else if(key==='y'||key==='Y'){root.querySelector('#xp-pair').classList.add('on')}
+        else if(key==='b'||key==='B'||key==='Escape'){root.querySelector('#xp-pair').classList.remove('on');say('Guide ready')}
+      }
+      root.addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown','Enter',' ','Escape'].includes(e.key)){e.preventDefault();act(e.key)}else if('xyabXYAB'.includes(e.key)){act(e.key)}});
+      tabs.forEach((t,i)=>t.addEventListener('click',()=>{section=i;update();say(`${sections[i]} selected`)}));
+      root.querySelector('#xp-play').addEventListener('click',tune);
+      root.querySelector('#xp-close-pair').addEventListener('click',()=>root.querySelector('#xp-pair').classList.remove('on'));
+      root.querySelectorAll('.xp-remote button').forEach(b=>b.addEventListener('click',()=>act(b.dataset.key)));
+      render();
+    })();
+  </script>
+</div>
