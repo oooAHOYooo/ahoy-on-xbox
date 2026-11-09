@@ -768,6 +768,12 @@
     }
 
     
+        /* AMBILIGHT DYNAMIC AMBIENT BACKDROP */
+    #xbox-preview .xp-video-backdrop.ambilight {
+      filter: blur(54px) saturate(2.0) brightness(0.42) !important;
+      transform: scale(1.18);
+    }
+
     /* DEDICATED HI-FI MUSIC HERO EXPERIENCE */
     #xbox-preview .xp-hero-music {
       display: flex;
@@ -924,26 +930,74 @@
       max-width: 440px;
     }
     #xbox-preview .xp-music-scrubber-bar {
-      height: 4px;
+      height: 6px;
       background: rgba(255, 255, 255, 0.16);
-      border-radius: 4px;
-      overflow: hidden;
+      border-radius: 6px;
       position: relative;
+      cursor: pointer;
+      overflow: visible;
+      transition: height 0.15s ease;
+    }
+    #xbox-preview .xp-music-scrubber-bar:hover {
+      height: 8px;
     }
     #xbox-preview .xp-music-scrubber-fill {
       height: 100%;
       background: linear-gradient(90deg, #FF0060, #FF5593);
+      border-radius: 6px;
       box-shadow: 0 0 10px var(--xp-pink-glow);
-      transition: width 0.3s linear;
+      position: relative;
       width: 0%;
+      pointer-events: none;
     }
-    #xbox-preview .xp-music-scrubber-times {
-      display: flex;
-      justify-content: space-between;
+    #xbox-preview .xp-music-scrubber-thumb {
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 10px #FF0060, 0 0 4px #FFF;
+      opacity: 1;
+      transition: transform 0.15s ease;
+    }
+    #xbox-preview .xp-music-up-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 3px 10px;
       font-size: 9.5px;
-      color: #8E8E96;
-      font-weight: 700;
-      margin-top: 3px;
+      color: #C0C0C8;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-left: 6px;
+    }
+    #xbox-preview .xp-music-up-next:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #FFF;
+    }
+    #xbox-preview .xp-up-next-label {
+      color: var(--xp-pink);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      font-size: 8.5px;
+    }
+    #xbox-preview .xp-up-next-song {
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    #xbox-preview .xp-up-next-artist {
+      color: #9A9AA4;
+    }
+
+    #xbox-preview .xp-music-cover-art {
+      box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.65);
     }
 
     #xbox-preview .xp-music-btn-row {
@@ -2057,8 +2111,10 @@
 
           <!-- AUDIO PROGRESS SCRUBBER -->
           <div class="xp-music-scrubber-box">
-            <div class="xp-music-scrubber-bar">
-              <div class="xp-music-scrubber-fill" id="xp-music-scrubber-fill"></div>
+            <div class="xp-music-scrubber-bar" id="xp-music-scrubber-bar" title="Click timeline to seek">
+              <div class="xp-music-scrubber-fill" id="xp-music-scrubber-fill">
+                <div class="xp-music-scrubber-thumb"></div>
+              </div>
             </div>
             <div class="xp-music-scrubber-times">
               <span id="xp-music-time-cur">0:00</span>
@@ -2066,7 +2122,7 @@
             </div>
           </div>
 
-          <!-- AUDIO CONTROLS -->
+          <!-- AUDIO CONTROLS & UP NEXT -->
           <div class="xp-music-btn-row">
             <button class="xp-action" id="xp-music-play-btn" type="button">
               <span id="xp-music-play-label">▶ &nbsp; PLAY TRACK [A]</span>
@@ -2074,7 +2130,11 @@
             <button class="xp-music-sub-btn" type="button" onclick="act('X')">
               <span>★ SAVE TO LIBRARY [X]</span>
             </button>
-            <span class="xp-music-hint-key"><kbd>◀ ▶</kbd> Next / Previous Track</span>
+            <div class="xp-music-up-next" id="xp-music-up-next" onclick="act('ArrowRight')">
+              <span class="xp-up-next-label">UP NEXT:</span>
+              <span class="xp-up-next-song" id="xp-up-next-song">Song</span>
+              <span class="xp-up-next-artist" id="xp-up-next-artist">Artist</span>
+            </div>
           </div>
         </div>
       </div>
@@ -2913,7 +2973,8 @@
           {
                     "id": "song_1",
                     "no": "MU-01",
-                    "name": "Samuel Dylan Witch",
+                    "name": "Seen Better Days",
+                    "trackTitle": "Seen Better Days",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 Seen Better Days",
@@ -2933,7 +2994,8 @@
           {
                     "id": "the-tines-barrows-01-cul-de-sac",
                     "no": "MU-02",
-                    "name": "The Tines",
+                    "name": "Cul De Sac",
+                    "trackTitle": "Cul De Sac",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Cul De Sac",
@@ -2953,7 +3015,8 @@
           {
                     "id": "song_2",
                     "no": "MU-03",
-                    "name": "Samuel Dylan Witch",
+                    "name": "Beneath the Willow Tree",
+                    "trackTitle": "Beneath the Willow Tree",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 Beneath the Willow Tree",
@@ -2973,7 +3036,8 @@
           {
                     "id": "the-tines-barrows-02-seawall",
                     "no": "MU-04",
-                    "name": "The Tines",
+                    "name": "Seawall",
+                    "trackTitle": "Seawall",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Seawall",
@@ -2993,7 +3057,8 @@
           {
                     "id": "song_3",
                     "no": "MU-05",
-                    "name": "Samuel Dylan Witch",
+                    "name": "Put Me on the Run",
+                    "trackTitle": "Put Me on the Run",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 Put Me on the Run",
@@ -3013,7 +3078,8 @@
           {
                     "id": "the-tines-barrows-03-ozone",
                     "no": "MU-06",
-                    "name": "The Tines",
+                    "name": "Ozone",
+                    "trackTitle": "Ozone",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Ozone",
@@ -3033,7 +3099,8 @@
           {
                     "id": "song_4",
                     "no": "MU-07",
-                    "name": "Samuel Dylan Witch",
+                    "name": "You Know Me",
+                    "trackTitle": "You Know Me",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 You Know Me",
@@ -3053,7 +3120,8 @@
           {
                     "id": "the-tines-barrows-04-holy-motors",
                     "no": "MU-08",
-                    "name": "The Tines",
+                    "name": "Holy Motors",
+                    "trackTitle": "Holy Motors",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Holy Motors",
@@ -3073,7 +3141,8 @@
           {
                     "id": "the-tines-barrows-05-among-the-copper",
                     "no": "MU-09",
-                    "name": "The Tines",
+                    "name": "Among The Copper",
+                    "trackTitle": "Among The Copper",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Among The Copper",
@@ -3093,7 +3162,8 @@
           {
                     "id": "song_5",
                     "no": "MU-10",
-                    "name": "Samuel Dylan Witch",
+                    "name": "Watching Her Fly",
+                    "trackTitle": "Watching Her Fly",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 Watching Her Fly",
@@ -3113,7 +3183,8 @@
           {
                     "id": "the-tines-barrows-06-centuries-long",
                     "no": "MU-11",
-                    "name": "The Tines",
+                    "name": "Centuries Long",
+                    "trackTitle": "Centuries Long",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Centuries Long",
@@ -3133,7 +3204,8 @@
           {
                     "id": "song_6",
                     "no": "MU-12",
-                    "name": "Cambell Rice",
+                    "name": "Far From Here",
+                    "trackTitle": "Far From Here",
                     "artist": "Cambell Rice",
                     "album": "Single",
                     "title": "Cambell Rice \u2014 Far From Here",
@@ -3153,7 +3225,8 @@
           {
                     "id": "the-tines-barrows-07-out-on-the-wind",
                     "no": "MU-13",
-                    "name": "The Tines",
+                    "name": "Out On The Wind",
+                    "trackTitle": "Out On The Wind",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Out On The Wind",
@@ -3173,7 +3246,8 @@
           {
                     "id": "song_7",
                     "no": "MU-14",
-                    "name": "Cambell Rice",
+                    "name": "Sunflower",
+                    "trackTitle": "Sunflower",
                     "artist": "Cambell Rice",
                     "album": "Single",
                     "title": "Cambell Rice \u2014 Sunflower",
@@ -3193,7 +3267,8 @@
           {
                     "id": "song_8",
                     "no": "MU-15",
-                    "name": "Cambell Rice",
+                    "name": "To Play Guitar in a Huge Room",
+                    "trackTitle": "To Play Guitar in a Huge Room",
                     "artist": "Cambell Rice",
                     "album": "Single",
                     "title": "Cambell Rice \u2014 To Play Guitar in a Huge Room",
@@ -3213,7 +3288,8 @@
           {
                     "id": "the-tines-barrows-08-white-birds",
                     "no": "MU-16",
-                    "name": "The Tines",
+                    "name": "White Birds",
+                    "trackTitle": "White Birds",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 White Birds",
@@ -3233,7 +3309,8 @@
           {
                     "id": "song_9",
                     "no": "MU-17",
-                    "name": "Youth XL",
+                    "name": "Summer Bummer",
+                    "trackTitle": "Summer Bummer",
                     "artist": "Youth XL",
                     "album": "Single",
                     "title": "Youth XL \u2014 Summer Bummer",
@@ -3253,7 +3330,8 @@
           {
                     "id": "the-tines-barrows-09-death-is-a-door",
                     "no": "MU-18",
-                    "name": "The Tines",
+                    "name": "Death is a Door",
+                    "trackTitle": "Death is a Door",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Death is a Door",
@@ -3273,7 +3351,8 @@
           {
                     "id": "the-tines-barrows-10-lotus-eater",
                     "no": "MU-19",
-                    "name": "The Tines",
+                    "name": "Lotus Eater",
+                    "trackTitle": "Lotus Eater",
                     "artist": "The Tines",
                     "album": "Barrows",
                     "title": "The Tines \u2014 Lotus Eater",
@@ -3293,7 +3372,8 @@
           {
                     "id": "song_10",
                     "no": "MU-20",
-                    "name": "Youth XL",
+                    "name": "Yoga",
+                    "trackTitle": "Yoga",
                     "artist": "Youth XL",
                     "album": "Single",
                     "title": "Youth XL \u2014 Yoga",
@@ -3313,7 +3393,8 @@
           {
                     "id": "song_11",
                     "no": "MU-21",
-                    "name": "Youth XL",
+                    "name": "Text Your Friends",
+                    "trackTitle": "Text Your Friends",
                     "artist": "Youth XL",
                     "album": "Single",
                     "title": "Youth XL \u2014 Text Your Friends",
@@ -3333,7 +3414,8 @@
           {
                     "id": "song_12",
                     "no": "MU-22",
-                    "name": "Youth XL",
+                    "name": "Gypsy Gia",
+                    "trackTitle": "Gypsy Gia",
                     "artist": "Youth XL",
                     "album": "Single",
                     "title": "Youth XL \u2014 Gypsy Gia",
@@ -3353,7 +3435,8 @@
           {
                     "id": "song_14",
                     "no": "MU-23",
-                    "name": "Riddle M",
+                    "name": "Glued in the Nude",
+                    "trackTitle": "Glued in the Nude",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Glued in the Nude",
@@ -3373,7 +3456,8 @@
           {
                     "id": "song_15",
                     "no": "MU-24",
-                    "name": "Riddle M",
+                    "name": "Honeydew",
+                    "trackTitle": "Honeydew",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Honeydew",
@@ -3393,7 +3477,8 @@
           {
                     "id": "song_16",
                     "no": "MU-25",
-                    "name": "Justin Arena",
+                    "name": "Oceans",
+                    "trackTitle": "Oceans",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 Oceans",
@@ -3413,7 +3498,8 @@
           {
                     "id": "song_17",
                     "no": "MU-26",
-                    "name": "Justin Arena",
+                    "name": "When You Wake Up",
+                    "trackTitle": "When You Wake Up",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 When You Wake Up",
@@ -3433,7 +3519,8 @@
           {
                     "id": "song_18",
                     "no": "MU-27",
-                    "name": "Justin Arena",
+                    "name": "Crash The Party",
+                    "trackTitle": "Crash The Party",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 Crash The Party",
@@ -3453,7 +3540,8 @@
           {
                     "id": "song_19",
                     "no": "MU-28",
-                    "name": "Clones of Clarence",
+                    "name": "Lost Time",
+                    "trackTitle": "Lost Time",
                     "artist": "Clones of Clarence",
                     "album": "Single",
                     "title": "Clones of Clarence \u2014 Lost Time",
@@ -3473,7 +3561,8 @@
           {
                     "id": "song_20",
                     "no": "MU-29",
-                    "name": "Clones of Clarence",
+                    "name": "Salty Salsa",
+                    "trackTitle": "Salty Salsa",
                     "artist": "Clones of Clarence",
                     "album": "Single",
                     "title": "Clones of Clarence \u2014 Salty Salsa",
@@ -3493,7 +3582,8 @@
           {
                     "id": "song_21",
                     "no": "MU-30",
-                    "name": "Clones of Clarence",
+                    "name": "Proj 17",
+                    "trackTitle": "Proj 17",
                     "artist": "Clones of Clarence",
                     "album": "Single",
                     "title": "Clones of Clarence \u2014 Proj 17",
@@ -3513,7 +3603,8 @@
           {
                     "id": "song_22",
                     "no": "MU-31",
-                    "name": "Clones of Clarence",
+                    "name": "3AM",
+                    "trackTitle": "3AM",
                     "artist": "Clones of Clarence",
                     "album": "Single",
                     "title": "Clones of Clarence \u2014 3AM",
@@ -3533,7 +3624,8 @@
           {
                     "id": "song_23",
                     "no": "MU-32",
-                    "name": "Samuel Dylan Witch",
+                    "name": "Electro",
+                    "trackTitle": "Electro",
                     "artist": "Samuel Dylan Witch",
                     "album": "Single",
                     "title": "Samuel Dylan Witch \u2014 Electro",
@@ -3554,6 +3646,7 @@
                     "id": "song_24",
                     "no": "MU-33",
                     "name": "My Own Grenade",
+                    "trackTitle": "My Own Grenade",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 My Own Grenade",
@@ -3573,7 +3666,8 @@
           {
                     "id": "song_13",
                     "no": "MU-34",
-                    "name": "Fella Gazelle",
+                    "name": "Reasons",
+                    "trackTitle": "Reasons",
                     "artist": "Fella Gazelle",
                     "album": "Single",
                     "title": "Fella Gazelle \u2014 Reasons",
@@ -3593,7 +3687,8 @@
           {
                     "id": "song_25",
                     "no": "MU-35",
-                    "name": "My Own Grenade",
+                    "name": "Frustrated",
+                    "trackTitle": "Frustrated",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 Frustrated",
@@ -3613,7 +3708,8 @@
           {
                     "id": "song_26",
                     "no": "MU-36",
-                    "name": "My Own Grenade",
+                    "name": "My Parents' Couch (Live Cut)",
+                    "trackTitle": "My Parents' Couch (Live Cut)",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 My Parents' Couch (Live Cut)",
@@ -3633,7 +3729,8 @@
           {
                     "id": "song_27",
                     "no": "MU-37",
-                    "name": "My Own Grenade",
+                    "name": "Spacegirl With A Headset",
+                    "trackTitle": "Spacegirl With A Headset",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 Spacegirl With A Headset",
@@ -3653,7 +3750,8 @@
           {
                     "id": "song_28",
                     "no": "MU-38",
-                    "name": "My Own Grenade",
+                    "name": "Special",
+                    "trackTitle": "Special",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 Special",
@@ -3673,7 +3771,8 @@
           {
                     "id": "song_29",
                     "no": "MU-39",
-                    "name": "My Own Grenade",
+                    "name": "Today Is In My Way",
+                    "trackTitle": "Today Is In My Way",
                     "artist": "My Own Grenade",
                     "album": "Single",
                     "title": "My Own Grenade \u2014 Today Is In My Way",
@@ -3693,7 +3792,8 @@
           {
                     "id": "song_30",
                     "no": "MU-40",
-                    "name": "S.G. Carlson",
+                    "name": "How I Got Fat While Living Skinny",
+                    "trackTitle": "How I Got Fat While Living Skinny",
                     "artist": "S.G. Carlson",
                     "album": "Single",
                     "title": "S.G. Carlson \u2014 How I Got Fat While Living Skinny",
@@ -3713,7 +3813,8 @@
           {
                     "id": "song_31",
                     "no": "MU-41",
-                    "name": "Justin Arena",
+                    "name": "Framework",
+                    "trackTitle": "Framework",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 Framework",
@@ -3733,7 +3834,8 @@
           {
                     "id": "song_32",
                     "no": "MU-42",
-                    "name": "Justin Arena",
+                    "name": "Fruit In The Shower",
+                    "trackTitle": "Fruit In The Shower",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 Fruit In The Shower",
@@ -3753,7 +3855,8 @@
           {
                     "id": "song_33",
                     "no": "MU-43",
-                    "name": "Justin Arena",
+                    "name": "No 1",
+                    "trackTitle": "No 1",
                     "artist": "Justin Arena",
                     "album": "Single",
                     "title": "Justin Arena \u2014 No 1",
@@ -3773,7 +3876,8 @@
           {
                     "id": "song_34",
                     "no": "MU-44",
-                    "name": "Riddle M",
+                    "name": "Daisies",
+                    "trackTitle": "Daisies",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Daisies",
@@ -3793,7 +3897,8 @@
           {
                     "id": "song_35",
                     "no": "MU-45",
-                    "name": "Riddle M",
+                    "name": "Garden Girl",
+                    "trackTitle": "Garden Girl",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Garden Girl",
@@ -3813,7 +3918,8 @@
           {
                     "id": "song_36",
                     "no": "MU-46",
-                    "name": "Riddle M",
+                    "name": "Magic Man",
+                    "trackTitle": "Magic Man",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Magic Man",
@@ -3833,7 +3939,8 @@
           {
                     "id": "song_37",
                     "no": "MU-47",
-                    "name": "Riddle M",
+                    "name": "Melted Side",
+                    "trackTitle": "Melted Side",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Melted Side",
@@ -3853,7 +3960,8 @@
           {
                     "id": "song_38",
                     "no": "MU-48",
-                    "name": "Riddle M",
+                    "name": "Snout",
+                    "trackTitle": "Snout",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Snout",
@@ -3873,7 +3981,8 @@
           {
                     "id": "song_39",
                     "no": "MU-49",
-                    "name": "Riddle M",
+                    "name": "Mustard Seed",
+                    "trackTitle": "Mustard Seed",
                     "artist": "Riddle M",
                     "album": "Single",
                     "title": "Riddle M \u2014 Mustard Seed",
@@ -3893,7 +4002,8 @@
           {
                     "id": "song_40",
                     "no": "MU-50",
-                    "name": "The Tines",
+                    "name": "Know By Feel",
+                    "trackTitle": "Know By Feel",
                     "artist": "The Tines",
                     "album": "Single",
                     "title": "The Tines \u2014 Know By Feel",
@@ -3913,7 +4023,8 @@
           {
                     "id": "song_41",
                     "no": "MU-51",
-                    "name": "The Tines",
+                    "name": "Chokecherries",
+                    "trackTitle": "Chokecherries",
                     "artist": "The Tines",
                     "album": "Single",
                     "title": "The Tines \u2014 Chokecherries",
@@ -3933,7 +4044,8 @@
           {
                     "id": "song_42",
                     "no": "MU-52",
-                    "name": "The Tines",
+                    "name": "Moon Views",
+                    "trackTitle": "Moon Views",
                     "artist": "The Tines",
                     "album": "Single",
                     "title": "The Tines \u2014 Moon Views",
@@ -3953,7 +4065,8 @@
           {
                     "id": "song_43",
                     "no": "MU-53",
-                    "name": "Jake Custer",
+                    "name": "Better Halves",
+                    "trackTitle": "Better Halves",
                     "artist": "Jake Custer",
                     "album": "Single",
                     "title": "Jake Custer \u2014 Better Halves",
@@ -3973,7 +4086,8 @@
           {
                     "id": "song_44",
                     "no": "MU-54",
-                    "name": "Jake Custer",
+                    "name": "By Myself",
+                    "trackTitle": "By Myself",
                     "artist": "Jake Custer",
                     "album": "Single",
                     "title": "Jake Custer \u2014 By Myself",
@@ -3993,7 +4107,8 @@
           {
                     "id": "song_45",
                     "no": "MU-55",
-                    "name": "Jake Custer",
+                    "name": "I'm Fine",
+                    "trackTitle": "I'm Fine",
                     "artist": "Jake Custer",
                     "album": "Single",
                     "title": "Jake Custer \u2014 I'm Fine",
@@ -4013,7 +4128,8 @@
           {
                     "id": "song_46",
                     "no": "MU-56",
-                    "name": "Jake Custer",
+                    "name": "It's a Mad,Mad World",
+                    "trackTitle": "It's a Mad,Mad World",
                     "artist": "Jake Custer",
                     "album": "Single",
                     "title": "Jake Custer \u2014 It's a Mad,Mad World",
@@ -4033,7 +4149,8 @@
           {
                     "id": "song_47",
                     "no": "MU-57",
-                    "name": "Jake Custer",
+                    "name": "You Love to See It",
+                    "trackTitle": "You Love to See It",
                     "artist": "Jake Custer",
                     "album": "Single",
                     "title": "Jake Custer \u2014 You Love to See It",
@@ -4053,7 +4170,8 @@
           {
                     "id": "song_48",
                     "no": "MU-58",
-                    "name": "Spider in Stereo",
+                    "name": "Float",
+                    "trackTitle": "Float",
                     "artist": "Spider in Stereo",
                     "album": "Single",
                     "title": "Spider in Stereo \u2014 Float",
@@ -4073,7 +4191,8 @@
           {
                     "id": "song_49",
                     "no": "MU-59",
-                    "name": "mintea",
+                    "name": "7eleven",
+                    "trackTitle": "7eleven",
                     "artist": "mintea",
                     "album": "Single",
                     "title": "mintea \u2014 7eleven",
@@ -4093,7 +4212,8 @@
           {
                     "id": "song_50",
                     "no": "MU-60",
-                    "name": "mintea",
+                    "name": "weird",
+                    "trackTitle": "weird",
                     "artist": "mintea",
                     "album": "Single",
                     "title": "mintea \u2014 weird",
@@ -4113,7 +4233,8 @@
           {
                     "id": "song_51",
                     "no": "MU-61",
-                    "name": "mintea",
+                    "name": "fairy wings",
+                    "trackTitle": "fairy wings",
                     "artist": "mintea",
                     "album": "Single",
                     "title": "mintea \u2014 fairy wings",
@@ -4133,7 +4254,8 @@
           {
                     "id": "song_52",
                     "no": "MU-62",
-                    "name": "mintea",
+                    "name": "clown girl",
+                    "trackTitle": "clown girl",
                     "artist": "mintea",
                     "album": "Single",
                     "title": "mintea \u2014 clown girl",
@@ -4153,7 +4275,8 @@
           {
                     "id": "song_53",
                     "no": "MU-63",
-                    "name": "Jake Custer",
+                    "name": "A Routine Affair",
+                    "trackTitle": "A Routine Affair",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 A Routine Affair",
@@ -4173,7 +4296,8 @@
           {
                     "id": "song_54",
                     "no": "MU-64",
-                    "name": "Jake Custer",
+                    "name": "Between Us Two",
+                    "trackTitle": "Between Us Two",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Between Us Two",
@@ -4193,7 +4317,8 @@
           {
                     "id": "song_55",
                     "no": "MU-65",
-                    "name": "Jake Custer",
+                    "name": "ClockedIn, Checked Out",
+                    "trackTitle": "ClockedIn, Checked Out",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 ClockedIn, Checked Out",
@@ -4213,7 +4338,8 @@
           {
                     "id": "song_56",
                     "no": "MU-66",
-                    "name": "Jake Custer",
+                    "name": "Feel That Way Again",
+                    "trackTitle": "Feel That Way Again",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Feel That Way Again",
@@ -4233,7 +4359,8 @@
           {
                     "id": "song_57",
                     "no": "MU-67",
-                    "name": "Jake Custer",
+                    "name": "Hide Away",
+                    "trackTitle": "Hide Away",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Hide Away",
@@ -4253,7 +4380,8 @@
           {
                     "id": "song_58",
                     "no": "MU-68",
-                    "name": "Jake Custer",
+                    "name": "I Get To Love You",
+                    "trackTitle": "I Get To Love You",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 I Get To Love You",
@@ -4273,7 +4401,8 @@
           {
                     "id": "song_59",
                     "no": "MU-69",
-                    "name": "Jake Custer",
+                    "name": "Interstellar",
+                    "trackTitle": "Interstellar",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Interstellar",
@@ -4293,7 +4422,8 @@
           {
                     "id": "song_60",
                     "no": "MU-70",
-                    "name": "Jake Custer",
+                    "name": "Let Go",
+                    "trackTitle": "Let Go",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Let Go",
@@ -4313,7 +4443,8 @@
           {
                     "id": "song_61",
                     "no": "MU-71",
-                    "name": "Jake Custer",
+                    "name": "Wake UpSpread Some Love",
+                    "trackTitle": "Wake UpSpread Some Love",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 Wake UpSpread Some Love",
@@ -4333,7 +4464,8 @@
           {
                     "id": "song_62",
                     "no": "MU-72",
-                    "name": "Jake Custer",
+                    "name": "We'll Be Right Back",
+                    "trackTitle": "We'll Be Right Back",
                     "artist": "Jake Custer",
                     "album": "I Think We're Lost",
                     "title": "Jake Custer \u2014 We'll Be Right Back",
@@ -4353,7 +4485,8 @@
           {
                     "id": "sinecera-i-wanna-tell-you",
                     "no": "MU-73",
-                    "name": "Sinecera",
+                    "name": "I wanna tell you",
+                    "trackTitle": "I wanna tell you",
                     "artist": "Sinecera",
                     "album": "Single",
                     "title": "Sinecera \u2014 I wanna tell you",
@@ -4373,7 +4506,8 @@
           {
                     "id": "sinecera-bookendz-i",
                     "no": "MU-74",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Bookendz I",
+                    "trackTitle": "Bookendz I",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Bookendz I",
@@ -4393,7 +4527,8 @@
           {
                     "id": "sinecera-ponyboy",
                     "no": "MU-75",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Ponyboy",
+                    "trackTitle": "Ponyboy",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Ponyboy",
@@ -4413,7 +4548,8 @@
           {
                     "id": "sinecera-bicycle-king",
                     "no": "MU-76",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Bicycle King",
+                    "trackTitle": "Bicycle King",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Bicycle King",
@@ -4433,7 +4569,8 @@
           {
                     "id": "sinecera-garden",
                     "no": "MU-77",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Garden",
+                    "trackTitle": "Garden",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Garden",
@@ -4453,7 +4590,8 @@
           {
                     "id": "sinecera-filament",
                     "no": "MU-78",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Filament",
+                    "trackTitle": "Filament",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Filament",
@@ -4473,7 +4611,8 @@
           {
                     "id": "sinecera-i-wanna-be-sick",
                     "no": "MU-79",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "I Wanna Be Sick",
+                    "trackTitle": "I Wanna Be Sick",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 I Wanna Be Sick",
@@ -4493,7 +4632,8 @@
           {
                     "id": "sinecera-teasing",
                     "no": "MU-80",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Teasing",
+                    "trackTitle": "Teasing",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Teasing",
@@ -4513,7 +4653,8 @@
           {
                     "id": "sinecera-bookendz-ii",
                     "no": "MU-81",
-                    "name": "Sinecera and The Knife Kickers",
+                    "name": "Bookendz II",
+                    "trackTitle": "Bookendz II",
                     "artist": "Sinecera and The Knife Kickers",
                     "album": "___told me to slow down, I can hardly know now, if I'm dosing the coda with work of the heart or lines from a tale...",
                     "title": "Sinecera and The Knife Kickers \u2014 Bookendz II",
@@ -4533,7 +4674,8 @@
           {
                     "id": "youth-xl-social-creature-01-september",
                     "no": "MU-82",
-                    "name": "Youth XL",
+                    "name": "September",
+                    "trackTitle": "September",
                     "artist": "Youth XL",
                     "album": "Social Creature",
                     "title": "Youth XL \u2014 September",
@@ -4553,7 +4695,8 @@
           {
                     "id": "youth-xl-social-creature-02-salad",
                     "no": "MU-83",
-                    "name": "Youth XL",
+                    "name": "Salad",
+                    "trackTitle": "Salad",
                     "artist": "Youth XL",
                     "album": "Social Creature",
                     "title": "Youth XL \u2014 Salad",
@@ -4573,7 +4716,8 @@
           {
                     "id": "youth-xl-social-creature-03-fake-fun",
                     "no": "MU-84",
-                    "name": "Youth XL",
+                    "name": "Fake Fun",
+                    "trackTitle": "Fake Fun",
                     "artist": "Youth XL",
                     "album": "Social Creature",
                     "title": "Youth XL \u2014 Fake Fun",
@@ -4593,7 +4737,8 @@
           {
                     "id": "youth-xl-social-creature-04-social-creature",
                     "no": "MU-85",
-                    "name": "Youth XL",
+                    "name": "Social Creature",
+                    "trackTitle": "Social Creature",
                     "artist": "Youth XL",
                     "album": "Social Creature",
                     "title": "Youth XL \u2014 Social Creature",
@@ -4613,12 +4758,13 @@
           {
                     "id": "cherrie-cherrie-waiting-for-the-long-days",
                     "no": "MU-86",
-                    "name": "Cherrie Cherrie",
+                    "name": "Waiting for the Long Days...",
+                    "trackTitle": "Waiting for the Long Days...",
                     "artist": "Cherrie Cherrie",
-                    "album": "",
+                    "album": "Single",
                     "title": "Cherrie Cherrie \u2014 Waiting for the Long Days...",
                     "line": "Indie \u00b7 3:00",
-                    "sub": "Cherrie Cherrie \u00b7  \u00b7 Indie",
+                    "sub": "Cherrie Cherrie \u00b7 Single \u00b7 Indie",
                     "description": "Recorded by Cherrie Cherrie. Streaming direct from app.ahoy.ooo music catalog.",
                     "category": "Indie",
                     "duration": "3:00",
@@ -4774,7 +4920,8 @@
                 return {
                   id: t.id || `track-${i+1}`,
                   no: `MU-${String(i+1).padStart(2, '0')}`,
-                  name: artist,
+                  name: title,
+                  trackTitle: title,
                   artist: artist,
                   album: t.album || 'Single',
                   title: `${artist} — ${title}`,
@@ -4924,6 +5071,11 @@
         const backdrop = root.querySelector('#xp-video-backdrop');
         if (backdrop && cur.poster) {
           backdrop.style.backgroundImage = `url("${cur.poster}")`;
+          if (section === 2) {
+            backdrop.classList.add('ambilight');
+          } else {
+            backdrop.classList.remove('ambilight');
+          }
         }
         if (video && cur.url) {
           const targetUrl = cur.url;
@@ -5522,13 +5674,15 @@
               if (c.art) b.style.setProperty('--art', c.art);
 
               const posterUrl = c.thumb || c.poster;
+              const trackSongTitle = c.trackTitle || (c.title ? c.title.replace(/^[^—-]+[—-]\s*/, '') : c.name);
+              const trackArtistName = c.artist || c.name;
               b.innerHTML = `
                 <div class="xp-music-cover-art" style="background-image: url('${posterUrl}')">
                   <span class="xp-music-dur-tag">${c.duration || '3:00'}</span>
                 </div>
                 <span class="xp-card-copy">
-                  <strong>${c.name || c.title}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</strong>
-                  <span>${c.artist || c.name}</span>
+                  <strong>${trackSongTitle}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</strong>
+                  <span>${trackArtistName}</span>
                 </span>
               `;
               b.addEventListener('click', () => {
@@ -5636,15 +5790,30 @@
             const timeTotal = root.querySelector('#xp-music-time-total');
             const playLabel = root.querySelector('#xp-music-play-label');
             const vinylDisc = root.querySelector('#xp-music-vinyl');
+            const upNextSong = root.querySelector('#xp-up-next-song');
+            const upNextArtist = root.querySelector('#xp-up-next-artist');
+
+            const songTitle = track.trackTitle || (track.title ? track.title.replace(/^[^—-]+[—-]\s*/, '') : (track.name || 'Song'));
+            const artistName = track.artist || (track.title && track.title.includes('—') ? track.title.split('—')[0].trim() : (track.name || 'Samuel Dylan Witch'));
+            const albumName = (track.album && track.album !== 'Single') ? `Album: ${track.album}` : 'Single Release';
 
             const posterImg = track.poster || track.thumb || 'https://app.ahoy.ooo/static/img/ahoy_logo.png';
             if (heroArt) heroArt.style.backgroundImage = `url("${posterImg}")`;
             if (vinylCenter) vinylCenter.style.backgroundImage = `url("${posterImg}")`;
             if (genreBadge) genreBadge.textContent = track.category || 'INDIE';
-            if (musicTitle) musicTitle.textContent = track.title ? track.title.replace(/^[^-]+—\s*/, '') : (track.name || 'Song');
-            if (musicArtist) musicArtist.textContent = track.artist || track.name || 'Ahoy Artist';
-            if (musicAlbum) musicAlbum.textContent = track.album ? `Album: ${track.album}` : 'Single Release';
+            if (musicTitle) musicTitle.textContent = songTitle;
+            if (musicArtist) musicArtist.textContent = artistName;
+            if (musicAlbum) musicAlbum.textContent = albumName;
             if (timeTotal) timeTotal.textContent = track.duration || '3:00';
+
+            // Next Track in Queue preview
+            const musicList = getActiveItems();
+            const nextIdx = (selected + 1) % musicList.length;
+            const nextTrack = musicList[nextIdx] || {};
+            const nextSong = nextTrack.trackTitle || (nextTrack.title ? nextTrack.title.replace(/^[^—-]+[—-]\s*/, '') : nextTrack.name);
+            const nextArtist = nextTrack.artist || 'Artist';
+            if (upNextSong) upNextSong.textContent = nextSong;
+            if (upNextArtist) upNextArtist.textContent = `· ${nextArtist}`;
 
             const video = root.querySelector('#xp-hero-video');
             const isPlaying = video && !video.paused;
@@ -6050,6 +6219,20 @@
               const s = Math.floor(cur % 60);
               curSpan.textContent = `${m}:${String(s).padStart(2, '0')}`;
             }
+          }
+        });
+      }
+
+
+      const scrubberBar = root.querySelector('#xp-music-scrubber-bar');
+      if (scrubberBar) {
+        scrubberBar.addEventListener('click', (e) => {
+          const rect = scrubberBar.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          const heroVid = root.querySelector('#xp-hero-video');
+          if (heroVid && heroVid.duration) {
+            heroVid.currentTime = pct * heroVid.duration;
+            playXboxSound('tick');
           }
         });
       }
