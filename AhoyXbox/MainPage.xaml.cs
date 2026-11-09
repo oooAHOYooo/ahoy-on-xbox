@@ -278,6 +278,18 @@ namespace AhoyXbox
                         e.Handled = true;
                     }
                 }
+                else if (e.Key == Windows.System.VirtualKey.GamepadDPadDown || e.Key == Windows.System.VirtualKey.Down)
+                {
+                    WakeGuide();
+                    if (currentSection == AppSection.Channels)
+                    {
+                        if (GuideDock != null && GuideDock.Visibility != Visibility.Visible)
+                        {
+                            GuideDock.Visibility = Visibility.Visible;
+                        }
+                        Channels.Focus(FocusState.Keyboard);
+                    }
+                }
                 else if (e.Key == Windows.System.VirtualKey.Number1)
                 {
                     SetSection(AppSection.Channels);

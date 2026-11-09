@@ -80,13 +80,13 @@
     #xbox-preview .xp-screen {
       position: relative;
       aspect-ratio: 16/9;
-      min-height: 480px;
+      min-height: 520px;
       overflow: hidden;
       background: #08090c;
       border: 1px solid #24252e;
       border-radius: 16px;
       isolation: isolate;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
     }
 
     /* BACKGROUND VISUAL STAGE */
@@ -149,7 +149,7 @@
       font-weight: 900;
     }
 
-    /* 4 CLEAN CANONICAL TABS (NO-WRAP GUARANTEE) */
+    /* 4 CANONICAL TABS (NO-WRAP GUARANTEE) */
     #xbox-preview .xp-tabs {
       display: flex;
       align-items: center;
@@ -191,6 +191,7 @@
     }
     #xbox-preview .xp-tab:focus-visible,
     #xbox-preview .xp-card:focus-visible,
+    #xbox-preview .xp-guide-row:focus-visible,
     #xbox-preview .xp-remote button:focus-visible,
     #xbox-preview .xp-keycap-pill:focus-visible {
       outline: 2px solid #FFFFFF;
@@ -213,28 +214,6 @@
       padding: 4px 6px;
       white-space: nowrap;
       line-height: 1;
-    }
-    .xp-mini-eq {
-      display: inline-flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 9px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .xp-mini-eq i {
-      width: 2px;
-      height: 100%;
-      background: var(--xp-pink);
-      border-radius: 1px;
-      animation: xpMiniEq 1s infinite ease-in-out;
-      transform-origin: bottom;
-    }
-    .xp-mini-eq i:nth-child(2) { animation-delay: 0.22s; }
-    .xp-mini-eq i:nth-child(3) { animation-delay: 0.44s; }
-    @keyframes xpMiniEq {
-      0%, 100% { transform: scaleY(0.25); }
-      50% { transform: scaleY(1); }
     }
     #xbox-preview .xp-live {
       display: inline-flex;
@@ -334,10 +313,11 @@
     #xbox-preview .xp-hero {
       position: absolute;
       left: 4%;
-      bottom: 31%;
+      bottom: 35%;
       width: min(62%, 720px);
       text-shadow: 0 2px 18px #000;
       z-index: 5;
+      transition: opacity 0.25s ease;
     }
     #xbox-preview .xp-eyebrow {
       color: #ff4d90;
@@ -383,19 +363,25 @@
       transform: scale(1.02);
     }
 
-    /* LOWER FROSTED SHELF */
+    /* PLUTO TV STYLE GUIDE SHELF ON BOTTOM OF HERO */
     #xbox-preview .xp-shelf {
       position: absolute;
       inset: auto 0 0;
-      padding: 12px 3.5% 14px;
-      background: linear-gradient(180deg, transparent, rgba(8,9,12,0.94) 20%, #050609 100%);
+      padding: 10px 3% 12px;
+      background: linear-gradient(180deg, transparent, rgba(6,7,10,0.95) 18%, #050609 100%);
       border-top: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      z-index: 5;
+      z-index: 6;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    #xbox-preview .xp-shelf.hidden {
+      transform: translateY(105%);
+      opacity: 0;
+      pointer-events: none;
     }
     #xbox-preview .xp-shelf-head {
-      height: 24px;
+      height: 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -403,24 +389,137 @@
       font-size: 10px;
       font-weight: 900;
       letter-spacing: 0.12em;
+      margin-bottom: 6px;
     }
     #xbox-preview .xp-shelf-head b {
       color: var(--xp-pink);
       letter-spacing: 0.05em;
     }
+
+    /* PLUTO TV GUIDE LIST */
+    #xbox-preview .xp-guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 185px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    #xbox-preview .xp-guide-row {
+      display: grid;
+      grid-template-columns: 180px 1.4fr 1fr;
+      align-items: center;
+      gap: 12px;
+      background: rgba(18, 20, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      padding: 7px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    #xbox-preview .xp-guide-row:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    #xbox-preview .xp-guide-row[aria-current="true"] {
+      background: rgba(255, 0, 96, 0.15);
+      border: 1.5px solid var(--xp-pink);
+      box-shadow: 0 4px 18px rgba(255, 0, 96, 0.35);
+      transform: scale(1.008);
+    }
+    #xbox-preview .xp-row-ch {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+    #xbox-preview .xp-row-badge {
+      background: #101014;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 5px;
+      padding: 3px 6px;
+      font-size: 9px;
+      font-weight: 900;
+      color: #FFF;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+    #xbox-preview .xp-guide-row[aria-current="true"] .xp-row-badge {
+      background: var(--xp-pink);
+      border-color: var(--xp-pink);
+    }
+    #xbox-preview .xp-row-name {
+      font-size: 11px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #xbox-preview .xp-row-slot {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    #xbox-preview .xp-slot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    #xbox-preview .xp-slot-label {
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    #xbox-preview .xp-slot-label.now { color: var(--xp-pink); }
+    #xbox-preview .xp-slot-label.next { color: #8E8E93; }
+    #xbox-preview .xp-slot-time {
+      font-size: 8px;
+      color: #8E8E93;
+      white-space: nowrap;
+    }
+    #xbox-preview .xp-slot-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #E2E2E6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #xbox-preview .xp-progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 1px;
+    }
+    #xbox-preview .xp-progress-fill {
+      height: 100%;
+      background: var(--xp-pink);
+      border-radius: 2px;
+      box-shadow: 0 0 6px var(--xp-pink);
+    }
+
+    /* CARD SHELF (FOR ON DEMAND, MUSIC, RADIO) */
     #xbox-preview .xp-cards {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       overflow: hidden;
-      padding: 6px 2px 8px;
+      padding: 4px 2px 6px;
     }
     #xbox-preview .xp-card {
       position: relative;
       flex: 1 1 0;
       min-width: 0;
-      height: clamp(82px, 13vw, 150px);
+      height: clamp(82px, 12vw, 140px);
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
       text-align: left;
       padding: 0;
@@ -449,7 +548,7 @@
       position: absolute;
       right: 10%;
       top: 5%;
-      font-size: clamp(28px, 5.5vw, 70px);
+      font-size: clamp(28px, 5vw, 64px);
       font-weight: 900;
       color: #ffffff48;
       transform: rotate(-12deg);
@@ -457,8 +556,8 @@
     #xbox-preview .xp-card-copy {
       position: absolute;
       z-index: 1;
-      bottom: 10px;
-      left: 12px;
+      bottom: 8px;
+      left: 10px;
       right: 10px;
       display: grid;
       gap: 2px;
@@ -478,7 +577,7 @@
       white-space: nowrap;
     }
     #xbox-preview .xp-card-copy strong {
-      font-size: clamp(10px, 1.2vw, 14px);
+      font-size: clamp(10px, 1.1vw, 13px);
       font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
@@ -486,11 +585,36 @@
     }
     #xbox-preview .xp-card-copy span {
       color: #a0a0a8;
-      font-size: clamp(8px, .9vw, 11px);
+      font-size: clamp(8px, .85vw, 10px);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    /* MINI EQ SOUNDWAVE */
+    .xp-mini-eq {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 9px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .xp-mini-eq i {
+      width: 2px;
+      height: 100%;
+      background: var(--xp-pink);
+      border-radius: 1px;
+      animation: xpMiniEq 1s infinite ease-in-out;
+      transform-origin: bottom;
+    }
+    .xp-mini-eq i:nth-child(2) { animation-delay: 0.22s; }
+    .xp-mini-eq i:nth-child(3) { animation-delay: 0.44s; }
+    @keyframes xpMiniEq {
+      0%, 100% { transform: scaleY(0.25); }
+      50% { transform: scaleY(1); }
+    }
+
     #xbox-preview .xp-hints {
       display: flex;
       gap: 16px;
@@ -500,6 +624,7 @@
       font-weight: 800;
       white-space: nowrap;
       overflow-x: auto;
+      margin-top: 6px;
     }
     #xbox-preview .xp-hints kbd {
       font: 900 9px "Segoe UI", sans-serif;
@@ -508,6 +633,53 @@
       border-radius: 4px;
       padding: 2px 6px;
       margin-right: 4px;
+    }
+
+    /* BROADCAST FLICK BANNER HUD */
+    #xbox-preview .xp-flick-hud {
+      position: absolute;
+      top: 80px;
+      left: 32px;
+      background: rgba(14, 15, 20, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: 4px solid var(--xp-pink);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+      z-index: 15;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    #xbox-preview .xp-flick-hud.on {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #xbox-preview .xp-flick-ch {
+      font-size: 14px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+    }
+    #xbox-preview .xp-flick-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    #xbox-preview .xp-flick-show {
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    #xbox-preview .xp-flick-specs {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--xp-pink);
+      letter-spacing: 0.8px;
     }
 
     #xbox-preview .xp-toast {
@@ -724,6 +896,8 @@
       #xbox-preview .xp-top { padding: 0 16px; }
       #xbox-preview .xp-tab { padding: 6px 10px; font-size: 10px; }
       #xbox-preview .xp-status { gap: 6px; }
+      #xbox-preview .xp-guide-row { grid-template-columns: 140px 1fr; }
+      #xbox-preview .xp-row-slot.next { display: none; }
     }
     @media (max-width: 680px) {
       #xbox-preview .xp-tab { padding: 5px 8px; font-size: 9px; }
@@ -735,7 +909,7 @@
     }
   </style>
 
-  <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use arrow keys to browse; Enter to select.">
+  <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use D-pad to flick channels and browse guide.">
     <div class="xp-picture" id="xp-picture"><div class="xp-art-shape"></div></div>
 
     <!-- REFINED TOP BROADCAST BAR -->
@@ -768,27 +942,40 @@
       </div>
     </header>
 
+    <!-- BROADCAST FLICK BANNER HUD -->
+    <div class="xp-flick-hud" id="xp-flick-hud">
+      <div class="xp-flick-ch" id="xp-flick-ch">CH 101</div>
+      <div class="xp-flick-meta">
+        <div class="xp-flick-show" id="xp-flick-show">The Wintergreen Sessions</div>
+        <div class="xp-flick-specs" id="xp-flick-specs">4K UHD • STEREO BROADCAST • LIVE ON NOW</div>
+      </div>
+    </div>
+
     <!-- MAIN HERO DISPLAY -->
-    <main class="xp-hero" aria-live="polite">
+    <main class="xp-hero" id="xp-hero" aria-live="polite">
       <div class="xp-eyebrow" id="xp-eyebrow">CH 101 · LIVE SHOWS</div>
       <div class="xp-title" id="xp-title">The Wintergreen Sessions</div>
       <div class="xp-subtitle" id="xp-subtitle">Live Broadcast · Ahoy TV</div>
       <div class="xp-description" id="xp-description">Independent culture, live sessions, and stories from the Ahoy community. Select a channel card to tune in.</div>
-      <button class="xp-action" id="xp-play">▶ &nbsp; WATCH NOW &nbsp; [A]</button>
+      <button class="xp-action" id="xp-play">▶ &nbsp; FULLSCREEN &nbsp; [A]</button>
     </main>
 
-    <!-- LOWER FROSTED SHELF -->
-    <section class="xp-shelf" aria-label="Channel shelf">
+    <!-- PLUTO TV-STYLE CHANNEL GUIDE SHELF ON BOTTOM OF HERO -->
+    <section class="xp-shelf" id="xp-shelf" aria-label="Broadcast TV Guide shelf">
       <div class="xp-shelf-head">
-        <span id="xp-shelf-label">CHANNELS · 4 CANONICAL PILLARS</span>
-        <b id="xp-shelf-status">CHANNEL 101 SELECTED</b>
+        <span id="xp-shelf-label">LIVE TV GUIDE • FLICK WITH D-PAD ▲ ▼</span>
+        <b id="xp-shelf-status">CHANNEL 101 TUNED</b>
       </div>
-      <div class="xp-cards" id="xp-cards"></div>
+
+      <!-- CONTAINER SWAPPED BETWEEN PLUTO GUIDE ROWS (LIVE TV) AND HORIZONTAL CARDS (OTHER SECTIONS) -->
+      <div id="xp-content-dock"></div>
+
       <div class="xp-hints">
-        <span><kbd>← →</kbd> Browse</span>
+        <span><kbd>▲ ▼</kbd> Flick Channels</span>
+        <span><kbd>← →</kbd> Timeline / Cards</span>
         <span><kbd style="background:#176B28">A</kbd> Tune / Select</span>
-        <span><kbd style="background:#98242C">B</kbd> Guide</span>
-        <span><kbd style="background:#1764A2">X</kbd> Save</span>
+        <span><kbd style="background:#98242C">B</kbd> Hide Guide</span>
+        <span><kbd style="background:#1764A2">X</kbd> Save Show</span>
         <span><kbd style="background:#8C670D">Y</kbd> Ahoy ID</span>
         <span><kbd>LT / RT</kbd> Section</span>
       </div>
@@ -839,9 +1026,11 @@
   <!-- CONTROLLER SIMULATOR -->
   <div class="xp-controls">
     <strong>Xbox Controller Simulator</strong>
-    <span>Click buttons, use Arrow keys, or press controller shortcuts:</span>
+    <span>Click buttons, use Arrow keys (▲ ▼ flick channels), or press controller shortcuts:</span>
     <div class="xp-remote">
       <button data-key="LT" aria-label="Previous section">LT</button>
+      <button data-key="↑" aria-label="Flick channel up">▲</button>
+      <button data-key="↓" aria-label="Flick channel down">▼</button>
       <button data-key="←" aria-label="Navigate left">◀</button>
       <button data-key="→" aria-label="Navigate right">▶</button>
       <button data-key="RT" aria-label="Next section">RT</button>
@@ -859,13 +1048,74 @@
 
       const sections = ['LIVE TV', 'ON DEMAND VIDEO', 'MUSIC', 'RADIO'];
 
-      const sectionChannels = {
-        0: [
-          {no:'101', name:'Live Shows', line:'Wintergreen Sessions & Concerts', title:'The Wintergreen Sessions', sub:'Live Broadcast · Ahoy TV', description:'Independent culture, live sessions, and stories from the Ahoy community. Continuous synchronized broadcast.', art:'linear-gradient(135deg,#584335,#bd7952 42%,#201d22 75%)', hero:'#bd7952', glyph:'W'},
-          {no:'102', name:'Music Videos', line:'Premieres & Visual Soundscapes', title:'Ahoy Music Video Rotation', sub:'Music · Independent artists', description:'A continuous mix of music videos, new releases, and soundscapes from independent creators.', art:'linear-gradient(135deg,#16384a,#267c91 40%,#161b25 78%)', hero:'#267c91', glyph:'♫'},
-          {no:'103', name:'Films & Skate', line:'Skate Tapes & Documentaries', title:'Skate Tapes & Stories', sub:'Films · Ahoy Originals', description:'Skateboarding, street culture, and independent film premieres from the Ahoy vault.', art:'linear-gradient(135deg,#4d3e72,#a66f9c 45%,#20202a 78%)', hero:'#a66f9c', glyph:'03'},
-          {no:'104', name:'The Mix 24/7', line:'24/7 Round-Robin Eclectic Stream', title:'The Ahoy Mix', sub:'Always on · Mixed culture', description:'A round-robin blend of independent music, skate clips, documentary, and community performance.', art:'linear-gradient(135deg,#59522b,#b09a3b 42%,#23221a 78%)', hero:'#b09a3b', glyph:'24'}
-        ],
+      const liveChannels = [
+        {
+          no: '101',
+          name: 'Live Shows',
+          tagline: 'Wintergreen Sessions & Concerts',
+          title: 'The Wintergreen Sessions',
+          sub: 'Live Broadcast · Ahoy TV',
+          description: 'Synchronized live music, recording sessions, and performances from the Wintergreen studio.',
+          nowTitle: 'Whatnot — Sand (Live @ Wintergreen)',
+          nowRemaining: '4 min left',
+          nowProgress: 68,
+          nextTitle: 'Whatnot — Running Away (Live)',
+          nextTime: 'Next at 9:05 PM',
+          art: 'linear-gradient(135deg,#584335,#bd7952 42%,#201d22 75%)',
+          hero: '#bd7952',
+          glyph: 'W'
+        },
+        {
+          no: '102',
+          name: 'Music Videos',
+          tagline: 'Premieres & Visual Soundscapes',
+          title: 'Ahoy Music Video Rotation',
+          sub: 'Music · Independent artists',
+          description: 'A continuous mix of music videos, new releases, and soundscapes from independent creators.',
+          nowTitle: 'The Problem With Kids Today — Beginning of the End',
+          nowRemaining: '1 min left',
+          nowProgress: 82,
+          nextTitle: 'Samuel Dylan Witch — Stop and Rewind',
+          nextTime: 'Next at 8:58 PM',
+          art: 'linear-gradient(135deg,#16384a,#267c91 40%,#161b25 78%)',
+          hero: '#267c91',
+          glyph: '♫'
+        },
+        {
+          no: '103',
+          name: 'Films & Skate',
+          tagline: 'Skate Tapes & Documentaries',
+          title: 'Skate Tapes & Stories',
+          sub: 'Films · Ahoy Originals',
+          description: 'Skateboarding, street culture, and independent film premieres from the Ahoy vault.',
+          nowTitle: 'Tallboyz — Obsolete (Full Film Feature)',
+          nowRemaining: '18 min left',
+          nowProgress: 45,
+          nextTitle: 'Flux TB Cash Contest (Street Edit)',
+          nextTime: 'Next at 9:15 PM',
+          art: 'linear-gradient(135deg,#4d3e72,#a66f9c 45%,#20202a 78%)',
+          hero: '#a66f9c',
+          glyph: '03'
+        },
+        {
+          no: '104',
+          name: 'The Mix 24/7',
+          tagline: '24/7 Round-Robin Eclectic Stream',
+          title: 'The Ahoy Mix',
+          sub: 'Always on · Mixed culture',
+          description: 'A round-robin blend of independent music, skate clips, documentary, and community performance.',
+          nowTitle: 'G-Dub Disc Golf — Georgia Road Trip',
+          nowRemaining: '7 min left',
+          nowProgress: 35,
+          nextTitle: 'Poets & Friends #13 — Highlights',
+          nextTime: 'Next at 9:02 PM',
+          art: 'linear-gradient(135deg,#59522b,#b09a3b 42%,#23221a 78%)',
+          hero: '#b09a3b',
+          glyph: '24'
+        }
+      ];
+
+      const mediaSections = {
         1: [
           {no:'OD-1', name:'Tyler Needs A Break', line:'Episode 4: Sam Carlson', title:'Tyler Needs a Break — Ep 4', sub:'On Demand Video · Series', description:'Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and touring.', art:'linear-gradient(135deg,#244358,#3c7e99 45%,#12161f 78%)', hero:'#3c7e99', glyph:'▶'},
           {no:'OD-2', name:'Poets & Friends #13', line:'Live at Koffee? on Audubon', title:'Poets & Friends #13 — Highlights', sub:'On Demand Video · Live Poetry', description:'Performances by Paul Wildy, Elena Gerald, Aidan Bauer, and Pat Clendenen.', art:'linear-gradient(135deg,#442a54,#88448b 45%,#1c1322 78%)', hero:'#88448b', glyph:'P'},
@@ -886,22 +1136,32 @@
         ]
       };
 
-      const cards = root.querySelector('#xp-cards');
+      const contentDock = root.querySelector('#xp-content-dock');
       const tabs = [...root.querySelectorAll('.xp-tab[data-tab]')];
       let selected = 0;
       let section = 0;
-      let saved = false;
+      let isShelfVisible = true;
       let isPairModalOpen = false;
       let pairedUser = localStorage.getItem('ahoy_id_handle') || null;
       let toastTimer;
+      let flickTimer;
 
       const say = (message) => {
         const t = root.querySelector('#xp-toast');
         t.textContent = message;
         t.classList.add('on');
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
+        toastTimer = setTimeout(() => t.classList.remove('on'), 2000);
       };
+
+      function showFlickHud(ch) {
+        const hud = root.querySelector('#xp-flick-hud');
+        root.querySelector('#xp-flick-ch').textContent = `CH ${ch.no} • ${ch.name.toUpperCase()}`;
+        root.querySelector('#xp-flick-show').textContent = ch.nowTitle || ch.title;
+        hud.classList.add('on');
+        clearTimeout(flickTimer);
+        flickTimer = setTimeout(() => hud.classList.remove('on'), 2200);
+      }
 
       function updateAccountUI() {
         const accountPill = root.querySelector('#xp-account');
@@ -969,83 +1229,193 @@
       }
 
       function render() {
-        const channels = sectionChannels[section] || sectionChannels[0];
-        if (selected >= channels.length) selected = 0;
-        const data = channels[selected];
+        contentDock.innerHTML = '';
 
-        cards.innerHTML = '';
-        channels.forEach((c, i) => {
-          const b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'xp-card';
-          const isCur = i === selected;
-          b.setAttribute('aria-current', isCur ? 'true' : 'false');
-          b.setAttribute('aria-label', `${c.name}`);
-          b.style.setProperty('--art', c.art);
-          b.innerHTML = `
-            <span class="xp-glyph" aria-hidden="true">${c.glyph}</span>
-            <span class="xp-card-copy">
-              <small>${c.no}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
-              <strong>${c.name}</strong>
-              <span>${c.line}</span>
-            </span>
-          `;
-          b.addEventListener('click', () => {
-            selected = i;
-            render();
-            tune();
+        if (section === 0) {
+          // PLUTO TV-STYLE BROADCAST GUIDE ROWS
+          const rowsContainer = document.createElement('div');
+          rowsContainer.className = 'xp-guide-list';
+
+          liveChannels.forEach((ch, i) => {
+            const isCur = i === selected;
+            const row = document.createElement('div');
+            row.className = 'xp-guide-row';
+            row.setAttribute('aria-current', isCur ? 'true' : 'false');
+            row.setAttribute('tabindex', '0');
+            row.innerHTML = `
+              <div class="xp-row-ch">
+                <span class="xp-row-badge">CH ${ch.no}</span>
+                <span class="xp-row-name">${ch.name}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</span>
+              </div>
+              <div class="xp-row-slot">
+                <div class="xp-slot-header">
+                  <span class="xp-slot-label now">● ON NOW</span>
+                  <span class="xp-slot-time">${ch.nowRemaining}</span>
+                </div>
+                <div class="xp-slot-title">${ch.nowTitle}</div>
+                <div class="xp-progress-track">
+                  <div class="xp-progress-fill" style="width:${ch.nowProgress}%"></div>
+                </div>
+              </div>
+              <div class="xp-row-slot next">
+                <div class="xp-slot-header">
+                  <span class="xp-slot-label next">UP NEXT</span>
+                  <span class="xp-slot-time">${ch.nextTime}</span>
+                </div>
+                <div class="xp-slot-title">${ch.nextTitle}</div>
+              </div>
+            `;
+            row.addEventListener('click', () => {
+              selected = i;
+              render();
+              tune(true);
+            });
+            rowsContainer.append(row);
           });
-          cards.append(b);
-        });
+          contentDock.append(rowsContainer);
 
-        root.querySelector('#xp-eyebrow').textContent = `${data.no} · ${data.name.toUpperCase()}`;
-        root.querySelector('#xp-title').textContent = data.title;
-        root.querySelector('#xp-subtitle').textContent = data.sub;
-        root.querySelector('#xp-description').textContent = data.description;
-        root.querySelector('#xp-shelf-status').textContent = `${data.no} SELECTED`;
-        root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${data.hero} 0%, #241f24 38%, #08090c 82%)`;
-        root.querySelector('#xp-shelf-label').textContent = `${sections[section]} · 4 CANONICAL PILLARS`;
+          const curCh = liveChannels[selected];
+          root.querySelector('#xp-eyebrow').textContent = `CH ${curCh.no} · ${curCh.name.toUpperCase()}`;
+          root.querySelector('#xp-title').textContent = curCh.title;
+          root.querySelector('#xp-subtitle').textContent = curCh.sub;
+          root.querySelector('#xp-description').textContent = curCh.description;
+          root.querySelector('#xp-shelf-status').textContent = `CH ${curCh.no} • ${curCh.name.toUpperCase()}`;
+          root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curCh.hero} 0%, #241f24 38%, #08090c 82%)`;
+          root.querySelector('#xp-shelf-label').textContent = 'PLUTO-STYLE TV GUIDE • FLICK CHANNELS [▲ ▼]';
+        } else {
+          // HORIZONTAL CARD SHELF FOR ON DEMAND, MUSIC, RADIO
+          const cardsContainer = document.createElement('div');
+          cardsContainer.className = 'xp-cards';
+          const items = mediaSections[section] || [];
+          if (selected >= items.length) selected = 0;
+          const curItem = items[selected] || items[0];
+
+          items.forEach((c, i) => {
+            const isCur = i === selected;
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'xp-card';
+            b.setAttribute('aria-current', isCur ? 'true' : 'false');
+            b.style.setProperty('--art', c.art);
+            b.innerHTML = `
+              <span class="xp-glyph" aria-hidden="true">${c.glyph}</span>
+              <span class="xp-card-copy">
+                <small>${c.no}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
+                <strong>${c.name}</strong>
+                <span>${c.line}</span>
+              </span>
+            `;
+            b.addEventListener('click', () => {
+              selected = i;
+              render();
+              tune(false);
+            });
+            cardsContainer.append(b);
+          });
+          contentDock.append(cardsContainer);
+
+          root.querySelector('#xp-eyebrow').textContent = `${curItem.no} · ${curItem.name.toUpperCase()}`;
+          root.querySelector('#xp-title').textContent = curItem.title;
+          root.querySelector('#xp-subtitle').textContent = curItem.sub;
+          root.querySelector('#xp-description').textContent = curItem.description;
+          root.querySelector('#xp-shelf-status').textContent = `${curItem.no} SELECTED`;
+          root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curItem.hero} 0%, #241f24 38%, #08090c 82%)`;
+          root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY`;
+        }
 
         tabs.forEach((t, i) => t.setAttribute('aria-selected', i === section ? 'true' : 'false'));
       }
 
-      function tune() {
-        const channels = sectionChannels[section];
-        say(`Tuned to ${channels[selected].no} · ${channels[selected].name}`);
+      function tune(isChannelFlick = true) {
+        if (section === 0) {
+          const ch = liveChannels[selected];
+          if (isChannelFlick) {
+            showFlickHud(ch);
+          }
+          say(`Tuned to CH ${ch.no} • ${ch.name} ("${ch.nowTitle}")`);
+        } else {
+          const item = mediaSections[section][selected];
+          say(`Playing ${item.name} • ${item.title}`);
+        }
       }
 
       window.act = (key) => {
-        const channels = sectionChannels[section];
-        if (key === 'ArrowRight' || key === '→') {
-          selected = (selected + 1) % channels.length;
-          render();
-        } else if (key === 'ArrowLeft' || key === '←') {
-          selected = (selected - 1 + channels.length) % channels.length;
-          render();
-        } else if (key === 'ArrowUp' || key === 'LT') {
+        // Ensure guide is visible when interacting with D-Pad
+        if (!isShelfVisible && ['ArrowUp', 'ArrowDown', '↑', '↓', 'ArrowLeft', 'ArrowRight', '←', '→'].includes(key)) {
+          isShelfVisible = true;
+          root.querySelector('#xp-shelf').classList.remove('hidden');
+        }
+
+        if (section === 0) {
+          // LIVE TV: UP & DOWN FLICK CHANNELS INSTANTLY LIKE PLUTO TV
+          if (key === 'ArrowDown' || key === '↓') {
+            selected = (selected + 1) % liveChannels.length;
+            render();
+            tune(true);
+          } else if (key === 'ArrowUp' || key === '↑') {
+            selected = (selected - 1 + liveChannels.length) % liveChannels.length;
+            render();
+            tune(true);
+          } else if (key === 'ArrowRight' || key === '→') {
+            selected = (selected + 1) % liveChannels.length;
+            render();
+            tune(true);
+          } else if (key === 'ArrowLeft' || key === '←') {
+            selected = (selected - 1 + liveChannels.length) % liveChannels.length;
+            render();
+            tune(true);
+          }
+        } else {
+          // OTHER SECTIONS: LEFT & RIGHT BROWSE MEDIA CARDS
+          const list = mediaSections[section] || [];
+          if (key === 'ArrowRight' || key === '→') {
+            selected = (selected + 1) % list.length;
+            render();
+          } else if (key === 'ArrowLeft' || key === '←') {
+            selected = (selected - 1 + list.length) % list.length;
+            render();
+          } else if (key === 'ArrowDown' || key === '↓') {
+            selected = (selected + 1) % list.length;
+            render();
+          } else if (key === 'ArrowUp' || key === '↑') {
+            selected = (selected - 1 + list.length) % list.length;
+            render();
+          }
+        }
+
+        if (key === 'LT') {
           section = (section + sections.length - 1) % sections.length;
           selected = 0;
           render();
+          tune(section === 0);
           say(`${sections[section]} selected`);
-        } else if (key === 'ArrowDown' || key === 'RT') {
+        } else if (key === 'RT') {
           section = (section + 1) % sections.length;
           selected = 0;
           render();
+          tune(section === 0);
           say(`${sections[section]} selected`);
         } else if (key === 'Enter' || key === ' ' || key === 'a' || key === 'A') {
-          tune();
+          tune(false);
+          say(`Playing fullscreen [A]`);
         } else if (key === 'x' || key === 'X') {
-          saved = !saved;
+          // WHAT DOES SAVE DO?
+          // Saves current playing show/item to user's Ahoy library, syncing with Ahoy ID in the cloud
+          const currentTitle = section === 0 ? liveChannels[selected].nowTitle : mediaSections[section][selected].title;
           const savePill = root.querySelector('#xp-save');
           const saveText = root.querySelector('#xp-save-text');
-          if (saved) {
-            savePill.classList.add('saved');
+          const isSaved = savePill.classList.toggle('saved');
+
+          if (isSaved) {
             saveText.textContent = 'SAVED';
-            say('Added to your Ahoy Library');
+            if (pairedUser) {
+              say(`Saved "${currentTitle}" to Ahoy Library (Synced to @${pairedUser})`);
+            } else {
+              say(`Saved "${currentTitle}" locally (Pair Ahoy ID with [Y] to sync)`);
+            }
           } else {
-            savePill.classList.remove('saved');
             saveText.textContent = 'SAVE';
-            say('Removed from your Ahoy Library');
+            say(`Removed "${currentTitle}" from your Ahoy Library`);
           }
         } else if (key === 'y' || key === 'Y') {
           if (isPairModalOpen) {
@@ -1058,7 +1428,10 @@
             closePairModal();
             say('Pairing dismissed. Guide ready');
           } else {
-            say('Back: Guide dock active');
+            // TOGGLE GUIDE VISIBILITY FOR UNINTERRUPTED CINEMA WATCHING
+            isShelfVisible = !isShelfVisible;
+            root.querySelector('#xp-shelf').classList.toggle('hidden', !isShelfVisible);
+            say(isShelfVisible ? 'TV Guide restored' : 'Cinema Mode: TV Guide hidden. Press any D-pad key to restore.');
           }
         }
       };
@@ -1072,6 +1445,7 @@
             section = parseInt(e.key, 10) - 1;
             selected = 0;
             render();
+            tune(section === 0);
             say(`${sections[section]} selected`);
           } else {
             act(e.key);
@@ -1083,10 +1457,11 @@
         section = i;
         selected = 0;
         render();
+        tune(section === 0);
         say(`${sections[i]} selected`);
       }));
 
-      root.querySelector('#xp-play').addEventListener('click', tune);
+      root.querySelector('#xp-play').addEventListener('click', () => tune(false));
       root.querySelector('#xp-close-pair').addEventListener('click', closePairModal);
       root.querySelectorAll('.xp-remote button').forEach(b => b.addEventListener('click', () => act(b.dataset.key)));
 

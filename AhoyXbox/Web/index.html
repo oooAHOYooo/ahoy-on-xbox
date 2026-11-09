@@ -1631,6 +1631,20 @@
             openPairingOverlay();
           }
           break;
+        case 'Up':
+          if (currentSection === 'channels') {
+            selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
+            tuneChannel(selectedChannel);
+            showToast(`[CH ${CHANNELS[selectedChannel].number}] ${CHANNELS[selectedChannel].name}`);
+          }
+          break;
+        case 'Down':
+          if (currentSection === 'channels') {
+            selectedChannel = (selectedChannel + 1) % CHANNELS.length;
+            tuneChannel(selectedChannel);
+            showToast(`[CH ${CHANNELS[selectedChannel].number}] ${CHANNELS[selectedChannel].name}`);
+          }
+          break;
         case 'Left':
           if (currentSection === 'channels') {
             selectedChannel = (selectedChannel - 1 + CHANNELS.length) % CHANNELS.length;
@@ -1657,6 +1671,8 @@
           e.preventDefault();
           handleBtn('RT');
           break;
+        case 'ArrowUp': handleBtn('Up'); break;
+        case 'ArrowDown': handleBtn('Down'); break;
         case 'ArrowLeft': handleBtn('Left'); break;
         case 'ArrowRight': handleBtn('Right'); break;
         case 'Enter':
