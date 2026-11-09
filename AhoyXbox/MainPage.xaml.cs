@@ -222,15 +222,21 @@ namespace AhoyXbox
             pairingPollTimer.Interval = TimeSpan.FromSeconds(5);
             pairingPollTimer.Tick += PollPairingStatus;
 
-            // Big-screen TV guide timer: 60s idle timeout so guide stays comfortably visible
-            guideTimer.Interval = TimeSpan.FromSeconds(60);
+            // Big-screen TV cinema timer: 10s idle timeout dims chrome for cinematic viewing
+            guideTimer.Interval = TimeSpan.FromSeconds(10);
             guideTimer.Tick += (s, e) => {
                 guideTimer.Stop();
-                if (GuideDock != null && !Player.IsFullWindow && currentSection != AppSection.Channels)
+                if (GuideDock != null && !Player.IsFullWindow)
                 {
                     GuideDock.Visibility = Visibility.Collapsed;
                 }
+                if (TopHeader != null)
+                {
+                    TopHeader.Opacity = 0.25;
+                }
             };
+
+            PointerMoved += (s, e) => WakeGuide();
 
             KeyDown += (s, e) => {
                 if (e.Key == Windows.System.VirtualKey.GamepadX || e.Key == Windows.System.VirtualKey.X)
@@ -367,6 +373,10 @@ namespace AhoyXbox
             if (GuideDock != null && GuideDock.Visibility != Visibility.Visible)
             {
                 GuideDock.Visibility = Visibility.Visible;
+            }
+            if (TopHeader != null && TopHeader.Opacity < 1.0)
+            {
+                TopHeader.Opacity = 1.0;
             }
             guideTimer.Stop();
             guideTimer.Start();
@@ -1012,13 +1022,15 @@ namespace AhoyXbox
             if (SavedStore.IsPaired)
             {
                 var h = SavedStore.AccountHandle;
-                AccountIndicator.Text = !string.IsNullOrEmpty(h) ? $"[Y] @{h.Replace("@", "")}" : "[Y] PAIRED";
+                AccountIndicator.Text = !string.IsNullOrEmpty(h) ? $"@{h.Replace("@", "")}" : "PAIRED";
                 AccountIndicator.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 52, 199, 89));
+                if (AccountKeycapText != null) AccountKeycapText.Text = "✓";
             }
             else
             {
-                AccountIndicator.Text = "[Y] PAIR ID";
-                AccountIndicator.Foreground = accentBrush;
+                AccountIndicator.Text = "PAIR ID";
+                AccountIndicator.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 208, 208, 216));
+                if (AccountKeycapText != null) AccountKeycapText.Text = "Y";
             }
         }
 

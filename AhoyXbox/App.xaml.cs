@@ -5,7 +5,14 @@ namespace AhoyXbox
 {
     sealed partial class App : Application
     {
-        public App() { InitializeComponent(); }
+        public App()
+        {
+            InitializeComponent();
+            // Lock out virtual mouse cursor for 100% controller-driven Xbox TV experience
+            this.RequiresPointerMode = ApplicationRequiresPointerMode.WhenRequested;
+            // Enable native Xbox UI sound effects (dashboard ticks on D-pad, select blip on A, back pop on B)
+            ElementSoundPlayer.State = ElementSoundPlayerState.On;
+        }
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             var frame = Window.Current.Content as Frame;

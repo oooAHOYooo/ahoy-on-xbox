@@ -64,9 +64,10 @@
       --xp-charcoal: #141418;
       --xp-card: #1c1c22;
       --xp-muted: #9a9aa2;
-      --xp-green: #34c759;
-      --xp-blue: #1764a2;
-      --xp-gold: #d69b11;
+      --xp-green: #107c10;
+      --xp-blue: #0078d7;
+      --xp-gold: #ffb900;
+      --xp-red: #e81123;
       color: #fff;
       font: 14px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       max-width: 1280px;
@@ -140,6 +141,11 @@
       -webkit-backdrop-filter: blur(20px);
       z-index: 10;
       gap: 16px;
+      transition: opacity 0.35s ease;
+    }
+    #xbox-preview .dimmed {
+      opacity: 0.15 !important;
+      transition: opacity 0.6s ease;
     }
     #xbox-preview .xp-brand {
       display: flex;
@@ -323,18 +329,6 @@
     .xp-keycap-x { background: var(--xp-blue); }
     .xp-keycap-y { background: var(--xp-gold); color: #17130a; }
     .xp-keycap-check { background: var(--xp-green); }
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      font-size: 9px;
-      font-weight: 900;
-      color: #FFFFFF;
-      flex-shrink: 0;
-      line-height: 1;
-    }
-    .xp-keycap-x { background: var(--xp-blue); }
-    .xp-keycap-y { background: var(--xp-gold); color: #17130a; }
-    .xp-keycap-check { background: var(--xp-green); }
 
     /* HERO STAGE */
     #xbox-preview .xp-hero {
@@ -450,10 +444,10 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
     #xbox-preview .xp-guide-row[aria-current="true"] {
-      background: rgba(255, 0, 96, 0.15);
-      border: 1.5px solid var(--xp-pink);
-      box-shadow: 0 4px 18px rgba(255, 0, 96, 0.35);
-      transform: scale(1.008);
+      background: rgba(255, 0, 96, 0.18);
+      border: 2px solid var(--xp-pink);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 16px var(--xp-pink-glow);
+      transform: scale(1.025);
     }
     #xbox-preview .xp-row-ch {
       display: flex;
@@ -1229,10 +1223,10 @@
       background: #2a2a34;
       color: #fff;
     }
-    #xbox-preview .xp-remote button[data-key="A"] { background: #176b28; border-color: #267b37; }
-    #xbox-preview .xp-remote button[data-key="B"] { background: #98242c; border-color: #b32b35; }
-    #xbox-preview .xp-remote button[data-key="X"] { background: #1764a2; border-color: #267cbb; }
-    #xbox-preview .xp-remote button[data-key="Y"] { background: #d69b11; border-color: #e8ae24; color: #17130a; }
+    #xbox-preview .xp-remote button[data-key="A"] { background: #107C10; border-color: #159E15; color: #FFFFFF; font-weight: 900; }
+    #xbox-preview .xp-remote button[data-key="B"] { background: #E81123; border-color: #F03A47; color: #FFFFFF; font-weight: 900; }
+    #xbox-preview .xp-remote button[data-key="X"] { background: #0078D7; border-color: #2896EB; color: #FFFFFF; font-weight: 900; }
+    #xbox-preview .xp-remote button[data-key="Y"] { background: #FFB900; border-color: #FFC83B; color: #1A1500; font-weight: 900; }
 
     @media (max-width: 960px) {
       .xp-bumper-cue { display: none; }
@@ -1326,10 +1320,10 @@
       <div class="xp-hints">
         <span><kbd>▲ ▼</kbd> Flick Channels</span>
         <span><kbd>← →</kbd> Timeline / Cards</span>
-        <span><kbd style="background:#176B28">A</kbd> Tune / Select</span>
-        <span><kbd style="background:#98242C">B</kbd> Hide Guide</span>
-        <span><kbd style="background:#1764A2">X</kbd> Save Show</span>
-        <span><kbd style="background:#8C670D">Y</kbd> Ahoy ID</span>
+        <span><kbd style="background:#107C10;color:#FFF">A</kbd> Tune / Select</span>
+        <span><kbd style="background:#E81123;color:#FFF">B</kbd> Hide Guide</span>
+        <span><kbd style="background:#0078D7;color:#FFF">X</kbd> Save Show</span>
+        <span><kbd style="background:#FFB900;color:#1A1500">Y</kbd> Ahoy ID</span>
         <span><kbd>LT / RT</kbd> Section</span>
       </div>
     </section>
@@ -2004,16 +1998,99 @@
         }
       }
 
+      // XBOX TV SOUND SYNTHESIZER (Web Audio API)
+      let audioCtx = null;
+      function playXboxSound(type) {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          if (!audioCtx) audioCtx = new AudioContext();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          if (type === 'tick') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(440, now + 0.04);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+            osc.start(now);
+            osc.stop(now + 0.04);
+          } else if (type === 'select') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+            osc.start(now);
+            osc.stop(now + 0.08);
+          } else if (type === 'back') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(293.66, now + 0.09);
+            gain.gain.setValueAtTime(0.10, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+            osc.start(now);
+            osc.stop(now + 0.09);
+          } else if (type === 'action') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(659.25, now);
+            osc.frequency.exponentialRampToValueAtTime(987.77, now + 0.1);
+            gain.gain.setValueAtTime(0.11, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+          } else if (type === 'bumper') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(660, now + 0.06);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+            osc.start(now);
+            osc.stop(now + 0.06);
+          }
+        } catch (e) {}
+      }
+
+      // IDLE CINEMA MODE (Auto-dim overlays after 8s idle, waking instantly on interaction)
+      let idleTimer = null;
+      function wakeCinemaMode() {
+        const top = root.querySelector('.xp-top');
+        const shelf = root.querySelector('#xp-shelf');
+        const hero = root.querySelector('#xp-hero');
+        if (top) top.classList.remove('dimmed');
+        if (shelf) shelf.classList.remove('dimmed');
+        if (hero) hero.classList.remove('dimmed');
+
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          if (!isSaveModalOpen && !isPairModalOpen) {
+            if (top) top.classList.add('dimmed');
+            if (shelf) shelf.classList.add('dimmed');
+            if (hero) hero.classList.add('dimmed');
+          }
+        }, 8000);
+      }
+
       window.act = (key) => {
+        wakeCinemaMode();
+
         if (isSaveModalOpen) {
           if (key === 'b' || key === 'B' || key === 'Escape') {
+            playXboxSound('back');
             closeSaveModal();
             say('Library closed. Resuming playback');
             return;
           } else if (key === 'x' || key === 'X') {
+            playXboxSound('action');
             toggleSaveCurrentItem();
             return;
           } else if (key === 'y' || key === 'Y') {
+            playXboxSound('action');
             closeSaveModal();
             openPairModal();
             return;
@@ -2029,18 +2106,22 @@
         if (section === 0) {
           // LIVE TV: UP & DOWN FLICK CHANNELS INSTANTLY LIKE PLUTO TV
           if (key === 'ArrowDown' || key === '↓') {
+            playXboxSound('tick');
             selected = (selected + 1) % liveChannels.length;
             render();
             tune(true);
           } else if (key === 'ArrowUp' || key === '↑') {
+            playXboxSound('tick');
             selected = (selected - 1 + liveChannels.length) % liveChannels.length;
             render();
             tune(true);
           } else if (key === 'ArrowRight' || key === '→') {
+            playXboxSound('tick');
             selected = (selected + 1) % liveChannels.length;
             render();
             tune(true);
           } else if (key === 'ArrowLeft' || key === '←') {
+            playXboxSound('tick');
             selected = (selected - 1 + liveChannels.length) % liveChannels.length;
             render();
             tune(true);
@@ -2049,39 +2130,48 @@
           // OTHER SECTIONS: LEFT & RIGHT BROWSE MEDIA CARDS
           const list = mediaSections[section] || [];
           if (key === 'ArrowRight' || key === '→') {
+            playXboxSound('tick');
             selected = (selected + 1) % list.length;
             render();
           } else if (key === 'ArrowLeft' || key === '←') {
+            playXboxSound('tick');
             selected = (selected - 1 + list.length) % list.length;
             render();
           } else if (key === 'ArrowDown' || key === '↓') {
+            playXboxSound('tick');
             selected = (selected + 1) % list.length;
             render();
           } else if (key === 'ArrowUp' || key === '↑') {
+            playXboxSound('tick');
             selected = (selected - 1 + list.length) % list.length;
             render();
           }
         }
 
         if (key === 'LT') {
+          playXboxSound('bumper');
           section = (section + sections.length - 1) % sections.length;
           selected = 0;
           render();
           tune(section === 0);
           say(`${sections[section]} selected`);
         } else if (key === 'RT') {
+          playXboxSound('bumper');
           section = (section + 1) % sections.length;
           selected = 0;
           render();
           tune(section === 0);
           say(`${sections[section]} selected`);
         } else if (key === 'Enter' || key === ' ' || key === 'a' || key === 'A') {
+          playXboxSound('select');
           tune(false);
           say(`Playing fullscreen [A]`);
         } else if (key === 'x' || key === 'X') {
+          playXboxSound('action');
           openSaveModal();
           say('AHOY Library & Pulse stats opened');
         } else if (key === 'y' || key === 'Y') {
+          playXboxSound('action');
           if (isSaveModalOpen) closeSaveModal();
           if (isPairModalOpen) {
             closePairModal();
@@ -2095,6 +2185,7 @@
             say(video.muted ? 'Audio Muted' : 'Audio Unmuted');
           }
         } else if (key === 'b' || key === 'B' || key === 'Escape') {
+          playXboxSound('back');
           if (isSaveModalOpen) {
             closeSaveModal();
             say('Library closed. Resuming playback');
@@ -2128,6 +2219,8 @@
       });
 
       tabs.forEach((t, i) => t.addEventListener('click', () => {
+        wakeCinemaMode();
+        playXboxSound('bumper');
         section = i;
         selected = 0;
         render();
@@ -2135,9 +2228,18 @@
         say(`${sections[i]} selected`);
       }));
 
-      root.querySelector('#xp-play').addEventListener('click', () => tune(false));
-      root.querySelector('#xp-close-pair').addEventListener('click', closePairModal);
+      root.querySelector('#xp-play').addEventListener('click', () => {
+        wakeCinemaMode();
+        playXboxSound('select');
+        tune(false);
+      });
+      root.querySelector('#xp-close-pair').addEventListener('click', () => {
+        wakeCinemaMode();
+        playXboxSound('back');
+        closePairModal();
+      });
       root.querySelectorAll('.xp-remote button').forEach(b => b.addEventListener('click', () => act(b.dataset.key)));
+      root.addEventListener('pointermove', wakeCinemaMode);
 
       function updateClock() {
         const clk = root.querySelector('#xp-clock');
@@ -2151,6 +2253,7 @@
       updateAccountUI();
       render();
       tune(false);
+      wakeCinemaMode();
     })();
   </script>
 </div>
