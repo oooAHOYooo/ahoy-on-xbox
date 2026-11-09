@@ -264,30 +264,30 @@
     #xbox-preview .xp-live {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      height: 28px;
+      gap: 5px;
+      height: 24px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 999px;
-      padding: 0 10px;
+      padding: 0 8px;
       white-space: nowrap !important;
       line-height: 1;
       box-sizing: border-box;
     }
     #xbox-preview .xp-live i {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--xp-pink);
-      box-shadow: 0 0 6px var(--xp-pink);
+      box-shadow: 0 0 5px var(--xp-pink);
       animation: xpPulse 2s infinite ease-in-out;
       flex-shrink: 0;
     }
     #xbox-preview .xp-live span {
-      font-size: 9.5px;
+      font-size: 8.5px;
       font-weight: 700;
       letter-spacing: 0.8px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.55);
       white-space: nowrap !important;
     }
 
@@ -299,16 +299,16 @@
     .xp-keycap-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      height: 28px;
+      gap: 5px;
+      height: 24px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 999px;
-      padding: 0 10px 0 5px;
-      font-size: 9.5px;
+      padding: 0 8px 0 4px;
+      font-size: 8.5px;
       font-weight: 700;
       letter-spacing: 0.6px;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.45);
       cursor: pointer;
       white-space: nowrap !important;
       flex-shrink: 0;
@@ -324,7 +324,7 @@
     .xp-keycap-pill.saved {
       background: rgba(59, 130, 246, 0.05);
       border-color: rgba(59, 130, 246, 0.16);
-      color: rgba(191, 219, 254, 0.72);
+      color: rgba(191, 219, 254, 0.7);
     }
     .xp-keycap-pill.saved:hover {
       background: rgba(59, 130, 246, 0.09);
@@ -334,7 +334,7 @@
     .xp-keycap-pill.ahoy-id {
       background: rgba(255, 255, 255, 0.03);
       border-color: rgba(255, 255, 255, 0.06);
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.45);
     }
     .xp-keycap-pill.ahoy-id:hover {
       background: rgba(255, 255, 255, 0.06);
@@ -347,13 +347,13 @@
       color: rgba(134, 239, 172, 0.75);
     }
     #xbox-preview #xp-save {
-      width: 82px !important;
-      min-width: 82px !important;
+      width: 66px !important;
+      min-width: 66px !important;
       justify-content: center !important;
     }
     #xbox-preview #xp-account {
-      width: 120px !important;
-      min-width: 120px !important;
+      width: 80px !important;
+      min-width: 80px !important;
       justify-content: center !important;
     }
 
@@ -361,10 +361,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      font-size: 8px;
+      font-size: 7.5px;
       font-weight: 800;
       flex-shrink: 0;
       line-height: 1;
@@ -2170,23 +2170,47 @@
       .xp-split-lists { grid-template-columns: 1fr; }
     }
 
-    /* CONTROLLER SIMULATOR (LIQUID GLASS GAMEPAD DOCK) */
+    /* CONTROLLER SIMULATOR (COLLAPSIBLE / HIDDEN BY DEFAULT) */
     #xbox-preview .xp-controls {
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin: 14px 0 0;
-      padding: 10px 16px;
+      margin: 10px 0 0;
+      padding: 8px 14px;
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       color: #8E8E93;
       font-size: 11px;
       flex-wrap: wrap;
+    }
+    #xbox-preview .xp-controls.show {
+      display: flex;
+    }
+    .xp-controls-toggle-bar {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .xp-controls-toggle-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .xp-controls-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.2);
     }
     #xbox-preview .xp-controls-info {
       display: flex;
@@ -2372,7 +2396,7 @@
         </button>
         <button class="xp-keycap-pill ahoy-id" id="xp-account" onclick="act('Y')">
           <span class="xp-keycap xp-keycap-y" id="xp-keycap-account">Y</span>
-          <span id="xp-account-text">PAIR AHOY ID</span>
+          <span id="xp-account-text">AHOY ID</span>
         </button>
       </div>
     </header>
@@ -2599,8 +2623,11 @@
     </div>
   </section>
 
-  <!-- CONTROLLER SIMULATOR (REFINED GAMEPAD DOCK) -->
-  <div class="xp-controls">
+  <!-- CONTROLLER SIMULATOR (COLLAPSIBLE TEST DOCK) -->
+  <div class="xp-controls-toggle-bar">
+    <button class="xp-controls-toggle-btn" id="xp-toggle-controls">🎮 Controller Simulator</button>
+  </div>
+  <div class="xp-controls" id="xp-controls-dock">
     <div class="xp-controls-info">
       <strong>GAMEPAD CONTROLS</strong>
       <span>Keyboard: Arrow keys (▲ ▼ change channels) • Enter / Space (A) • Esc (B)</span>
@@ -5570,7 +5597,7 @@
         } else {
           accountPill.classList.remove('paired');
           accountPill.classList.add('ahoy-id');
-          accountText.textContent = 'PAIR AHOY ID';
+          accountText.textContent = 'AHOY ID';
           keycap.className = 'xp-keycap xp-keycap-y';
           keycap.textContent = 'Y';
 
@@ -6667,6 +6694,14 @@
         closePairModal();
       });
       root.querySelectorAll('.xp-remote button').forEach(b => b.addEventListener('click', () => act(b.dataset.key)));
+      const toggleControlsBtn = root.querySelector('#xp-toggle-controls');
+      const controlsDock = root.querySelector('#xp-controls-dock');
+      if (toggleControlsBtn && controlsDock) {
+        toggleControlsBtn.addEventListener('click', () => {
+          controlsDock.classList.toggle('show');
+          toggleControlsBtn.textContent = controlsDock.classList.contains('show') ? '✕ Hide Controller Simulator' : '🎮 Controller Simulator';
+        });
+      }
       root.addEventListener('pointermove', wakeCinemaMode);
 
       function updateClock() {
