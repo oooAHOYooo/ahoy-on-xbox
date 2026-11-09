@@ -20,30 +20,40 @@
       </Grid.Background>
     </Grid>
 
-    <!-- Broadcast header -->
-    <Grid VerticalAlignment="Top" Height="76" Margin="42,0" Background="#99000000">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="24" Stretch="Uniform" VerticalAlignment="Center"/>
-        <TextBlock Text="tv" FontSize="14" FontWeight="Bold" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="6,0,0,1"/>
-      </StackPanel>
-      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
-        <Button x:Name="TabOnDemand" Content="ON DEMAND" Click="TabOnDemand_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
-        <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8" Margin="0,0,5,0"/>
-        <Button x:Name="TabPodcasts" Content="PODCASTS" Click="TabPodcasts_Click" Background="#1C1C22" Foreground="#96969D" FontWeight="SemiBold" FontSize="11" CornerRadius="6" Padding="14,8"/>
-      </StackPanel>
-      <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-        <Ellipse Width="7" Height="7" Fill="#FF0060" Margin="0,0,7,0"/>
-        <TextBlock Text="LIVE" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,16,0" CharacterSpacing="80"/>
-        <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="11" FontWeight="SemiBold" Foreground="#96969D" Margin="0,0,14,0"/>
-        <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="11" FontWeight="SemiBold" Foreground="#FF0060"/>
-      </StackPanel>
-    </Grid>
+    <!-- Broadcast header with polished obsidian glass and crisp telemetry -->
+    <Border VerticalAlignment="Top" Height="78" Padding="44,0" Background="#CC08090C" BorderBrush="#1FFFFFFF" BorderThickness="0,0,0,1">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="26" Stretch="Uniform" VerticalAlignment="Center"/>
+          <TextBlock Text="tv" FontSize="14" FontWeight="Black" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="6,0,0,2"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
+          <Button x:Name="TabOnDemand" Content="ON DEMAND VIDEO" Click="TabOnDemand_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
+          <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
+          <Button x:Name="TabRadio" Content="RADIO" Click="TabRadio_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+          <Border Background="#26FF0060" BorderBrush="#59FF0060" BorderThickness="1" CornerRadius="12" Padding="8,4" Margin="0,0,12,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Ellipse Width="7" Height="7" Fill="#FF0060" Margin="0,0,6,0"/>
+              <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold" Foreground="#FFFFFF" CharacterSpacing="100"/>
+            </StackPanel>
+          </Border>
+          <Border Background="#1AFFFFFF" BorderBrush="#2EFFFFFF" BorderThickness="1" CornerRadius="12" Padding="10,4" Margin="0,0,10,0">
+            <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="10" FontWeight="Bold" Foreground="#96969D"/>
+          </Border>
+          <Border Background="#22FF0060" BorderBrush="#55FF0060" BorderThickness="1" CornerRadius="12" Padding="10,4">
+            <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="10" FontWeight="Bold" Foreground="#FF4D90"/>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </Border>
 
     <!-- Program details sit directly over the live picture. -->
     <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="48,0,0,260" MaxWidth="800" IsHitTestVisible="True">
@@ -54,72 +64,94 @@
       <Button Content="Fullscreen  [A]" Click="FullscreenClicked" Background="#FF0060" BorderBrush="#FF0060" Foreground="#FFFFFF" FontSize="12" FontWeight="Bold" Padding="18,9" CornerRadius="6" HorizontalAlignment="Left" Margin="0,14,0,0"/>
     </StackPanel>
 
-    <!-- Fire TV style lower channel shelf; program list remains available in other sections. -->
-    <Border x:Name="GuideDock" VerticalAlignment="Bottom" Height="224" Background="#D9000000" Padding="42,10,42,12">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="24"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="22"/>
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="0">
-        <TextBlock Text="CHANNELS · 4 CANONICAL PILLARS" FontSize="10" FontWeight="Bold" Foreground="#8E8E93" CharacterSpacing="100" VerticalAlignment="Center"/>
-        <TextBlock x:Name="GuideHeader" Text="SCHEDULE • ON NOW &amp; UP NEXT" FontSize="10" FontWeight="Bold" Foreground="#FF0060" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+    <!-- Lower channel & media shelf with frosted obsidian glass and rich thumbnail cards -->
+    <Border x:Name="GuideDock" VerticalAlignment="Bottom" Height="234" Padding="44,12,44,14" Background="#E608090C" BorderBrush="#1FFFFFFF" BorderThickness="0,1,0,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="26"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+          <TextBlock Text="CHANNELS · 4 CANONICAL PILLARS" FontSize="11" FontWeight="Bold" Foreground="#8E8E93" CharacterSpacing="120" VerticalAlignment="Center"/>
+          <TextBlock x:Name="GuideHeader" Text="SCHEDULE • ON NOW &amp; UP NEXT" FontSize="11" FontWeight="Bold" Foreground="#FF0060" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        </Grid>
+        <ListView x:Name="Channels" Grid.Row="1" SelectionChanged="ChannelChanged" IsItemClickEnabled="True" ItemClick="ChannelClicked" SelectionMode="Single"
+                  Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+          <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
+          <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+              <Setter Property="Width" Value="252"/><Setter Property="Height" Value="154"/>
+              <Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/>
+              <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+            </Style>
+          </ListView.ItemContainerStyle>
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <Border Background="#141418" BorderBrush="#2A2A34" BorderThickness="1" CornerRadius="16" Padding="14,10">
+                <Grid>
+                  <Image Source="{Binding Artwork}" Stretch="UniformToFill" Opacity="0.85"/>
+                  <Rectangle IsHitTestVisible="False">
+                    <Rectangle.Fill>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00090A10" Offset="0.2"/>
+                        <GradientStop Color="#F007080D" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Rectangle.Fill>
+                  </Rectangle>
+                  <StackPanel VerticalAlignment="Bottom">
+                    <Border Background="#33FF0060" BorderBrush="#66FF0060" BorderThickness="1" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" Margin="0,0,0,4">
+                      <TextBlock FontSize="9" FontWeight="Bold" Foreground="#FF0060" CharacterSpacing="80"><Run Text="CH "/><Run Text="{Binding Number}"/></TextBlock>
+                    </Border>
+                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding Tagline}" FontSize="11" Foreground="#A0A0A8" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+        <ListView x:Name="Programs" Grid.Row="1" Visibility="Collapsed" MaxHeight="154" IsItemClickEnabled="True" ItemClick="PlayClicked" SelectionMode="Single"
+                  Background="Transparent" BorderThickness="0" Padding="0" ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+          <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
+          <ListView.ItemContainerStyle><Style TargetType="ListViewItem"><Setter Property="Width" Value="252"/><Setter Property="Height" Value="154"/><Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/></Style></ListView.ItemContainerStyle>
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <Border Background="#141418" BorderBrush="#2A2A34" BorderThickness="1" CornerRadius="16" Padding="14,10">
+                <Grid>
+                  <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" Opacity="0.85"/>
+                  <Rectangle IsHitTestVisible="False">
+                    <Rectangle.Fill>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00090A10" Offset="0.2"/>
+                        <GradientStop Color="#F007080D" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Rectangle.Fill>
+                  </Rectangle>
+                  <StackPanel VerticalAlignment="Bottom">
+                    <Border Background="#33FF0060" BorderBrush="#66FF0060" BorderThickness="1" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" Margin="0,0,0,4">
+                      <TextBlock Text="{Binding DurationLabel}" FontSize="9" FontWeight="Bold" Foreground="#FF0060" CharacterSpacing="80"/>
+                    </Border>
+                    <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding Host}" FontSize="11" Foreground="#A0A0A8" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="[D-PAD] Browse" FontSize="10" FontWeight="Bold" Foreground="#8E8E93" Margin="0,0,18,0"/>
+          <TextBlock Text="[A] Select / Tune" FontSize="10" FontWeight="Bold" Foreground="#3CD070" Margin="0,0,18,0"/>
+          <TextBlock Text="[B] Guide" FontSize="10" FontWeight="Bold" Foreground="#FF5E6C" Margin="0,0,18,0"/>
+          <TextBlock Text="[X] Save" FontSize="10" FontWeight="Bold" Foreground="#4BA3E3" Margin="0,0,18,0"/>
+          <TextBlock Text="[Y] Account Pairing" FontSize="10" FontWeight="Bold" Foreground="#FFC83B" Margin="0,0,18,0"/>
+          <TextBlock Text="[LT / RT] Switch Section" FontSize="10" FontWeight="Bold" Foreground="#B0B0B8"/>
+        </StackPanel>
       </Grid>
-      <ListView x:Name="Channels" Grid.Row="1" SelectionChanged="ChannelChanged" IsItemClickEnabled="True" ItemClick="ChannelClicked" SelectionMode="Single"
-                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-        <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
-        <ListView.ItemContainerStyle>
-          <Style TargetType="ListViewItem">
-            <Setter Property="Width" Value="250"/><Setter Property="Height" Value="154"/>
-            <Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
-          </Style>
-        </ListView.ItemContainerStyle>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <Border Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="18" Padding="14,10">
-              <Grid>
-                <Image Source="{Binding Artwork}" Stretch="UniformToFill" Opacity="0.82"/>
-                <Rectangle IsHitTestVisible="False">
-                  <Rectangle.Fill>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                      <GradientStop Color="#00111118" Offset="0.25"/>
-                      <GradientStop Color="#EE0B0D16" Offset="1"/>
-                    </LinearGradientBrush>
-                  </Rectangle.Fill>
-                </Rectangle>
-                <StackPanel VerticalAlignment="Bottom">
-                  <TextBlock FontSize="10" FontWeight="Bold" Foreground="#FF4D90" CharacterSpacing="100"><Run Text="CH "/><Run Text="{Binding Number}"/></TextBlock>
-                  <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
-                  <TextBlock Text="{Binding Tagline}" FontSize="11" Foreground="#B5B5BB" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
-                </StackPanel>
-              </Grid>
-            </Border>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-      <ListView x:Name="Programs" Grid.Row="1" Visibility="Collapsed" MaxHeight="154" IsItemClickEnabled="True" ItemClick="PlayClicked" SelectionMode="Single"
-                Background="Transparent" BorderThickness="0" Padding="0" ScrollViewer.HorizontalScrollMode="Enabled"
-                ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-        <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListView.ItemsPanel>
-        <ListView.ItemContainerStyle><Style TargetType="ListViewItem"><Setter Property="Width" Value="250"/><Setter Property="Height" Value="154"/><Setter Property="Margin" Value="0,4,16,4"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/></Style></ListView.ItemContainerStyle>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <Border Background="#1C1C22" BorderBrush="#2A2A32" BorderThickness="1" CornerRadius="18" Padding="14,10">
-              <StackPanel VerticalAlignment="Bottom">
-                <TextBlock Text="{Binding DurationLabel}" FontSize="10" FontWeight="Bold" Foreground="#FF4D90"/>
-                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
-                <TextBlock Text="{Binding Host}" FontSize="11" Foreground="#B5B5BB" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
-              </StackPanel>
-            </Border>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-      <TextBlock Grid.Row="2" Text="D-pad Browse     A Select     B Guide     X Save     Y Pair ID" FontSize="10" Foreground="#77777D" VerticalAlignment="Center"/>
-    </Grid>
     </Border>
 
     <!-- Xbox account pairing remains a platform-specific overlay. -->

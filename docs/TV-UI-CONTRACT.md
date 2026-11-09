@@ -7,7 +7,7 @@ This contract defines the screen structure and interaction model shared by the X
 - Full-screen video or selected artwork is the background stage.
 - The header places the Ahoy mark on the left, four section tabs in the center, and live/account status on the right.
 - The program information block sits over the lower left of the background and shows channel context, title, secondary title/host, description, and the primary playback action.
-- A bottom shelf shows the current section's selectable cards. Live TV uses channel cards; On Demand, Music, and Podcasts use media cards.
+- A bottom shelf shows the current section's selectable cards. Live TV uses channel cards; On Demand, Music, and Radio use media cards.
 - Cards use artwork where available, a dark text gradient, readable metadata, and a clear pink selected/focused outline.
 
 ## Sections and labels
@@ -15,9 +15,9 @@ This contract defines the screen structure and interaction model shared by the X
 Use the same order and user-facing labels on both platforms:
 
 1. `LIVE TV`
-2. `ON DEMAND`
+2. `ON DEMAND VIDEO`
 3. `MUSIC`
-4. `PODCASTS`
+4. `RADIO`
 
 Changing a section updates the selected tab, hero content, shelf contents, and playback context together. Live TV presents channels 101–104 in the shelf. Other sections present their media items using the same card pattern.
 

@@ -1815,5 +1815,39 @@
         }
       ]
     }
+  ],
+  "radio": [
+    {
+      "id": "radio-indie-1",
+      "title": "Seen Better Days & Indie Airwaves",
+      "artist": "Ahoy Radio Network",
+      "description": "Live 24/7 synchronized indie broadcast featuring premier indie artists, b-sides, and studio cuts.",
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg"
+    },
+    {
+      "id": "radio-wintergreen-2",
+      "title": "Wintergreen Sessions Radio",
+      "artist": "Wintergreen Studio",
+      "description": "Acoustic sets, live studio recordings, and intimate performances.",
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/koPyEhqksBk/maxresdefault.jpg"
+    },
+    {
+      "id": "radio-reasons-3",
+      "title": "High-Energy Indie & Radio Edits",
+      "artist": "Ahoy Upbeat",
+      "description": "Upbeat indie rock, fast tempo releases, and modern radio edits.",
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Fella%20Gazelle%20-%20Reasons%20-%20Radio%20Edit.mp3",
+      "thumbnail": "https://storage.googleapis.com/ahoy-dynamic-content/_2026/whats-new-thumbnails/FELLA%20GAZELLE.jpg"
+    },
+    {
+      "id": "radio-ambient-4",
+      "title": "Late Night Ambient Soundscapes",
+      "artist": "Ahoy Soundscapes",
+      "description": "Ambient, lo-fi, and instrumental soundscapes for late night sessions.",
+      "stream_url": "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3",
+      "thumbnail": "https://i.ytimg.com/vi/uEqMlBsKYpQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLABNZs86_3-knu6Zq78I43Am1eLWA"
+    }
   ]
 }

@@ -17,7 +17,7 @@ namespace AhoyXbox
         Channels,
         OnDemand,
         Music,
-        Podcasts
+        Radio
     }
 
     public static class SavedStore
@@ -194,7 +194,7 @@ namespace AhoyXbox
         private readonly List<Channel> allChannels = new List<Channel>();
         private readonly List<Video> onDemandVideos = new List<Video>();
         private readonly List<Video> musicTracks = new List<Video>();
-        private readonly List<Video> podcastEpisodes = new List<Video>();
+        private readonly List<Video> radioTracks = new List<Video>();
 
         private Channel playingChannel;
         private int playingIndex;
@@ -202,6 +202,7 @@ namespace AhoyXbox
 
         private readonly SolidColorBrush accentBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 96));
         private readonly SolidColorBrush inactiveBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 28, 28, 34));
+        private readonly SolidColorBrush tabBorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 42, 42, 52));
         private readonly SolidColorBrush whiteBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 255, 255));
         private readonly SolidColorBrush grayBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 142, 142, 147));
 
@@ -294,7 +295,7 @@ namespace AhoyXbox
                 }
                 else if (e.Key == Windows.System.VirtualKey.Number4)
                 {
-                    SetSection(AppSection.Podcasts);
+                    SetSection(AppSection.Radio);
                     e.Handled = true;
                 }
                 else
@@ -306,7 +307,7 @@ namespace AhoyXbox
 
         private void CycleSection(int direction)
         {
-            var sections = new[] { AppSection.Channels, AppSection.OnDemand, AppSection.Music, AppSection.Podcasts };
+            var sections = new[] { AppSection.Channels, AppSection.OnDemand, AppSection.Music, AppSection.Radio };
             int idx = Array.IndexOf(sections, currentSection);
             int next = (idx + direction + sections.Length) % sections.Length;
             SetSection(sections[next]);
@@ -329,7 +330,7 @@ namespace AhoyXbox
                 return;
             }
 
-            // 3. Return to Live TV if in another section (On Demand / Music / Podcasts)
+            // 3. Return to Live TV if in another section (On Demand / Music / Radio)
             if (currentSection != AppSection.Channels)
             {
                 SetSection(AppSection.Channels);
@@ -371,7 +372,7 @@ namespace AhoyXbox
         private void TabChannels_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Channels);
         private void TabOnDemand_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.OnDemand);
         private void TabMusic_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Music);
-        private void TabPodcasts_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Podcasts);
+        private void TabRadio_Click(object sender, RoutedEventArgs e) => SetSection(AppSection.Radio);
 
         public void SetSection(AppSection sec)
         {
@@ -380,15 +381,19 @@ namespace AhoyXbox
             // Highlight active tab pill
             TabChannels.Background = sec == AppSection.Channels ? accentBrush : inactiveBrush;
             TabChannels.Foreground = sec == AppSection.Channels ? whiteBrush : grayBrush;
+            TabChannels.BorderBrush = sec == AppSection.Channels ? accentBrush : tabBorderBrush;
 
             TabOnDemand.Background = sec == AppSection.OnDemand ? accentBrush : inactiveBrush;
             TabOnDemand.Foreground = sec == AppSection.OnDemand ? whiteBrush : grayBrush;
+            TabOnDemand.BorderBrush = sec == AppSection.OnDemand ? accentBrush : tabBorderBrush;
 
             TabMusic.Background = sec == AppSection.Music ? accentBrush : inactiveBrush;
             TabMusic.Foreground = sec == AppSection.Music ? whiteBrush : grayBrush;
+            TabMusic.BorderBrush = sec == AppSection.Music ? accentBrush : tabBorderBrush;
 
-            TabPodcasts.Background = sec == AppSection.Podcasts ? accentBrush : inactiveBrush;
-            TabPodcasts.Foreground = sec == AppSection.Podcasts ? whiteBrush : grayBrush;
+            TabRadio.Background = sec == AppSection.Radio ? accentBrush : inactiveBrush;
+            TabRadio.Foreground = sec == AppSection.Radio ? whiteBrush : grayBrush;
+            TabRadio.BorderBrush = sec == AppSection.Radio ? accentBrush : tabBorderBrush;
 
             switch (sec)
             {
@@ -411,7 +416,7 @@ namespace AhoyXbox
                 case AppSection.OnDemand:
                     Channels.Visibility = Visibility.Collapsed;
                     Programs.Visibility = Visibility.Visible;
-                    GuideHeader.Text = $"ON DEMAND • {onDemandVideos.Count} INDIE FILMS & SHOWS";
+                    GuideHeader.Text = $"ON DEMAND VIDEO • {onDemandVideos.Count} INDIE FILMS & SHOWS";
                     Programs.ItemsSource = onDemandVideos;
                     if (onDemandVideos.Count > 0)
                     {
@@ -422,7 +427,7 @@ namespace AhoyXbox
                 case AppSection.Music:
                     Channels.Visibility = Visibility.Collapsed;
                     Programs.Visibility = Visibility.Visible;
-                    GuideHeader.Text = $"MUSIC • {musicTracks.Count} AHOY RADIO & INDIE TRACKS";
+                    GuideHeader.Text = $"MUSIC • {musicTracks.Count} AHOY TRACKS & ALBUMS";
                     Programs.ItemsSource = musicTracks;
                     if (musicTracks.Count > 0)
                     {
@@ -430,14 +435,14 @@ namespace AhoyXbox
                     }
                     break;
 
-                case AppSection.Podcasts:
+                case AppSection.Radio:
                     Channels.Visibility = Visibility.Collapsed;
                     Programs.Visibility = Visibility.Visible;
-                    GuideHeader.Text = $"PODCASTS • {podcastEpisodes.Count} ORIGINAL EPISODES";
-                    Programs.ItemsSource = podcastEpisodes;
-                    if (podcastEpisodes.Count > 0)
+                    GuideHeader.Text = $"RADIO • {radioTracks.Count} LIVE STATIONS & BROADCASTS";
+                    Programs.ItemsSource = radioTracks;
+                    if (radioTracks.Count > 0)
                     {
-                        PlayVideo(podcastEpisodes[0]);
+                        PlayVideo(radioTracks[0]);
                     }
                     break;
             }
@@ -549,41 +554,75 @@ namespace AhoyXbox
                     }
                 }
 
-                // 4. Parse Podcasts
-                podcastEpisodes.Clear();
-                if (root.ContainsKey("podcasts"))
+                // 4. Parse Radio Stations
+                radioTracks.Clear();
+                if (root.ContainsKey("radio"))
                 {
-                    var podcastsArray = root.GetNamedArray("podcasts");
-                    foreach (var pVal in podcastsArray)
+                    var radioArray = root.GetNamedArray("radio");
+                    foreach (var val in radioArray)
                     {
-                        var pRow = pVal.GetObject();
-                        string showTitle = pRow.GetNamedString("title", "Podcast");
-                        string showThumb = pRow.ContainsKey("thumbnail") ? pRow.GetNamedString("thumbnail", "") : "";
-
-                        if (pRow.ContainsKey("episodes"))
-                        {
-                            var epArray = pRow.GetNamedArray("episodes");
-                            foreach (var epVal in epArray)
-                            {
-                                var epRow = epVal.GetObject();
-                                string epThumb = epRow.ContainsKey("thumbnail") ? epRow.GetNamedString("thumbnail", "") : showThumb;
-                                if (!string.IsNullOrEmpty(epThumb) && epThumb.StartsWith("/"))
-                                    epThumb = "https://app.ahoy.ooo" + epThumb;
-
-                                podcastEpisodes.Add(new Video {
-                                    Id = epRow.GetNamedString("id", Guid.NewGuid().ToString()),
-                                    Title = epRow.GetNamedString("title", "Episode"),
-                                    Host = showTitle,
-                                    Description = epRow.ContainsKey("description") ? epRow.GetNamedString("description", "") : "",
-                                    Duration = epRow.ContainsKey("duration") ? epRow.GetNamedString("duration", "") : "",
-                                    Url = epRow.GetNamedString("audio_url", ""),
-                                    Thumbnail = epThumb,
-                                    Category = "podcast",
-                                    Tags = new List<string> { "podcast", "audio" }
-                                });
-                            }
-                        }
+                        var row = val.GetObject();
+                        var thumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
+                        string artist = row.ContainsKey("artist") ? row.GetNamedString("artist", "Ahoy Radio") : "Ahoy Radio";
+                        radioTracks.Add(new Video {
+                            Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
+                            Title = row.GetNamedString("title", "Ahoy Indie Radio"),
+                            Host = artist,
+                            Description = row.ContainsKey("description") ? row.GetNamedString("description", "Live Synchronized 24/7 Broadcast") : "Live Synchronized 24/7 Broadcast",
+                            Duration = "LIVE",
+                            Url = row.GetNamedString("stream_url", ""),
+                            Thumbnail = thumb,
+                            Category = "radio",
+                            Tags = new List<string> { "radio", "audio", "live" }
+                        });
                     }
+                }
+                if (radioTracks.Count == 0)
+                {
+                    radioTracks.Add(new Video {
+                        Id = "radio-indie-1",
+                        Title = "Ahoy Indie Radio 1 · Live Airwaves",
+                        Host = "Ahoy Radio Network",
+                        Description = "Live 24/7 synchronized indie broadcast featuring premier indie artists, b-sides, and studio cuts.",
+                        Duration = "LIVE",
+                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3",
+                        Thumbnail = "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg",
+                        Category = "radio",
+                        Tags = new List<string> { "radio", "audio", "live" }
+                    });
+                    radioTracks.Add(new Video {
+                        Id = "radio-wintergreen-2",
+                        Title = "Wintergreen Sessions Radio",
+                        Host = "Wintergreen Studio",
+                        Description = "Acoustic sets, live studio recordings, and intimate performances.",
+                        Duration = "LIVE",
+                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3",
+                        Thumbnail = "https://i.ytimg.com/vi/koPyEhqksBk/maxresdefault.jpg",
+                        Category = "radio",
+                        Tags = new List<string> { "radio", "audio", "live" }
+                    });
+                    radioTracks.Add(new Video {
+                        Id = "radio-reasons-3",
+                        Title = "High-Energy Indie & Radio Edits",
+                        Host = "Ahoy Upbeat",
+                        Description = "Upbeat indie rock, fast tempo releases, and modern radio edits.",
+                        Duration = "LIVE",
+                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Fella%20Gazelle%20-%20Reasons%20-%20Radio%20Edit.mp3",
+                        Thumbnail = "https://storage.googleapis.com/ahoy-dynamic-content/_2026/whats-new-thumbnails/FELLA%20GAZELLE.jpg",
+                        Category = "radio",
+                        Tags = new List<string> { "radio", "audio", "live" }
+                    });
+                    radioTracks.Add(new Video {
+                        Id = "radio-ambient-4",
+                        Title = "Late Night Ambient Soundscapes",
+                        Host = "Ahoy Soundscapes",
+                        Description = "Ambient, lo-fi, and instrumental soundscapes for late night sessions.",
+                        Duration = "LIVE",
+                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3",
+                        Thumbnail = "https://i.ytimg.com/vi/uEqMlBsKYpQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLABNZs86_3-knu6Zq78I43Am1eLWA",
+                        Category = "radio",
+                        Tags = new List<string> { "radio", "audio", "live" }
+                    });
                 }
 
                 // Initialize Channels view
@@ -740,8 +779,8 @@ namespace AhoyXbox
                 case AppSection.Music:
                     secLabel = "AHOY MUSIC";
                     break;
-                case AppSection.Podcasts:
-                    secLabel = "PODCAST";
+                case AppSection.Radio:
+                    secLabel = "RADIO";
                     break;
                 default:
                     secLabel = "AHOY TV";
@@ -822,10 +861,10 @@ namespace AhoyXbox
                     int nextIdx = (musicTracks.IndexOf(currentPlayingVideo) + 1) % musicTracks.Count;
                     PlayVideo(musicTracks[nextIdx]);
                 }
-                else if (currentSection == AppSection.Podcasts && podcastEpisodes.Count > 0)
+                else if (currentSection == AppSection.Radio && radioTracks.Count > 0)
                 {
-                    int nextIdx = (podcastEpisodes.IndexOf(currentPlayingVideo) + 1) % podcastEpisodes.Count;
-                    PlayVideo(podcastEpisodes[nextIdx]);
+                    int nextIdx = (radioTracks.IndexOf(currentPlayingVideo) + 1) % radioTracks.Count;
+                    PlayVideo(radioTracks[nextIdx]);
                 }
             });
         }
