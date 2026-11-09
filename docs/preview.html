@@ -544,52 +544,72 @@
       box-shadow: 0 0 6px var(--xp-pink);
     }
 
-    /* CARD SHELF (FOR ON DEMAND, MUSIC, RADIO) */
+    /* CARD SHELF (FOR ON DEMAND, MUSIC, RADIO - PHOTOGRAPHIC THUMBNAILS) */
     #xbox-preview .xp-cards {
       display: flex;
       gap: 12px;
-      overflow: hidden;
-      padding: 4px 2px 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 6px 4px 10px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+      scroll-behavior: smooth;
+    }
+    #xbox-preview .xp-cards::-webkit-scrollbar {
+      height: 4px;
+    }
+    #xbox-preview .xp-cards::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #xbox-preview .xp-cards::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+    }
+    #xbox-preview .xp-cards::-webkit-scrollbar-thumb:hover {
+      background: var(--xp-pink);
     }
     #xbox-preview .xp-card {
       position: relative;
-      flex: 1 1 0;
-      min-width: 0;
-      height: clamp(82px, 12vw, 140px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
+      flex: 0 0 clamp(160px, 17vw, 210px);
+      height: clamp(88px, 10.5vw, 126px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
       overflow: hidden;
       text-align: left;
       padding: 0;
-      background: #141418;
-      transition: transform .18s, border-color .18s, box-shadow .18s;
+      background: #101218;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+    }
+    #xbox-preview .xp-card:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px);
     }
     #xbox-preview .xp-card[aria-current=true] {
       border: 2px solid var(--xp-pink);
-      transform: translateY(-3px) scale(1.035);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.8), 0 0 18px #ff006050;
+      transform: translateY(-4px) scale(1.035);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.85), 0 0 20px var(--xp-pink-glow);
+      z-index: 2;
     }
-    #xbox-preview .xp-card:before {
-      content: "";
+    #xbox-preview .xp-card-poster {
       position: absolute;
       inset: 0;
-      background: var(--art);
-      transition: filter .2s;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.3s ease, filter 0.2s ease;
+    }
+    #xbox-preview .xp-card:hover .xp-card-poster,
+    #xbox-preview .xp-card[aria-current=true] .xp-card-poster {
+      transform: scale(1.06);
     }
     #xbox-preview .xp-card:after {
       content: "";
       position: absolute;
-      inset: 20% 0 0;
-      background: linear-gradient(transparent, #07080df2);
-    }
-    #xbox-preview .xp-glyph {
-      position: absolute;
-      right: 10%;
-      top: 5%;
-      font-size: clamp(28px, 5vw, 64px);
-      font-weight: 900;
-      color: #ffffff48;
-      transform: rotate(-12deg);
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5, 7, 11, 0.05) 0%, rgba(5, 7, 11, 0.48) 46%, rgba(5, 7, 11, 0.94) 100%);
+      pointer-events: none;
     }
     #xbox-preview .xp-card-copy {
       position: absolute;
@@ -602,8 +622,8 @@
     }
     #xbox-preview .xp-card-copy small {
       color: #ff0060;
-      background: rgba(255,0,96,0.18);
-      border: 1px solid rgba(255,0,96,0.4);
+      background: rgba(255, 0, 96, 0.18);
+      border: 1px solid rgba(255, 0, 96, 0.4);
       border-radius: 4px;
       padding: 1px 5px;
       font-size: 8px;
@@ -613,6 +633,7 @@
       display: inline-block;
       margin-bottom: 2px;
       white-space: nowrap;
+      text-transform: uppercase;
     }
     #xbox-preview .xp-card-copy strong {
       font-size: clamp(10px, 1.1vw, 13px);
@@ -620,13 +641,80 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: #FFFFFF;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
     }
     #xbox-preview .xp-card-copy span {
-      color: #a0a0a8;
+      color: #D0D0D8;
       font-size: clamp(8px, .85vw, 10px);
+      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    /* SHELF CATEGORY & SORT BAR */
+    #xbox-preview .xp-shelf-filters {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: nowrap;
+    }
+    #xbox-preview .xp-filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    #xbox-preview .xp-filter-chips::-webkit-scrollbar { display: none; }
+    #xbox-preview .xp-filter-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #9A9AA2;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #xbox-preview .xp-filter-chip:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.28);
+      color: #FFFFFF;
+    }
+    #xbox-preview .xp-filter-chip[aria-selected=true] {
+      background: var(--xp-pink);
+      border-color: var(--xp-pink);
+      color: #FFFFFF;
+      box-shadow: 0 0 12px var(--xp-pink-glow);
+    }
+    #xbox-preview .xp-sort-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: #8E8E93;
+      font-weight: 700;
+    }
+    #xbox-preview .xp-sort-select {
+      background: rgba(22, 24, 32, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #FFF;
+      cursor: pointer;
+      outline: none;
     }
 
     /* MINI EQ SOUNDWAVE */
@@ -1791,11 +1879,583 @@
 
       const mediaSections = {
         1: [
-          {no:'OD-1', name:'Tyler Needs A Break', line:'Episode 4: Sam Carlson', title:'Tyler Needs a Break — Ep 4', sub:'On Demand Video · Series', description:'Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and touring.', art:'linear-gradient(135deg,#244358,#3c7e99 45%,#12161f 78%)', hero:'#3c7e99', glyph:'▶', url:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4', poster:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/thumbnails/01.webp'},
-          {no:'OD-2', name:'Poets & Friends #13', line:'Live at Koffee? on Audubon', title:'Poets & Friends #13 — Highlights', sub:'On Demand Video · Live Poetry', description:'Performances by Paul Wildy, Elena Gerald, Aidan Bauer, and Pat Clendenen.', art:'linear-gradient(135deg,#442a54,#88448b 45%,#1c1322 78%)', hero:'#88448b', glyph:'P', url:'https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets_10_FULL.mp4', poster:'https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/thumbnails/01.webp'},
-          {no:'OD-3', name:'Tallboyz Obsolete', line:'Full Length Skate Film', title:'Tallboyz — Obsolete (Full Film)', sub:'On Demand Video · Skate Feature', description:'Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.', art:'linear-gradient(135deg,#5c4728,#ab8446 45%,#1e1910 78%)', hero:'#ab8446', glyph:'SK', url:'https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4', poster:'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg'},
-          {no:'OD-4', name:'G-Dub Disc Golf', line:'Georgia Road Trip Series', title:'Georgia Disc Golf Trip (15hr Drive)', sub:'On Demand Video · Series', description:'Greg Weese takes a 15-hour road trip to Georgia to throw disc golf courses.', art:'linear-gradient(135deg,#264e32,#478a5b 45%,#101c13 78%)', hero:'#478a5b', glyph:'GD', url:'https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20Road%20Trip%20Series_%20Georgia%20Disc%20Golf%20Trip%20(I%20Drove%2015%20Hours%20to%20Play%20Disc%20Golf!!).mp4', poster:'https://i.ytimg.com/vi/grB5ydvYWW8/maxresdefault.jpg'}
-        ],
+          {
+                    "id": "od-15",
+                    "no": "OD-01",
+                    "name": "Tallboyz",
+                    "line": "Skate & Films \u00b7 38:12",
+                    "title": "Tallboyz - Obsolete",
+                    "sub": "Skate & Films \u00b7 38:12 \u00b7 On Demand",
+                    "description": "A full-length skating film from Tallboyz featuring Dave Gunn and Andrew Leverton. Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.",
+                    "category": "Skate & Films",
+                    "duration": "38:12",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete_Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete%20-%20Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete5.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete_Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete%20-%20Ahoy%20Indie%20Media%20-%20Tallboyz%20-%20Obsolete5.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/Full%20Videos/Obsolete/Tallboyz%20-%20Obsolete%20-%20Full%20Film.mov",
+                    "hero": "#bd7952",
+                    "durationSec": 2292
+          },
+          {
+                    "id": "od-11",
+                    "no": "OD-02",
+                    "name": "Tyler Needs a Break",
+                    "line": "Series & Shows \u00b7 48:20",
+                    "title": "Tyler Needs a Break \u2014 Episode 4: Sam Carlson (Full Show)",
+                    "sub": "Series & Shows \u00b7 48:20 \u00b7 On Demand",
+                    "description": "Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and going on tour. Full episode of Tyler Needs a Break, Episode 4.",
+                    "category": "Series & Shows",
+                    "duration": "48:20",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/tyler-needs-a-break-ep4-full_sam-carlson_8646f844c333.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/tyler-needs-a-break-ep4-full_sam-carlson_8646f844c333.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 2900
+          },
+          {
+                    "id": "od-36",
+                    "no": "OD-03",
+                    "name": "Wintergreen Sessions Episo\u2026",
+                    "line": "Live Concerts \u00b7 13:49",
+                    "title": "Wintergreen Sessions Episode 1: Whatnot",
+                    "sub": "Live Concerts \u00b7 13:49 \u00b7 On Demand",
+                    "description": "Welcome to Wintergreen Sessions! This is a new series dedicated to capturing the live performances of artists and bands. I say we because we're working in conjunction with Kicker Pictures to record high quality professional video alongside the live audio recording. Today, we're starting off our series with a local band from here in CT. Whatnot recorded their debut record, \"Self-Titled,\" here at the Wintergreen Studio. Today they start off their performance with a brand new, never before heard song. After that, they dive into two familiar tunes off their EP - With some slight changes.\n\nWhatnot - \nYoutube: @WhatnotTheBand \nInstagram: @whatnot.band\n\nKicker Pictures - \nYoutube: @kickerpictures \nInstagram: @Kickerpicturesct\nWebsite: https://www.kickerpictures.com/\n\nWintergreen Sessions - \nInstagram: @Wintergreen_sessions",
+                    "category": "Live Concerts",
+                    "duration": "13:49",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/grB5ydvYWW8.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/grB5ydvYWW8.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/grB5ydvYWW8.mp4",
+                    "hero": "#478a5b",
+                    "durationSec": 829
+          },
+          {
+                    "id": "od-1",
+                    "no": "OD-04",
+                    "name": "The Problem With Kids Today",
+                    "line": "Music Videos \u00b7 2:38",
+                    "title": "The Problem With Kids Today \u2014 The Beginning of the End of the World",
+                    "sub": "Music Videos \u00b7 2:38 \u00b7 On Demand",
+                    "description": "Music video for \u201cThe Beginning of the End of the World,\u201d the third single from Take It! Filmed and edited by Connor Rog of Kicker Pictures. Glitch Mini DV by Derick Noetzel. Filmed in New Haven, CT.",
+                    "category": "Music Videos",
+                    "duration": "2:38",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/the-problem-with-kids-today-the-beginning-of-the-end-of-the-world.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/the-problem-with-kids-today-the-beginning-of-the-end-of-the-world.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4",
+                    "hero": "#b8355b",
+                    "durationSec": 158
+          },
+          {
+                    "id": "od-17",
+                    "no": "OD-05",
+                    "name": "Flux TB Cash Contest",
+                    "line": "Skate & Films \u00b7 8:15",
+                    "title": "Flux TB Cash Contest",
+                    "sub": "Skate & Films \u00b7 8:15 \u00b7 On Demand",
+                    "description": "Cash Contest hosted by the Tallboyz at FLUX during their first annual skate film festival at Flux. Shot and edited by Alex Gonzalez.",
+                    "category": "Skate & Films",
+                    "duration": "8:15",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4",
+                    "hero": "#bd7952",
+                    "durationSec": 495
+          },
+          {
+                    "id": "od-2",
+                    "no": "OD-06",
+                    "name": "Samuel Dylan Witch",
+                    "line": "Music Videos \u00b7 4:03",
+                    "title": "Samuel Dylan Witch \u2014 Stop and Rewind",
+                    "sub": "Music Videos \u00b7 4:03 \u00b7 On Demand",
+                    "description": "Watch Samuel Dylan Witch perform \u201cStop and Rewind.\u201d",
+                    "category": "Music Videos",
+                    "duration": "4:03",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/samuel-dylan-witch-stop-and-rewind.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4",
+                    "hero": "#b8355b",
+                    "durationSec": 243
+          },
+          {
+                    "id": "od-4",
+                    "no": "OD-07",
+                    "name": "Road Trip Series: Georgia \u2026",
+                    "line": "Series & Shows \u00b7 22:40",
+                    "title": "Road Trip Series: Georgia Disc Golf Trip (I Drove 15 Hours to Play Disc Golf!!)",
+                    "sub": "Series & Shows \u00b7 22:40 \u00b7 On Demand",
+                    "description": "Greg takes a 15-hour road trip to Georgia to play some amazing disc golf courses.",
+                    "category": "Series & Shows",
+                    "duration": "22:40",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-georgia-trip_010eb5ec.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-georgia-trip_010eb5ec.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20Road%20Trip%20Series_%20Georgia%20Disc%20Golf%20Trip%20(I%20Drove%2015%20Hours%20to%20Play%20Disc%20Golf!!).mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 1360
+          },
+          {
+                    "id": "od-33",
+                    "no": "OD-08",
+                    "name": "Whatnot",
+                    "line": "Live Concerts \u00b7 5:24",
+                    "title": "Whatnot - Sand - Live @ Wintergreen Sessions",
+                    "sub": "Live Concerts \u00b7 5:24 \u00b7 On Demand",
+                    "description": "Whatnot performs their Roblox minigame hit, \"Sand.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe",
+                    "category": "Live Concerts",
+                    "duration": "5:24",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4",
+                    "hero": "#478a5b",
+                    "durationSec": 324
+          },
+          {
+                    "id": "od-3",
+                    "no": "OD-09",
+                    "name": "Which Discraft Putter is B\u2026",
+                    "line": "Series & Shows \u00b7 12:15",
+                    "title": "Which Discraft Putter is Best",
+                    "sub": "Series & Shows \u00b7 12:15 \u00b7 On Demand",
+                    "description": "Greg Weese compares and reviews Discraft putters to find the best one for your game.",
+                    "category": "Series & Shows",
+                    "duration": "12:15",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-which-putter-best_324904ae.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-which-putter-best_324904ae.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20Which%20Discraft%20Putter%20is%20Best.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 735
+          },
+          {
+                    "id": "od-5",
+                    "no": "OD-10",
+                    "name": "From Casual to MPO",
+                    "line": "Series & Shows \u00b7 14:50",
+                    "title": "From Casual to MPO - My PDGA Journey Starts Here",
+                    "sub": "Series & Shows \u00b7 14:50 \u00b7 On Demand",
+                    "description": "Greg's journey into the Professional Disc Golf Association (PDGA) starts here. From casual player to competitive golfer.",
+                    "category": "Series & Shows",
+                    "duration": "14:50",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-pdga-journey_cd5bc8b0.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-pdga-journey_cd5bc8b0.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20From%20Casual%20to%20MPO%20-%20My%20PDGA%20Journey%20Starts%20Here.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 890
+          },
+          {
+                    "id": "od-6",
+                    "no": "OD-11",
+                    "name": "The Discraft Luna",
+                    "line": "Series & Shows \u00b7 11:20",
+                    "title": "The Discraft Luna",
+                    "sub": "Series & Shows \u00b7 11:20 \u00b7 On Demand",
+                    "description": "A detailed review of the Discraft Luna disc \u2014 features, performance, and why it's worth trying.",
+                    "category": "Series & Shows",
+                    "duration": "11:20",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-luna-review_9177ed7e.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-luna-review_9177ed7e.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20The%20Discraft%20Luna.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 680
+          },
+          {
+                    "id": "od-7",
+                    "no": "OD-12",
+                    "name": "Discraft",
+                    "line": "Series & Shows \u00b7 9:45",
+                    "title": "Discraft \u2014 G-Dub Disc Golf",
+                    "sub": "Series & Shows \u00b7 9:45 \u00b7 On Demand",
+                    "description": "A quick clip from G-Dub Disc Golf featuring Discraft disc reviews.",
+                    "category": "Series & Shows",
+                    "duration": "9:45",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-discraft-clip_1e4839a7.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-discraft-clip_1e4839a7.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20CLIP%20-%20Discraft.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 585
+          },
+          {
+                    "id": "od-8",
+                    "no": "OD-13",
+                    "name": "Chase for Ace",
+                    "line": "Series & Shows \u00b7 15:30",
+                    "title": "Chase for Ace \u2014 G-Dub Disc Golf",
+                    "sub": "Series & Shows \u00b7 15:30 \u00b7 On Demand",
+                    "description": "A thrilling clip from G-Dub Disc Golf where Greg attempts a challenging ace.",
+                    "category": "Series & Shows",
+                    "duration": "15:30",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-chase-for-ace-clip_0959f8f1.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/g-dub-disc-golf-chase-for-ace-clip_0959f8f1.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20CLIP%20-%20Chase%20for%20Ace.mp4",
+                    "hero": "#3c7e99",
+                    "durationSec": 930
+          },
+          {
+                    "id": "od-9",
+                    "no": "OD-14",
+                    "name": "Poets & Friends #10",
+                    "line": "Poets & Friends \u00b7 42:10",
+                    "title": "Poets & Friends #10 \u2014 Full Show Recording",
+                    "sub": "Poets & Friends \u00b7 42:10 \u00b7 On Demand",
+                    "description": "Full unedited recording of Poets & Friends #10, originally recorded live on April 30, 2026 at Koffee?, New Haven CT.",
+                    "category": "Poets & Friends",
+                    "duration": "42:10",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets%20%2310.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets%20%2310.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets_10_FULL.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 2530
+          },
+          {
+                    "id": "od-10",
+                    "no": "OD-15",
+                    "name": "Poets & Friends #9",
+                    "line": "Poets & Friends \u00b7 45:00",
+                    "title": "Poets & Friends #9 \u2014 Full Show Recording",
+                    "sub": "Poets & Friends \u00b7 45:00 \u00b7 On Demand",
+                    "description": "Full unedited recording of Poets & Friends #9: Springtime, originally recorded live on March 26, 2026 at Koffee?, New Haven CT.",
+                    "category": "Poets & Friends",
+                    "duration": "45:00",
+                    "thumb": "https://partiful.imgix.net/external/user/CwCebGXbOBSYcICoVLo5921X2ZC3/50ZHnbZBbi-ReHwK2D24a?fit=clip&w=460&auto=format",
+                    "poster": "https://partiful.imgix.net/external/user/CwCebGXbOBSYcICoVLo5921X2ZC3/50ZHnbZBbi-ReHwK2D24a?fit=clip&w=460&auto=format",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-09/Poets%20and%20Friends%20%239%20-%20full.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 2700
+          },
+          {
+                    "id": "od-12",
+                    "no": "OD-16",
+                    "name": "Poets & Friends #8",
+                    "line": "Poets & Friends \u00b7 38:30",
+                    "title": "Poets & Friends #8 \u2014 Full Show Recording",
+                    "sub": "Poets & Friends \u00b7 38:30 \u00b7 On Demand",
+                    "description": "Full unedited recording of Poets & Friends #8, originally recorded live on February 26, 2026 at Koffee?, New Haven CT. Featuring Micky Vampiro, Paul Wildly, Aidan Bauer, Layne Boles, Alex Gonzalez, Miranda Copps, Katie Myerscough, Pat Clendenen, Ellen Martin, Samuel Chen, and Sasha.",
+                    "category": "Poets & Friends",
+                    "duration": "38:30",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-8_b1908116a7c8.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-8_b1908116a7c8.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets%20and%20Friends%20%238%20-%20Draft%203.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 2310
+          },
+          {
+                    "id": "od-13",
+                    "no": "OD-17",
+                    "name": "Poets & Friends #4: Spooky\u2026",
+                    "line": "Poets & Friends \u00b7 35:15",
+                    "title": "Poets & Friends #4: Spooky Edition - Live Show Recording",
+                    "sub": "Poets & Friends \u00b7 35:15 \u00b7 On Demand",
+                    "description": "Full recording of the Spooky Edition poetry and performance event",
+                    "category": "Poets & Friends",
+                    "duration": "35:15",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-4_24ec074f1c38.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-4_24ec074f1c38.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Poets4Total.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 2115
+          },
+          {
+                    "id": "od-14",
+                    "no": "OD-18",
+                    "name": "Poets and Friends #3",
+                    "line": "Poets & Friends \u00b7 39:00",
+                    "title": "Poets and Friends #3 - Live Show Recording",
+                    "sub": "Poets & Friends \u00b7 39:00 \u00b7 On Demand",
+                    "description": "Full recording of the live poetry and performance event",
+                    "category": "Poets & Friends",
+                    "duration": "39:00",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-3_a0e72c328dba.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-3_a0e72c328dba.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/Ahoy_poets%20and%20friends%20-%203%20-%20ready.mov",
+                    "hero": "#88448b",
+                    "durationSec": 2340
+          },
+          {
+                    "id": "od-16",
+                    "no": "OD-19",
+                    "name": "UFR White",
+                    "line": "Skate & Films \u00b7 6:45",
+                    "title": "UFR White - Featuring Dave Gunn",
+                    "sub": "Skate & Films \u00b7 6:45 \u00b7 On Demand",
+                    "description": "New skating content from Tallboyz featuring Dave Gunn.",
+                    "category": "Skate & Films",
+                    "duration": "6:45",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite_thumb.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite_thumb.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4",
+                    "hero": "#bd7952",
+                    "durationSec": 405
+          },
+          {
+                    "id": "od-18",
+                    "no": "OD-20",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 2:15",
+                    "title": "Poets & Friends #13 \u2014 Opening Remarks",
+                    "sub": "Poets & Friends \u00b7 2:15 \u00b7 On Demand",
+                    "description": "Alex Gonzalez kicks off Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "2:15",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-0-opening-remarks_6ba3a44db0ab.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-0-opening-remarks_6ba3a44db0ab.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_0_Opening.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 135
+          },
+          {
+                    "id": "od-19",
+                    "no": "OD-21",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 4:09",
+                    "title": "Poets & Friends #13 \u2014 Paul Wildy",
+                    "sub": "Poets & Friends \u00b7 4:09 \u00b7 On Demand",
+                    "description": "Paul Wildy performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "4:09",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-1-paul-wildy_7aeecfa84620.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-1-paul-wildy_7aeecfa84620.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_1_PaulWildy.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 249
+          },
+          {
+                    "id": "od-20",
+                    "no": "OD-22",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 3:49",
+                    "title": "Poets & Friends #13 \u2014 Elena Gerald",
+                    "sub": "Poets & Friends \u00b7 3:49 \u00b7 On Demand",
+                    "description": "Elena Gerald performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "3:49",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-2-elena-gerald_c07344d27c21.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-2-elena-gerald_c07344d27c21.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_2_ElenaGerald.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 229
+          },
+          {
+                    "id": "od-21",
+                    "no": "OD-23",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 3:05",
+                    "title": "Poets & Friends #13 \u2014 Aidan Bauer",
+                    "sub": "Poets & Friends \u00b7 3:05 \u00b7 On Demand",
+                    "description": "Aidan Bauer performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "3:05",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-3-aidan-bauer_ac40d34fc94f.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-3-aidan-bauer_ac40d34fc94f.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_3_AidanBauer.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 185
+          },
+          {
+                    "id": "od-22",
+                    "no": "OD-24",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 1:52",
+                    "title": "Poets & Friends #13 \u2014 Pat Clendenen",
+                    "sub": "Poets & Friends \u00b7 1:52 \u00b7 On Demand",
+                    "description": "Pat Clendenen performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "1:52",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-4-pat-clendenen_e0df2fee0195.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-4-pat-clendenen_e0df2fee0195.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_4_PatClendenen.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 112
+          },
+          {
+                    "id": "od-23",
+                    "no": "OD-25",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 4:48",
+                    "title": "Poets & Friends #13 \u2014 Ellen Martin",
+                    "sub": "Poets & Friends \u00b7 4:48 \u00b7 On Demand",
+                    "description": "Ellen Martin performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "4:48",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-5-ellen-martin_b747148a13d0.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-5-ellen-martin_b747148a13d0.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_5_EllenMartin.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 288
+          },
+          {
+                    "id": "od-24",
+                    "no": "OD-26",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 2:27",
+                    "title": "Poets & Friends #13 \u2014 Kyle Middleton",
+                    "sub": "Poets & Friends \u00b7 2:27 \u00b7 On Demand",
+                    "description": "Kyle Middleton performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "2:27",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-6-kyle-middleton_23b780be729b.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-6-kyle-middleton_23b780be729b.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_6_KyleMiddleton.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 147
+          },
+          {
+                    "id": "od-25",
+                    "no": "OD-27",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 5:05",
+                    "title": "Poets & Friends #13 \u2014 Seth Bollinger",
+                    "sub": "Poets & Friends \u00b7 5:05 \u00b7 On Demand",
+                    "description": "Seth Bollinger performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "5:05",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-7-seth-bollinger_72579bd8fe14.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-7-seth-bollinger_72579bd8fe14.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_7_SethBollinger.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 305
+          },
+          {
+                    "id": "od-26",
+                    "no": "OD-28",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 5:59",
+                    "title": "Poets & Friends #13 \u2014 Jailene Rodriguez",
+                    "sub": "Poets & Friends \u00b7 5:59 \u00b7 On Demand",
+                    "description": "Jailene Rodriguez performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "5:59",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-8-jailene-rodriguez_376daeb23f0b.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-8-jailene-rodriguez_376daeb23f0b.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_8_JaileneRodriguez.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 359
+          },
+          {
+                    "id": "od-27",
+                    "no": "OD-29",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 3:01",
+                    "title": "Poets & Friends #13 \u2014 Phil",
+                    "sub": "Poets & Friends \u00b7 3:01 \u00b7 On Demand",
+                    "description": "Phil performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "3:01",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-10-phil_af7e0a451d9a.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-10-phil_af7e0a451d9a.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_10_phil.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 181
+          },
+          {
+                    "id": "od-28",
+                    "no": "OD-30",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 2:48",
+                    "title": "Poets & Friends #13 \u2014 Prasaus",
+                    "sub": "Poets & Friends \u00b7 2:48 \u00b7 On Demand",
+                    "description": "Prasaus performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "2:48",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-11-prasaus_3f2522d89cc9.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-11-prasaus_3f2522d89cc9.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_11_Prasaus.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 168
+          },
+          {
+                    "id": "od-29",
+                    "no": "OD-31",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 2:06",
+                    "title": "Poets & Friends #13 \u2014 James",
+                    "sub": "Poets & Friends \u00b7 2:06 \u00b7 On Demand",
+                    "description": "James performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "2:06",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-12-james_52804eeed656.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-12-james_52804eeed656.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_12_James.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 126
+          },
+          {
+                    "id": "od-30",
+                    "no": "OD-32",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 2:25",
+                    "title": "Poets & Friends #13 \u2014 CJ",
+                    "sub": "Poets & Friends \u00b7 2:25 \u00b7 On Demand",
+                    "description": "CJ performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "2:25",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-13-cj_50182d842ff5.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-13-cj_50182d842ff5.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_13_CJ.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 145
+          },
+          {
+                    "id": "od-31",
+                    "no": "OD-33",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 4:51",
+                    "title": "Poets & Friends #13 \u2014 Khanyisile Nawa",
+                    "sub": "Poets & Friends \u00b7 4:51 \u00b7 On Demand",
+                    "description": "Khanyisile Nawa performs at Poets & Friends #13, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "4:51",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-14-khanyisile-nawa_4225e831ec91.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-14-khanyisile-nawa_4225e831ec91.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_14_Kanye.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 291
+          },
+          {
+                    "id": "od-32",
+                    "no": "OD-34",
+                    "name": "Poets & Friends #13",
+                    "line": "Poets & Friends \u00b7 1:40",
+                    "title": "Poets & Friends #13 \u2014 Closing Remarks",
+                    "sub": "Poets & Friends \u00b7 1:40 \u00b7 On Demand",
+                    "description": "Alex Gonzalez concludes Poets & Friends #13 with closing remarks, recorded live on September 24, 2026 at Koffee? on Audubon in New Haven, CT.",
+                    "category": "Poets & Friends",
+                    "duration": "1:40",
+                    "thumb": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-15-closing-remarks_67ca889007a3.jpg",
+                    "poster": "https://app.ahoy.ooo/static/thumbnails/poets-and-friends-13-part-15-closing-remarks_67ca889007a3.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/live/poets/poets-13/poets13_15_ClosingRemarks.mp4",
+                    "hero": "#88448b",
+                    "durationSec": 100
+          },
+          {
+                    "id": "od-34",
+                    "no": "OD-35",
+                    "name": "Whatnot",
+                    "line": "Live Concerts \u00b7 4:32",
+                    "title": "Whatnot - Running Away - Live @ Wintergreen Sessions",
+                    "sub": "Live Concerts \u00b7 4:32 \u00b7 On Demand",
+                    "description": "Whatnot performs \"Running Away.\"\n\nSee the full performance here - https://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe",
+                    "category": "Live Concerts",
+                    "duration": "4:32",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/1hJR3r16J8Q.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/1hJR3r16J8Q.mp4",
+                    "hero": "#478a5b",
+                    "durationSec": 272
+          },
+          {
+                    "id": "od-35",
+                    "no": "OD-36",
+                    "name": "Whatnot",
+                    "line": "Live Concerts \u00b7 4:01",
+                    "title": "Whatnot - Dispatch - Live @ Wintergreen Sessions",
+                    "sub": "Live Concerts \u00b7 4:01 \u00b7 On Demand",
+                    "description": "Whatnot performs \"Dispatch.\"\n\nSee the full performance here:\nhttps://youtu.be/grB5ydvYWW8?si=Kdvje5E2YVjrvkwe",
+                    "category": "Live Concerts",
+                    "duration": "4:01",
+                    "thumb": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/Km_6Ux09jj4.jpg",
+                    "poster": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/Km_6Ux09jj4.jpg",
+                    "url": "https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/Km_6Ux09jj4.mp4",
+                    "hero": "#478a5b",
+                    "durationSec": 241
+          }
+],
         2: [
           {no:'MU-1', name:'Take It! (Album)', line:'The Problem With Kids Today', title:'The Problem With Kids Today — Take It!', sub:'Music · 10 Tracks · Stereo', description:'High-octane indie rock featuring "The Beginning of the End of the World" and "Speed Demon".', art:'linear-gradient(135deg,#661c32,#b8355b 45%,#220b12 78%)', hero:'#b8355b', glyph:'♪', url:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4', poster:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/thumbnails/01.webp'},
           {no:'MU-2', name:'Sand (Live EP)', line:'Whatnot · Wintergreen Live', title:'Whatnot — Live at Wintergreen', sub:'Music · 4 Tracks · Studio Master', description:'Live tracking of "Sand", "Running Away", and "Dispatch" recorded direct to tape.', art:'linear-gradient(135deg,#543c1c,#9e7033 45%,#1c140a 78%)', hero:'#9e7033', glyph:'WN', url:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4', poster:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg'},
@@ -1814,6 +2474,8 @@
       const tabs = [...root.querySelectorAll('.xp-tab[data-tab]')];
       let selected = 0;
       let section = 0;
+      let activeCategory = 'ALL';
+      let activeSort = 'curated';
       let isShelfVisible = true;
       let isPairModalOpen = false;
       let isSaveModalOpen = false;
@@ -1852,6 +2514,24 @@
         flickTimer = setTimeout(() => hud.classList.remove('on'), 2200);
       }
 
+      function getActiveItems() {
+        if (section === 0) return liveChannels;
+        let items = mediaSections[section] || [];
+        if (section === 1) {
+          if (activeCategory && activeCategory !== 'ALL') {
+            items = items.filter(it => it.category === activeCategory);
+          }
+          if (activeSort === 'az') {
+            items = [...items].sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''));
+          } else if (activeSort === 'duration-desc') {
+            items = [...items].sort((a, b) => (b.durationSec || 0) - (a.durationSec || 0));
+          } else if (activeSort === 'duration-asc') {
+            items = [...items].sort((a, b) => (a.durationSec || 0) - (b.durationSec || 0));
+          }
+        }
+        return items;
+      }
+
       function getCurrentItem() {
         if (section === 0) {
           const ch = liveChannels[selected] || liveChannels[0];
@@ -1866,16 +2546,17 @@
             poster: ch.poster
           };
         } else {
-          const m = (mediaSections[section] || [])[selected] || {};
+          const items = getActiveItems();
+          const m = items[selected] || items[0] || {};
           return {
-            id: `sec-${section}-${selected}`,
+            id: m.id || `sec-${section}-${selected}`,
             title: m.title || m.name,
-            badge: m.glyph || m.no,
-            sub: `${m.name} • ${sections[section]}`,
+            badge: m.category || m.glyph || m.no,
+            sub: m.sub || `${m.name} • ${sections[section]}`,
             sec: section,
             idx: selected,
             url: m.url,
-            poster: m.poster
+            poster: m.poster || m.thumb
           };
         }
       }
@@ -2168,11 +2849,69 @@
           }
         } else {
           // HORIZONTAL CARD SHELF FOR ON DEMAND, MUSIC, RADIO
+          const items = getActiveItems();
+          if (selected >= items.length) selected = 0;
+          const curItem = items[selected] || items[0] || {};
+
+          // If On Demand (section 1), render category chips and sort options above the shelf
+          if (section === 1) {
+            const filtersBar = document.createElement('div');
+            filtersBar.className = 'xp-shelf-filters';
+
+            const chipsBox = document.createElement('div');
+            chipsBox.className = 'xp-filter-chips';
+
+            const categories = [
+              { id: 'ALL', label: `ALL (${mediaSections[1].length})` },
+              { id: 'Skate & Films', label: `Skate & Films (${mediaSections[1].filter(x => x.category === 'Skate & Films').length})` },
+              { id: 'Series & Shows', label: `Series & Shows (${mediaSections[1].filter(x => x.category === 'Series & Shows').length})` },
+              { id: 'Live Concerts', label: `Live Concerts (${mediaSections[1].filter(x => x.category === 'Live Concerts').length})` },
+              { id: 'Music Videos', label: `Music Videos (${mediaSections[1].filter(x => x.category === 'Music Videos').length})` },
+              { id: 'Poets & Friends', label: `Poets & Friends (${mediaSections[1].filter(x => x.category === 'Poets & Friends').length})` }
+            ];
+
+            categories.forEach(cat => {
+              const chip = document.createElement('button');
+              chip.type = 'button';
+              chip.className = 'xp-filter-chip';
+              chip.setAttribute('aria-selected', activeCategory === cat.id ? 'true' : 'false');
+              chip.textContent = cat.label;
+              chip.addEventListener('click', () => {
+                playXboxSound('tick');
+                activeCategory = cat.id;
+                selected = 0;
+                render();
+                tune(false);
+              });
+              chipsBox.append(chip);
+            });
+            filtersBar.append(chipsBox);
+
+            const sortBox = document.createElement('div');
+            sortBox.className = 'xp-sort-box';
+            sortBox.innerHTML = `
+              <span>SORT:</span>
+              <select class="xp-sort-select" aria-label="Sort videos">
+                <option value="curated"${activeSort === 'curated' ? ' selected' : ''}>Curated</option>
+                <option value="az"${activeSort === 'az' ? ' selected' : ''}>A–Z</option>
+                <option value="duration-desc"${activeSort === 'duration-desc' ? ' selected' : ''}>Duration (Longest)</option>
+                <option value="duration-asc"${activeSort === 'duration-asc' ? ' selected' : ''}>Duration (Shortest)</option>
+              </select>
+            `;
+            sortBox.querySelector('select').addEventListener('change', (e) => {
+              playXboxSound('tick');
+              activeSort = e.target.value;
+              selected = 0;
+              render();
+              tune(false);
+            });
+            filtersBar.append(sortBox);
+
+            contentDock.append(filtersBar);
+          }
+
           const cardsContainer = document.createElement('div');
           cardsContainer.className = 'xp-cards';
-          const items = mediaSections[section] || [];
-          if (selected >= items.length) selected = 0;
-          const curItem = items[selected] || items[0];
 
           items.forEach((c, i) => {
             const isCur = i === selected;
@@ -2180,13 +2919,17 @@
             b.type = 'button';
             b.className = 'xp-card';
             b.setAttribute('aria-current', isCur ? 'true' : 'false');
-            b.style.setProperty('--art', c.art);
+            if (c.art) b.style.setProperty('--art', c.art);
+
+            const posterUrl = c.thumb || c.poster;
+            const hasPhoto = Boolean(posterUrl);
+
             b.innerHTML = `
-              <span class="xp-glyph" aria-hidden="true">${c.glyph}</span>
+              ${hasPhoto ? `<div class="xp-card-poster" style="background-image: url('${posterUrl}')"></div>` : `<span class="xp-glyph" aria-hidden="true">${c.glyph || '▶'}</span>`}
               <span class="xp-card-copy">
-                <small>${c.no}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
-                <strong>${c.name}</strong>
-                <span>${c.line}</span>
+                <small>${c.category || c.no}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
+                <strong>${c.title || c.name}</strong>
+                <span>${c.line || c.duration || c.name}</span>
               </span>
             `;
             b.addEventListener('click', () => {
@@ -2198,17 +2941,27 @@
           });
           contentDock.append(cardsContainer);
 
-          root.querySelector('#xp-eyebrow').textContent = `${curItem.no} · ${curItem.name.toUpperCase()}`;
-          root.querySelector('#xp-title').textContent = curItem.title;
-          root.querySelector('#xp-subtitle').textContent = curItem.sub;
-          root.querySelector('#xp-description').textContent = curItem.description;
-          root.querySelector('#xp-shelf-status').textContent = `${curItem.no} SELECTED`;
-          root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curItem.hero} 0%, #241f24 38%, #08090c 82%)`;
-          root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY`;
+          // Auto-scroll active card into center view smoothly
+          const activeCard = cardsContainer.querySelector('.xp-card[aria-current="true"]');
+          if (activeCard) {
+            setTimeout(() => {
+              activeCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }, 30);
+          }
+
+          if (curItem && curItem.title) {
+            root.querySelector('#xp-eyebrow').textContent = `${curItem.no || 'AHOY'} · ${(curItem.category || curItem.name || '').toUpperCase()}`;
+            root.querySelector('#xp-title').textContent = curItem.title;
+            root.querySelector('#xp-subtitle').textContent = curItem.sub || curItem.line || '';
+            root.querySelector('#xp-description').textContent = curItem.description || '';
+            root.querySelector('#xp-shelf-status').textContent = `${curItem.no || 'OD'} SELECTED (${selected + 1} of ${items.length})`;
+            root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curItem.hero || '#ff0060'} 0%, #241f24 38%, #08090c 82%)`;
+            root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY (${items.length} TITLES)`;
+          }
           const hints = root.querySelector('#xp-hints');
           if (hints) {
             hints.innerHTML = `
-              <span><kbd>◀ ▶</kbd> Browse</span>
+              <span><kbd>◀ ▶</kbd> Browse (${items.length})</span>
               <span><kbd class="xp-hint-a">A</kbd> Play</span>
               <span><kbd class="xp-hint-b">B</kbd> Close Guide</span>
             `;
@@ -2247,8 +3000,9 @@
           }
           say(`Tuned to CH ${ch.no} • ${ch.name} ("${ch.nowTitle}")`);
         } else {
-          const item = mediaSections[section][selected];
-          say(`Playing ${item.name} • ${item.title}`);
+          const items = getActiveItems();
+          const item = items[selected] || items[0] || {};
+          say(`Playing ${item.name || item.title} • ${item.title || item.name}`);
         }
       }
 
@@ -2382,7 +3136,8 @@
           }
         } else {
           // OTHER SECTIONS: LEFT & RIGHT BROWSE MEDIA CARDS
-          const list = mediaSections[section] || [];
+          const list = getActiveItems();
+          if (list.length === 0) return;
           if (key === 'ArrowRight' || key === '→') {
             playXboxSound('tick');
             selected = (selected + 1) % list.length;
