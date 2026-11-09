@@ -131,6 +131,16 @@
       gap: 10px;
       flex-shrink: 0;
     }
+    .top-clock {
+      font-size: 11px;
+      font-weight: 800;
+      color: #8E8E96;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+      letter-spacing: 0.6px;
+      padding: 4px 6px;
+      white-space: nowrap;
+      line-height: 1;
+    }
     .live-badge {
       display: inline-flex;
       align-items: center;
@@ -906,6 +916,7 @@
       </div>
 
       <div class="top-status">
+        <span class="top-clock" id="top-clock">--:--</span>
         <div class="live-badge">
           <div class="live-dot"></div>
           <span class="live-text" id="status-live">LIVE</span>
@@ -1709,6 +1720,16 @@
     }
     window.addEventListener('gamepadconnected', () => requestAnimationFrame(pollGamepad));
     requestAnimationFrame(pollGamepad);
+
+    // Live clock ticker
+    function updateClock() {
+      const clk = document.getElementById('top-clock');
+      if (!clk) return;
+      const now = new Date();
+      clk.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     // Initial load: Channel 101 & Pairing status
     checkPairingStatus();

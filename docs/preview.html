@@ -204,6 +204,38 @@
       gap: 10px;
       flex-shrink: 0;
     }
+    .xp-clock {
+      font-size: 11px;
+      font-weight: 800;
+      color: #8E8E96;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+      letter-spacing: 0.6px;
+      padding: 4px 6px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .xp-mini-eq {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 9px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .xp-mini-eq i {
+      width: 2px;
+      height: 100%;
+      background: var(--xp-pink);
+      border-radius: 1px;
+      animation: xpMiniEq 1s infinite ease-in-out;
+      transform-origin: bottom;
+    }
+    .xp-mini-eq i:nth-child(2) { animation-delay: 0.22s; }
+    .xp-mini-eq i:nth-child(3) { animation-delay: 0.44s; }
+    @keyframes xpMiniEq {
+      0%, 100% { transform: scaleY(0.25); }
+      50% { transform: scaleY(1); }
+    }
     #xbox-preview .xp-live {
       display: inline-flex;
       align-items: center;
@@ -720,6 +752,7 @@
 
       <!-- CRISP STATUS & CONTROLLER PILLS -->
       <div class="xp-status">
+        <span class="xp-clock" id="xp-clock">--:--</span>
         <div class="xp-live">
           <i></i>
           <span>LIVE</span>
@@ -945,13 +978,14 @@
           const b = document.createElement('button');
           b.type = 'button';
           b.className = 'xp-card';
-          b.setAttribute('aria-current', i === selected ? 'true' : 'false');
+          const isCur = i === selected;
+          b.setAttribute('aria-current', isCur ? 'true' : 'false');
           b.setAttribute('aria-label', `${c.name}`);
           b.style.setProperty('--art', c.art);
           b.innerHTML = `
             <span class="xp-glyph" aria-hidden="true">${c.glyph}</span>
             <span class="xp-card-copy">
-              <small>${c.no}</small>
+              <small>${c.no}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
               <strong>${c.name}</strong>
               <span>${c.line}</span>
             </span>
@@ -1055,6 +1089,15 @@
       root.querySelector('#xp-play').addEventListener('click', tune);
       root.querySelector('#xp-close-pair').addEventListener('click', closePairModal);
       root.querySelectorAll('.xp-remote button').forEach(b => b.addEventListener('click', () => act(b.dataset.key)));
+
+      function updateClock() {
+        const clk = root.querySelector('#xp-clock');
+        if (!clk) return;
+        const now = new Date();
+        clk.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
 
       updateAccountUI();
       render();
