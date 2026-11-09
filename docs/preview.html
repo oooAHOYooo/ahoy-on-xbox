@@ -174,9 +174,10 @@
       font-weight: 900;
     }
 
-    /* 4 CANONICAL SECTIONS TABS */
+    /* 4 CANONICAL SECTIONS TABS - STRICT EQUAL-WIDTH GRID */
     #xbox-preview .xp-tabs {
-      display: flex;
+      display: grid !important;
+      grid-template-columns: repeat(4, 104px) !important;
       align-items: center;
       gap: 3px;
       background: rgba(16, 17, 22, 0.72);
@@ -186,26 +187,29 @@
       backdrop-filter: blur(16px);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
       flex-shrink: 0;
+      box-sizing: border-box;
+      height: 38px;
     }
     #xbox-preview .xp-tab {
+      width: 100% !important;
+      min-width: 0 !important;
+      height: 28px !important;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 999px;
-      padding: 7px 0;
-      width: 104px;
-      min-width: 104px;
-      box-sizing: border-box;
+      padding: 0 !important;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.5px;
       color: rgba(255, 255, 255, 0.55);
       white-space: nowrap !important;
       flex-shrink: 0;
-      line-height: 1;
-      display: inline-flex;
+      line-height: 28px;
+      display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      box-sizing: border-box;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -220,8 +224,8 @@
       content: "";
       position: absolute;
       bottom: -3px;
-      left: 22%;
-      right: 22%;
+      left: 20px;
+      right: 20px;
       height: 2px;
       background: rgba(255, 0, 96, 0.85);
       border-radius: 2px;
@@ -338,12 +342,14 @@
       color: #34C759;
     }
     #xbox-preview #xp-save {
-      min-width: 82px;
-      justify-content: center;
+      width: 84px !important;
+      min-width: 84px !important;
+      justify-content: center !important;
     }
     #xbox-preview #xp-account {
-      min-width: 122px;
-      justify-content: center;
+      width: 126px !important;
+      min-width: 126px !important;
+      justify-content: center !important;
     }
 
     .xp-keycap {
@@ -2316,7 +2322,9 @@
     }
     @media (max-width: 860px) {
       #xbox-preview .xp-top { padding: 0 16px; }
-      #xbox-preview .xp-tab { padding: 6px 10px; font-size: 10px; }
+      #xbox-preview .xp-tabs { grid-template-columns: repeat(4, 84px) !important; height: 34px; padding: 3px; }
+      #xbox-preview .xp-tab { width: 100% !important; height: 26px !important; font-size: 10px !important; padding: 0 !important; }
+      #xbox-preview .xp-tab[aria-selected="true"]::after { left: 14px; right: 14px; }
       .xp-tab-icon { display: none; }
       .xp-nav-divider { display: none; }
       #xbox-preview .xp-status { gap: 6px; }
@@ -2324,7 +2332,9 @@
       #xbox-preview .xp-row-slot.next { display: none; }
     }
     @media (max-width: 680px) {
-      #xbox-preview .xp-tab { padding: 5px 8px; font-size: 9px; }
+      #xbox-preview .xp-tabs { grid-template-columns: repeat(4, 72px) !important; height: 32px; padding: 2px; }
+      #xbox-preview .xp-tab { width: 100% !important; height: 24px !important; font-size: 9px !important; padding: 0 !important; }
+      #xbox-preview .xp-tab[aria-selected="true"]::after { left: 10px; right: 10px; }
       #xbox-preview .xp-brand { font-size: 16px; }
       #xbox-preview .xp-status .xp-live { display: none; }
     }
