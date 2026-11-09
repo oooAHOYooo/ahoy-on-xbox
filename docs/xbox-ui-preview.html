@@ -261,35 +261,7 @@
       white-space: nowrap;
       line-height: 1;
     }
-    #xbox-preview .xp-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 999px;
-      padding: 0 8px;
-      white-space: nowrap !important;
-      line-height: 1;
-      box-sizing: border-box;
-    }
-    #xbox-preview .xp-live i {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--xp-pink);
-      box-shadow: 0 0 5px var(--xp-pink);
-      animation: xpPulse 2s infinite ease-in-out;
-      flex-shrink: 0;
-    }
-    #xbox-preview .xp-live span {
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: rgba(255, 255, 255, 0.55);
-      white-space: nowrap !important;
-    }
+
 
     @keyframes xpPulse {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -304,11 +276,11 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 999px;
-      padding: 0 8px 0 4px;
+      padding: 0 8px 0 5px;
       font-size: 8.5px;
       font-weight: 700;
-      letter-spacing: 0.6px;
-      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.55);
       cursor: pointer;
       white-space: nowrap !important;
       flex-shrink: 0;
@@ -321,30 +293,19 @@
       color: rgba(255, 255, 255, 0.85);
       border-color: rgba(255, 255, 255, 0.12);
     }
-    .xp-keycap-pill.saved {
-      background: rgba(59, 130, 246, 0.05);
-      border-color: rgba(59, 130, 246, 0.16);
-      color: rgba(191, 219, 254, 0.7);
-    }
-    .xp-keycap-pill.saved:hover {
-      background: rgba(59, 130, 246, 0.09);
-      border-color: rgba(59, 130, 246, 0.25);
-      color: rgba(219, 234, 254, 0.9);
-    }
-    .xp-keycap-pill.ahoy-id {
+    .xp-keycap-pill.saved,
+    .xp-keycap-pill.ahoy-id,
+    .xp-keycap-pill.paired {
       background: rgba(255, 255, 255, 0.03);
       border-color: rgba(255, 255, 255, 0.06);
-      color: rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.55);
     }
-    .xp-keycap-pill.ahoy-id:hover {
+    .xp-keycap-pill.saved:hover,
+    .xp-keycap-pill.ahoy-id:hover,
+    .xp-keycap-pill.paired:hover {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(255, 255, 255, 0.12);
       color: rgba(255, 255, 255, 0.85);
-    }
-    .xp-keycap-pill.paired {
-      background: rgba(52, 199, 89, 0.06);
-      border-color: rgba(52, 199, 89, 0.18);
-      color: rgba(134, 239, 172, 0.75);
     }
     #xbox-preview #xp-save,
     #xbox-preview #xp-account {
@@ -2366,7 +2327,7 @@
       #xbox-preview .xp-tab { width: 100% !important; height: 24px !important; font-size: 9px !important; padding: 0 !important; }
       #xbox-preview .xp-tab[aria-selected="true"]::after { left: 10px; right: 10px; }
       #xbox-preview .xp-brand { font-size: 16px; }
-      #xbox-preview .xp-status .xp-live { display: none; }
+
       #xbox-preview #xp-save,
       #xbox-preview #xp-account {
         width: 66px !important;
@@ -2405,10 +2366,7 @@
       <!-- CRISP STATUS & CONTROLLER PILLS -->
       <div class="xp-status">
         <span class="xp-clock" id="xp-clock">--:--</span>
-        <div class="xp-live">
-          <i></i>
-          <span>LIVE</span>
-        </div>
+
         <button class="xp-keycap-pill" id="xp-save" onclick="act('X')">
           <span class="xp-keycap xp-keycap-x">X</span>
           <span id="xp-save-text">SAVE</span>
