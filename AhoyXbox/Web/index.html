@@ -84,15 +84,39 @@
       margin-top: 2px;
     }
 
-    /* 4 CLEAN SECTIONS - FLOATING CAPSULE */
+    /* 4 CLEAN SECTIONS - FLOATING CAPSULE WITH BUMPERS */
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .bumper-cue {
+      background: rgba(28, 30, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 6px 9px;
+      font-size: 9px;
+      font-weight: 900;
+      color: #8E8E96;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.15s ease;
+    }
+    .bumper-cue:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
     .section-nav {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(18, 20, 26, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 3px;
+      background: rgba(14, 16, 22, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 999px;
-      padding: 4px 6px;
+      padding: 4px;
       backdrop-filter: blur(16px);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
       flex-shrink: 0;
@@ -104,7 +128,7 @@
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.6px;
-      padding: 8px 18px;
+      padding: 7px 15px;
       border-radius: 999px;
       cursor: pointer;
       white-space: nowrap;
@@ -112,7 +136,15 @@
       line-height: 1;
       display: inline-flex;
       align-items: center;
+      gap: 6px;
       justify-content: center;
+    }
+    .nav-tab-icon {
+      width: 13px;
+      height: 13px;
+      opacity: 0.75;
+      fill: currentColor;
+      flex-shrink: 0;
     }
     .nav-btn.active {
       background: var(--ahoy-accent);
@@ -120,9 +152,20 @@
       border-color: var(--ahoy-accent);
       box-shadow: 0 0 16px rgba(255, 0, 96, 0.45);
     }
+    .nav-btn.active .nav-tab-icon {
+      opacity: 1;
+    }
     .nav-btn:hover:not(.active) {
       color: #FFFFFF;
       background: rgba(255, 255, 255, 0.08);
+    }
+    .nav-btn:hover:not(.active) .nav-tab-icon {
+      opacity: 1;
+    }
+    .top-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.12);
     }
 
     .top-status {
@@ -1058,12 +1101,28 @@
         <span class="brand-tv-mark">tv</span>
       </div>
 
-      <!-- 4 CLEAN SECTIONS -->
-      <div class="section-nav">
-        <button class="nav-btn active" id="nav-channels" onclick="setSection('channels')">LIVE TV</button>
-        <button class="nav-btn" id="nav-ondemand" onclick="setSection('ondemand')">ON DEMAND VIDEO</button>
-        <button class="nav-btn" id="nav-music" onclick="setSection('music')">MUSIC</button>
-        <button class="nav-btn" id="nav-radio" onclick="setSection('radio')">RADIO</button>
+      <!-- 4 CLEAN SECTIONS WITH [LT] / [RT] CUES & ICONS -->
+      <div class="nav-wrapper">
+        <button class="bumper-cue" onclick="handleBtn('LT')" title="Previous section [LT]">LT</button>
+        <div class="section-nav">
+          <button class="nav-btn active" id="nav-channels" onclick="setSection('channels')">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+            <span>LIVE TV</span>
+          </button>
+          <button class="nav-btn" id="nav-ondemand" onclick="setSection('ondemand')">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+            <span>ON DEMAND</span>
+          </button>
+          <button class="nav-btn" id="nav-music" onclick="setSection('music')">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            <span>MUSIC</span>
+          </button>
+          <button class="nav-btn" id="nav-radio" onclick="setSection('radio')">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24"><path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-.83-.51-1.57-1.24-1.85L12 2.5 3.24 6.15zM7 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-3h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+            <span>RADIO</span>
+          </button>
+        </div>
+        <button class="bumper-cue" onclick="handleBtn('RT')" title="Next section [RT]">RT</button>
       </div>
 
       <div class="top-status">
@@ -1072,6 +1131,7 @@
           <div class="live-dot"></div>
           <span class="live-text" id="status-live">LIVE</span>
         </div>
+        <div class="top-divider"></div>
         <button class="btn-keycap-pill" id="btn-save" onclick="handleBtn('X')">
           <span class="xbox-keycap keycap-x">X</span>
           <span id="save-label">SAVE</span>

@@ -134,50 +134,88 @@
     }
     #xbox-preview .xp-brand {
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      gap: 6px;
       font-weight: 900;
       letter-spacing: 0.08em;
       font-size: 20px;
       flex-shrink: 0;
       color: #FFFFFF;
+      user-select: none;
     }
-    #xbox-preview .xp-brand small {
-      color: var(--xp-pink);
-      font-size: 0.65em;
-      margin-left: 4px;
-      text-transform: uppercase;
+    #xbox-preview .xp-brand-badge {
+      background: var(--xp-pink);
+      color: #FFFFFF;
+      font-size: 10px;
       font-weight: 900;
+      letter-spacing: 0.8px;
+      padding: 3px 6px;
+      border-radius: 5px;
+      line-height: 1;
+      box-shadow: 0 0 12px var(--xp-pink-glow);
     }
 
-    /* 4 CANONICAL TABS (NO-WRAP GUARANTEE) */
+    /* CENTER NAV CAPSULE WITH [LT] / [RT] BUMPERS */
+    .xp-nav-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .xp-bumper-cue {
+      background: rgba(28, 30, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 6px 9px;
+      font-size: 9px;
+      font-weight: 900;
+      color: #8E8E96;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1;
+    }
+    .xp-bumper-cue:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
     #xbox-preview .xp-tabs {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(18, 20, 26, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 3px;
+      background: rgba(14, 16, 22, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 999px;
-      padding: 4px 6px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+      padding: 4px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       flex-shrink: 0;
     }
     #xbox-preview .xp-tab {
       border: 1px solid transparent;
       background: transparent;
       border-radius: 999px;
-      padding: 7px 16px;
+      padding: 7px 15px;
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.6px;
-      color: var(--xp-muted);
+      color: #9A9AA4;
       white-space: nowrap !important;
       flex-shrink: 0;
       line-height: 1;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .xp-tab-icon {
+      width: 13px;
+      height: 13px;
+      opacity: 0.75;
+      flex-shrink: 0;
+      fill: currentColor;
     }
     #xbox-preview .xp-tab[aria-selected="true"] {
       background: var(--xp-pink);
@@ -185,9 +223,15 @@
       color: #FFFFFF;
       box-shadow: 0 0 16px var(--xp-pink-glow);
     }
+    #xbox-preview .xp-tab[aria-selected="true"] .xp-tab-icon {
+      opacity: 1;
+    }
     #xbox-preview .xp-tab:hover:not([aria-selected="true"]) {
       color: #FFFFFF;
       background: rgba(255, 255, 255, 0.08);
+    }
+    #xbox-preview .xp-tab:hover:not([aria-selected="true"]) .xp-tab-icon {
+      opacity: 1;
     }
     #xbox-preview .xp-tab:focus-visible,
     #xbox-preview .xp-card:focus-visible,
@@ -198,31 +242,64 @@
       outline-offset: 3px;
     }
 
-    /* RIGHT STATUS & KEYCAP PILLS */
+    /* RIGHT STATUS & ACTIONS CLUSTER WITH CLEAR HIERARCHY */
     #xbox-preview .xp-status {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-shrink: 0;
+    }
+    .xp-broadcast-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .xp-clock {
       font-size: 11px;
       font-weight: 800;
       color: #8E8E96;
       font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
-      letter-spacing: 0.6px;
-      padding: 4px 6px;
+      letter-spacing: 0.5px;
       white-space: nowrap;
       line-height: 1;
     }
     #xbox-preview .xp-live {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      background: rgba(255, 0, 96, 0.14);
-      border: 1px solid rgba(255, 0, 96, 0.38);
+      gap: 6px;
+      background: rgba(255, 0, 96, 0.12);
+      border: 1px solid rgba(255, 0, 96, 0.32);
       border-radius: 999px;
-      padding: 6px 13px;
+      padding: 5px 10px;
+      white-space: nowrap !important;
+      line-height: 1;
+    }
+    #xbox-preview .xp-live i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--xp-pink);
+      box-shadow: 0 0 8px var(--xp-pink);
+      animation: xpPulse 2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+    #xbox-preview .xp-live span {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #FFFFFF;
+      white-space: nowrap !important;
+    }
+    .xp-nav-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .xp-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
       white-space: nowrap !important;
       line-height: 1;
     }
@@ -1207,9 +1284,15 @@
     #xbox-preview .xp-remote button[data-key="X"] { background: #1764a2; border-color: #267cbb; }
     #xbox-preview .xp-remote button[data-key="Y"] { background: #d69b11; border-color: #e8ae24; color: #17130a; }
 
+    @media (max-width: 960px) {
+      .xp-bumper-cue { display: none; }
+      .xp-clock { display: none; }
+    }
     @media (max-width: 860px) {
       #xbox-preview .xp-top { padding: 0 16px; }
       #xbox-preview .xp-tab { padding: 6px 10px; font-size: 10px; }
+      .xp-tab-icon { display: none; }
+      .xp-nav-divider { display: none; }
       #xbox-preview .xp-status { gap: 6px; }
       #xbox-preview .xp-guide-row { grid-template-columns: 140px 1fr; }
       #xbox-preview .xp-row-slot.next { display: none; }
@@ -1227,33 +1310,59 @@
   <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use D-pad to flick channels and browse guide.">
     <div class="xp-picture" id="xp-picture"><div class="xp-art-shape"></div></div>
 
-    <!-- REFINED TOP BROADCAST BAR -->
+    <!-- REFINED HIGH-CLARITY TOP BROADCAST BAR -->
     <header class="xp-top">
-      <div class="xp-brand">AHOY<small>TV</small></div>
+      <div class="xp-brand">
+        <span>AHOY</span>
+        <span class="xp-brand-badge">TV</span>
+      </div>
 
-      <!-- 4 CANONICAL SECTIONS -->
-      <nav class="xp-tabs" aria-label="Sections">
-        <button class="xp-tab" data-tab="0" aria-selected="true">LIVE TV</button>
-        <button class="xp-tab" data-tab="1" aria-selected="false">ON DEMAND VIDEO</button>
-        <button class="xp-tab" data-tab="2" aria-selected="false">MUSIC</button>
-        <button class="xp-tab" data-tab="3" aria-selected="false">RADIO</button>
-      </nav>
+      <!-- 4 CANONICAL SECTIONS WITH [LT] / [RT] CUES & ICONS -->
+      <div class="xp-nav-wrapper">
+        <button class="xp-bumper-cue" onclick="act('LT')" title="Previous section [LT]">LT</button>
+        <nav class="xp-tabs" aria-label="Sections">
+          <button class="xp-tab" data-tab="0" aria-selected="true">
+            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+            <span>LIVE TV</span>
+          </button>
+          <button class="xp-tab" data-tab="1" aria-selected="false">
+            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+            <span>ON DEMAND</span>
+          </button>
+          <button class="xp-tab" data-tab="2" aria-selected="false">
+            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            <span>MUSIC</span>
+          </button>
+          <button class="xp-tab" data-tab="3" aria-selected="false">
+            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-.83-.51-1.57-1.24-1.85L12 2.5 3.24 6.15zM7 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-3h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+            <span>RADIO</span>
+          </button>
+        </nav>
+        <button class="xp-bumper-cue" onclick="act('RT')" title="Next section [RT]">RT</button>
+      </div>
 
-      <!-- CRISP STATUS & CONTROLLER PILLS -->
+      <!-- CRISP STATUS & CONTROLLER ACTIONS CLUSTER -->
       <div class="xp-status">
-        <span class="xp-clock" id="xp-clock">--:--</span>
-        <div class="xp-live">
-          <i></i>
-          <span>LIVE</span>
+        <div class="xp-broadcast-status">
+          <span class="xp-clock" id="xp-clock">--:--</span>
+          <div class="xp-live">
+            <i></i>
+            <span>LIVE</span>
+          </div>
         </div>
-        <button class="xp-keycap-pill" id="xp-save" onclick="act('X')">
-          <span class="xp-keycap xp-keycap-x">X</span>
-          <span id="xp-save-text">SAVE</span>
-        </button>
-        <button class="xp-keycap-pill ahoy-id" id="xp-account" onclick="act('Y')">
-          <span class="xp-keycap xp-keycap-y" id="xp-keycap-account">Y</span>
-          <span id="xp-account-text">PAIR AHOY ID</span>
-        </button>
+
+        <div class="xp-nav-divider"></div>
+
+        <div class="xp-actions-group">
+          <button class="xp-keycap-pill" id="xp-save" onclick="act('X')">
+            <span class="xp-keycap xp-keycap-x">X</span>
+            <span id="xp-save-text">SAVE</span>
+          </button>
+          <button class="xp-keycap-pill ahoy-id" id="xp-account" onclick="act('Y')">
+            <span class="xp-keycap xp-keycap-y" id="xp-keycap-account">Y</span>
+            <span id="xp-account-text">PAIR AHOY ID</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -1442,7 +1551,7 @@
       const root = document.getElementById('xbox-preview');
       if (!root) return;
 
-      const sections = ['LIVE TV', 'ON DEMAND VIDEO', 'MUSIC', 'RADIO'];
+      const sections = ['LIVE TV', 'ON DEMAND', 'MUSIC', 'RADIO'];
 
       const liveChannels = [
         {
