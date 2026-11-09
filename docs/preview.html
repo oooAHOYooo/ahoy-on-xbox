@@ -719,6 +719,20 @@
       padding: 0;
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 0 8px rgba(96, 165, 250, 0.25);
     }
+    #xbox-preview .xp-hints kbd.xp-hint-y,
+    #xbox-preview .xp-save-footer-hints kbd.xp-hint-y {
+      background: rgba(242, 200, 17, 0.35);
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #FBBF24;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 0 8px rgba(251, 191, 36, 0.25);
+    }
 
     /* BROADCAST FLICK BANNER HUD */
     #xbox-preview .xp-flick-hud {
@@ -937,43 +951,47 @@
     }
     #xbox-preview .xp-pair-btn-secondary:hover { background: #282830; }
 
-    /* DYNAMIC SAVE & STATS OVERLAY */
+    /* DYNAMIC SAVE & STATS OVERLAY (AHOY LIBRARY & PULSE) */
     #xbox-preview .xp-save-modal {
       position: absolute;
       inset: 0;
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(4, 5, 8, 0.92);
+      background: rgba(4, 5, 8, 0.94);
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
       z-index: 45;
-      padding: 16px;
+      padding: 12px;
+      box-sizing: border-box;
     }
     #xbox-preview .xp-save-modal.on {
       display: flex;
     }
     #xbox-preview .xp-save-sheet {
       width: min(840px, 94%);
-      max-height: 88%;
-      background: rgba(14, 16, 23, 0.94);
+      max-height: calc(100% - 24px);
+      height: auto;
+      background: rgba(14, 16, 23, 0.96);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 18px;
-      padding: 16px 22px;
+      border-radius: 16px;
+      padding: 12px 18px;
       box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 0, 96, 0.14);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 7px;
+      box-sizing: border-box;
       overflow: hidden;
+      margin: auto;
     }
     .xp-save-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 8px;
+      padding-bottom: 6px;
       flex-shrink: 0;
     }
     .xp-save-head-left {
@@ -982,14 +1000,15 @@
       gap: 12px;
     }
     .xp-save-title-wrap h3 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       color: #FFFFFF;
       margin: 0;
       letter-spacing: 0.3px;
+      line-height: 1.1;
     }
     .xp-save-title-wrap span {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       color: #8E8E96;
       letter-spacing: 0.5px;
@@ -1002,7 +1021,7 @@
       border: 1px solid rgba(52, 199, 89, 0.35);
       border-radius: 999px;
       padding: 3px 9px;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 800;
       color: #34C759;
       letter-spacing: 0.5px;
@@ -1016,30 +1035,30 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
       background: linear-gradient(90deg, rgba(255, 0, 96, 0.12) 0%, rgba(20, 22, 30, 0.85) 100%);
       border: 1px solid rgba(255, 0, 96, 0.3);
-      border-radius: 10px;
-      padding: 8px 14px;
+      border-radius: 9px;
+      padding: 6px 12px;
       flex-shrink: 0;
     }
     .xp-save-cta-info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
       min-width: 0;
       flex: 1 1 auto;
       overflow: hidden;
     }
     .xp-save-cta-tag {
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 900;
       letter-spacing: 1.1px;
       color: var(--xp-pink);
       text-transform: uppercase;
     }
     .xp-save-cta-title {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 800;
       color: #FFFFFF;
       white-space: nowrap;
@@ -1047,7 +1066,7 @@
       text-overflow: ellipsis;
     }
     .xp-save-cta-sub {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #9A9AA2;
       white-space: nowrap;
       overflow: hidden;
@@ -1060,8 +1079,8 @@
       background: var(--xp-pink);
       border: none;
       border-radius: 999px;
-      padding: 7px 15px;
-      font-size: 10.5px;
+      padding: 6px 14px;
+      font-size: 10px;
       font-weight: 900;
       letter-spacing: 0.5px;
       color: #FFFFFF;
@@ -1085,58 +1104,59 @@
     .xp-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 7px;
       flex-shrink: 0;
     }
     .xp-stat-card {
       background: rgba(22, 25, 34, 0.7);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 7px 12px;
+      border-radius: 8px;
+      padding: 5px 10px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
     }
     .xp-stat-value {
-      font-size: 15px;
+      font-size: 13.5px;
       font-weight: 900;
       color: #FFFFFF;
       font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
       letter-spacing: 0.5px;
+      line-height: 1.1;
     }
     .xp-stat-label {
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 800;
       color: #8E8E96;
       letter-spacing: 0.6px;
       text-transform: uppercase;
     }
     .xp-stat-meta {
-      font-size: 8.5px;
+      font-size: 8px;
       color: var(--xp-pink);
       font-weight: 700;
-      margin-top: 1px;
     }
 
     /* 2 COLUMNS: RECENTLY PLAYED & SAVED IN LIBRARY */
     .xp-split-lists {
       display: grid;
       grid-template-columns: 1.1fr 1fr;
-      gap: 12px;
-      min-height: 0;
-      flex: 1 1 auto;
+      gap: 9px;
+      flex: 1 1 0;
+      min-height: 100px;
+      max-height: 175px;
       overflow: hidden;
     }
     .xp-list-panel {
       background: rgba(18, 20, 28, 0.65);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 9px 12px;
+      border-radius: 9px;
+      padding: 7px 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       min-height: 0;
       overflow: hidden;
     }
@@ -1144,26 +1164,42 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       color: #D0D0D8;
       letter-spacing: 0.5px;
-      padding-bottom: 5px;
+      padding-bottom: 4px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       flex-shrink: 0;
     }
     .xp-list-panel-head span {
       color: var(--xp-pink);
-      font-size: 9.5px;
+      font-size: 9px;
     }
     .xp-list-scroll {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      flex: 1 1 auto;
-      max-height: 145px;
+      gap: 4px;
+      flex: 1 1 0;
+      min-height: 0;
       overflow-y: auto;
+      overflow-x: hidden;
       padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+    .xp-list-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .xp-list-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .xp-list-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+    }
+    .xp-list-scroll::-webkit-scrollbar-thumb:hover {
+      background: var(--xp-pink);
     }
     .xp-list-item {
       display: flex;
@@ -1173,10 +1209,11 @@
       background: rgba(28, 30, 40, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 7px;
-      padding: 6px 9px;
+      padding: 5px 8px;
       cursor: pointer;
       transition: all 0.15s ease;
       min-width: 0;
+      flex-shrink: 0;
     }
     .xp-list-item:hover,
     .xp-list-item.selected {
@@ -1187,7 +1224,7 @@
     .xp-list-item-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       min-width: 0;
       flex: 1 1 auto;
       overflow: hidden;
@@ -1196,9 +1233,9 @@
       background: #101014;
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 4px;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 800;
-      padding: 2px 5px;
+      padding: 2px 4px;
       color: #FFF;
       flex-shrink: 0;
     }
@@ -1210,7 +1247,7 @@
       overflow: hidden;
     }
     .xp-list-main-title {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       color: #FFFFFF;
       white-space: nowrap;
@@ -1219,7 +1256,7 @@
       max-width: 100%;
     }
     .xp-list-sub-title {
-      font-size: 8.5px;
+      font-size: 8px;
       color: #8E8E96;
       white-space: nowrap;
       overflow: hidden;
@@ -1227,13 +1264,13 @@
       max-width: 100%;
     }
     .xp-list-item-action {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 800;
       color: var(--xp-pink);
       background: rgba(255, 0, 96, 0.12);
       border: 1px solid rgba(255, 0, 96, 0.3);
       border-radius: 4px;
-      padding: 3px 6px;
+      padding: 2px 6px;
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -1242,15 +1279,16 @@
       align-items: center;
       justify-content: space-between;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 8px;
-      font-size: 9.5px;
+      padding-top: 6px;
+      font-size: 9px;
       color: #8E8E96;
       font-weight: 700;
       flex-shrink: 0;
+      margin-top: 1px;
     }
     .xp-save-footer-hints {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
     .xp-save-footer-hints kbd {
@@ -1259,16 +1297,16 @@
       border-radius: 4px;
       padding: 2px 5px;
       color: #fff;
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 900;
     }
     .xp-save-close-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 7px;
-      padding: 5px 12px;
+      padding: 4px 11px;
       color: #FFF;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -1633,6 +1671,7 @@
             <span><kbd>▲ ▼</kbd> Select Item</span>
             <span><kbd class="xp-hint-a">A</kbd> Play</span>
             <span><kbd class="xp-hint-x">X</kbd> Toggle Save</span>
+            <span><kbd class="xp-hint-y">Y</kbd> Ahoy ID Link</span>
           </div>
           <button class="xp-save-close-btn" id="xp-close-save" onclick="act('B')">DONE [B]</button>
         </div>
