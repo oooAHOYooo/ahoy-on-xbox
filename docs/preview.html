@@ -2321,13 +2321,15 @@
       .xp-clock { display: none; }
     }
     @media (max-width: 860px) {
-      #xbox-preview .xp-top { padding: 0 16px; }
-      #xbox-preview .xp-tabs { grid-template-columns: repeat(4, 84px) !important; height: 34px; padding: 3px; }
-      #xbox-preview .xp-tab { width: 100% !important; height: 26px !important; font-size: 10px !important; padding: 0 !important; }
-      #xbox-preview .xp-tab[aria-selected="true"]::after { left: 14px; right: 14px; }
+      #xbox-preview .xp-top { padding: 0 14px; }
+      #xbox-preview .xp-tabs { grid-template-columns: repeat(4, 80px) !important; height: 34px; padding: 3px; }
+      #xbox-preview .xp-tab { width: 100% !important; height: 26px !important; font-size: 9.5px !important; padding: 0 !important; }
+      #xbox-preview .xp-tab[aria-selected="true"]::after { left: 12px; right: 12px; }
       .xp-tab-icon { display: none; }
       .xp-nav-divider { display: none; }
       #xbox-preview .xp-status { gap: 6px; }
+      #xbox-preview #xp-save { width: auto !important; min-width: 68px !important; padding: 0 8px 0 4px !important; }
+      #xbox-preview #xp-account { width: auto !important; min-width: 96px !important; padding: 0 9px 0 5px !important; }
       #xbox-preview .xp-guide-row { grid-template-columns: 140px 1fr; }
       #xbox-preview .xp-row-slot.next { display: none; }
     }
@@ -2397,7 +2399,7 @@
         <div class="xp-title" id="xp-title">The Wintergreen Sessions</div>
         <div class="xp-subtitle" id="xp-subtitle">Live Broadcast · Ahoy TV</div>
         <div class="xp-description" id="xp-description">Independent culture, live sessions, and stories from the Ahoy community. Select a channel card to tune in.</div>
-        <button class="xp-action" id="xp-play">▶ &nbsp; FULLSCREEN &nbsp; [A]</button>
+        <button class="xp-action" id="xp-play">▶ &nbsp; PLAY FULLSCREEN &nbsp; [A]</button>
       </div>
 
       <!-- DEDICATED HI-FI MUSIC & RADIO PLAYER HERO -->
@@ -6216,7 +6218,7 @@
                   const isPlaying = video && !video.paused;
                   playBtn.textContent = isPlaying ? '❚❚   PAUSE STREAM   [A]' : '▶   TUNE STATION   [A]';
                 } else {
-                  playBtn.textContent = '▶   FULLSCREEN   [A]';
+                  playBtn.textContent = '▶   PLAY FULLSCREEN   [A]';
                 }
               }
             }
@@ -6533,7 +6535,7 @@
             }
           } else {
             tune(false);
-            say(`Playing fullscreen [A]`);
+            say(`Playing Fullscreen [A]`);
           }
         } else if (key === 'x' || key === 'X') {
           playXboxSound('action');
