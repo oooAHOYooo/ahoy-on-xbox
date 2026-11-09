@@ -201,10 +201,10 @@ namespace AhoyXbox
         private Video currentPlayingVideo;
 
         private readonly SolidColorBrush accentBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 0, 96));
-        private readonly SolidColorBrush inactiveBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 28, 28, 34));
-        private readonly SolidColorBrush tabBorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 42, 42, 52));
+        private readonly SolidColorBrush inactiveBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 20, 21, 26));
+        private readonly SolidColorBrush tabBorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 36, 38, 46));
         private readonly SolidColorBrush whiteBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 255, 255));
-        private readonly SolidColorBrush grayBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 142, 142, 147));
+        private readonly SolidColorBrush grayBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 160, 160, 168));
 
         public MainPage()
         {

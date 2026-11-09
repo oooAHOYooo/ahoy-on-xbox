@@ -89,44 +89,53 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
     }
 
-    /* BACKGROUND VISUAL STAGE */
+    /* BACKGROUND HERO VIDEO STAGE */
     #xbox-preview .xp-picture {
       position: absolute;
       inset: 0;
-      z-index: -2;
-      background: radial-gradient(ellipse at 69% 35%, #73563f 0%, #392b2a 24%, #17151a 56%, #050609 100%);
-      transition: background 0.45s ease;
+      z-index: 1;
+      overflow: hidden;
+      background: #08090c;
     }
-    #xbox-preview .xp-picture:before {
-      content: "";
+    #xbox-preview .xp-hero-video {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 69% 38%, transparent 0 18%, rgba(0,0,0,0.35) 54%, #000 100%),
-                  linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 25%, transparent 50%, #000 100%);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: opacity 0.5s ease;
+      z-index: 1;
     }
-    #xbox-preview .xp-art-shape {
+    #xbox-preview .xp-video-backdrop {
       position: absolute;
-      right: 14%;
-      top: 12%;
-      width: 30%;
-      height: 50%;
-      opacity: 0.5;
-      filter: blur(1px);
-      background: linear-gradient(145deg, rgba(255,203,145,0.4), rgba(255,0,96,0.1) 50%, transparent);
-      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.68) contrast(1.05);
+      transition: background 0.45s ease;
+      z-index: 0;
+    }
+    #xbox-preview .xp-hero-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 62% 38%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 68%, #08090c 100%),
+                  linear-gradient(180deg, rgba(8,9,12,0.7) 0%, transparent 25%, rgba(8,9,12,0.45) 55%, #08090c 100%);
+      pointer-events: none;
+      z-index: 2;
     }
 
-    /* TOP BROADCAST BAR */
+    /* REFINED TOP BROADCAST BAR */
     #xbox-preview .xp-top {
       position: absolute;
       inset: 0 0 auto;
-      height: 68px;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
-      background: linear-gradient(180deg, rgba(6,7,10,0.98) 0%, rgba(6,7,10,0.85) 60%, transparent 100%);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 0 34px;
+      background: linear-gradient(180deg, rgba(6,7,10,0.94) 0%, rgba(6,7,10,0.7) 65%, transparent 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       z-index: 10;
@@ -134,104 +143,62 @@
     }
     #xbox-preview .xp-brand {
       display: flex;
-      align-items: center;
-      gap: 6px;
+      align-items: baseline;
       font-weight: 900;
       letter-spacing: 0.08em;
-      font-size: 20px;
+      font-size: 21px;
       flex-shrink: 0;
       color: #FFFFFF;
       user-select: none;
     }
-    #xbox-preview .xp-brand-badge {
-      background: var(--xp-pink);
-      color: #FFFFFF;
-      font-size: 10px;
+    #xbox-preview .xp-brand small {
+      color: var(--xp-pink);
+      font-size: 0.65em;
+      margin-left: 4px;
+      text-transform: uppercase;
       font-weight: 900;
-      letter-spacing: 0.8px;
-      padding: 3px 6px;
-      border-radius: 5px;
-      line-height: 1;
-      box-shadow: 0 0 12px var(--xp-pink-glow);
     }
 
-    /* CENTER NAV CAPSULE WITH [LT] / [RT] BUMPERS */
-    .xp-nav-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .xp-bumper-cue {
-      background: rgba(28, 30, 40, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
-      padding: 6px 9px;
-      font-size: 9px;
-      font-weight: 900;
-      color: #8E8E96;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      line-height: 1;
-    }
-    .xp-bumper-cue:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
+    /* 4 CANONICAL SECTIONS TABS */
     #xbox-preview .xp-tabs {
       display: flex;
       align-items: center;
       gap: 3px;
-      background: rgba(14, 16, 22, 0.94);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(16, 17, 22, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 999px;
       padding: 4px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
       flex-shrink: 0;
     }
     #xbox-preview .xp-tab {
       border: 1px solid transparent;
       background: transparent;
       border-radius: 999px;
-      padding: 7px 15px;
+      padding: 7px 16px;
       font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      color: #9A9AA4;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.55);
       white-space: nowrap !important;
       flex-shrink: 0;
       line-height: 1;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .xp-tab-icon {
-      width: 13px;
-      height: 13px;
-      opacity: 0.75;
-      flex-shrink: 0;
-      fill: currentColor;
     }
     #xbox-preview .xp-tab[aria-selected="true"] {
       background: var(--xp-pink);
       border-color: var(--xp-pink);
       color: #FFFFFF;
-      box-shadow: 0 0 16px var(--xp-pink-glow);
-    }
-    #xbox-preview .xp-tab[aria-selected="true"] .xp-tab-icon {
-      opacity: 1;
+      box-shadow: 0 2px 10px rgba(255, 0, 96, 0.35);
     }
     #xbox-preview .xp-tab:hover:not([aria-selected="true"]) {
       color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.08);
-    }
-    #xbox-preview .xp-tab:hover:not([aria-selected="true"]) .xp-tab-icon {
-      opacity: 1;
+      background: rgba(255, 255, 255, 0.06);
     }
     #xbox-preview .xp-tab:focus-visible,
     #xbox-preview .xp-card:focus-visible,
@@ -242,24 +209,20 @@
       outline-offset: 3px;
     }
 
-    /* RIGHT STATUS & ACTIONS CLUSTER WITH CLEAR HIERARCHY */
+    /* RIGHT STATUS & ACTIONS CLUSTER (UNIFIED 30PX HEIGHT & NEUTRAL SURFACES) */
     #xbox-preview .xp-status {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-shrink: 0;
     }
-    .xp-broadcast-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     .xp-clock {
-      font-size: 11px;
-      font-weight: 800;
-      color: #8E8E96;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.45);
       font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
       letter-spacing: 0.5px;
+      padding: 0 4px;
       white-space: nowrap;
       line-height: 1;
     }
@@ -267,56 +230,29 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 0, 96, 0.12);
-      border: 1px solid rgba(255, 0, 96, 0.32);
+      height: 30px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 999px;
-      padding: 5px 10px;
+      padding: 0 11px;
       white-space: nowrap !important;
       line-height: 1;
+      box-sizing: border-box;
     }
     #xbox-preview .xp-live i {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--xp-pink);
-      box-shadow: 0 0 8px var(--xp-pink);
-      animation: xpPulse 2s infinite ease-in-out;
-      flex-shrink: 0;
-    }
-    #xbox-preview .xp-live span {
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #FFFFFF;
-      white-space: nowrap !important;
-    }
-    .xp-nav-divider {
-      width: 1px;
-      height: 22px;
-      background: rgba(255, 255, 255, 0.12);
-    }
-    .xp-actions-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-      white-space: nowrap !important;
-      line-height: 1;
-    }
-    #xbox-preview .xp-live i {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--xp-pink);
-      box-shadow: 0 0 8px var(--xp-pink);
+      box-shadow: 0 0 6px var(--xp-pink);
       animation: xpPulse 2s infinite ease-in-out;
       flex-shrink: 0;
     }
     #xbox-preview .xp-live span {
       font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 1.2px;
-      color: #FFFFFF;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.85);
       white-space: nowrap !important;
     }
 
@@ -328,44 +264,46 @@
     .xp-keycap-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      gap: 6px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 999px;
-      padding: 5px 13px 5px 6px;
+      padding: 0 11px 0 5px;
       font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      color: #A0A0A8;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.7);
       cursor: pointer;
       white-space: nowrap !important;
       flex-shrink: 0;
       line-height: 1;
+      box-sizing: border-box;
       transition: all 0.2s ease;
     }
     .xp-keycap-pill:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
       color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.16);
     }
     .xp-keycap-pill.saved {
-      background: rgba(75, 163, 227, 0.18);
-      border-color: #4BA3E3;
+      background: rgba(75, 163, 227, 0.14);
+      border-color: rgba(75, 163, 227, 0.35);
       color: #FFFFFF;
     }
     .xp-keycap-pill.ahoy-id {
-      background: rgba(255, 0, 96, 0.12);
-      border-color: rgba(255, 0, 96, 0.35);
-      color: #FF4D90;
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.75);
     }
     .xp-keycap-pill.ahoy-id:hover {
-      background: rgba(255, 0, 96, 0.22);
-      border-color: var(--xp-pink);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.16);
       color: #FFFFFF;
     }
     .xp-keycap-pill.paired {
-      background: rgba(52, 199, 89, 0.15);
-      border-color: rgba(52, 199, 89, 0.45);
+      background: rgba(52, 199, 89, 0.12);
+      border-color: rgba(52, 199, 89, 0.3);
       color: #34C759;
     }
 
@@ -373,6 +311,18 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 900;
+      color: #FFFFFF;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .xp-keycap-x { background: var(--xp-blue); }
+    .xp-keycap-y { background: var(--xp-gold); color: #17130a; }
+    .xp-keycap-check { background: var(--xp-green); }
       width: 17px;
       height: 17px;
       border-radius: 50%;
@@ -1308,61 +1258,40 @@
   </style>
 
   <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use D-pad to flick channels and browse guide.">
-    <div class="xp-picture" id="xp-picture"><div class="xp-art-shape"></div></div>
+    <!-- HERO VIDEO BACKGROUND STAGE -->
+    <div class="xp-picture" id="xp-picture">
+      <div class="xp-video-backdrop" id="xp-video-backdrop"></div>
+      <video class="xp-hero-video" id="xp-hero-video" playsinline autoplay loop muted></video>
+      <div class="xp-hero-vignette"></div>
+    </div>
 
-    <!-- REFINED HIGH-CLARITY TOP BROADCAST BAR -->
+    <!-- REFINED TOP BROADCAST BAR -->
     <header class="xp-top">
-      <div class="xp-brand">
-        <span>AHOY</span>
-        <span class="xp-brand-badge">TV</span>
-      </div>
+      <div class="xp-brand">AHOY<small>TV</small></div>
 
-      <!-- 4 CANONICAL SECTIONS WITH [LT] / [RT] CUES & ICONS -->
-      <div class="xp-nav-wrapper">
-        <button class="xp-bumper-cue" onclick="act('LT')" title="Previous section [LT]">LT</button>
-        <nav class="xp-tabs" aria-label="Sections">
-          <button class="xp-tab" data-tab="0" aria-selected="true">
-            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
-            <span>LIVE TV</span>
-          </button>
-          <button class="xp-tab" data-tab="1" aria-selected="false">
-            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
-            <span>ON DEMAND</span>
-          </button>
-          <button class="xp-tab" data-tab="2" aria-selected="false">
-            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-            <span>MUSIC</span>
-          </button>
-          <button class="xp-tab" data-tab="3" aria-selected="false">
-            <svg class="xp-tab-icon" viewBox="0 0 24 24"><path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-.83-.51-1.57-1.24-1.85L12 2.5 3.24 6.15zM7 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-3h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
-            <span>RADIO</span>
-          </button>
-        </nav>
-        <button class="xp-bumper-cue" onclick="act('RT')" title="Next section [RT]">RT</button>
-      </div>
+      <!-- 4 CANONICAL SECTIONS -->
+      <nav class="xp-tabs" aria-label="Sections">
+        <button class="xp-tab" data-tab="0" aria-selected="true">LIVE TV</button>
+        <button class="xp-tab" data-tab="1" aria-selected="false">ON DEMAND</button>
+        <button class="xp-tab" data-tab="2" aria-selected="false">MUSIC</button>
+        <button class="xp-tab" data-tab="3" aria-selected="false">RADIO</button>
+      </nav>
 
-      <!-- CRISP STATUS & CONTROLLER ACTIONS CLUSTER -->
+      <!-- CRISP STATUS & CONTROLLER PILLS -->
       <div class="xp-status">
-        <div class="xp-broadcast-status">
-          <span class="xp-clock" id="xp-clock">--:--</span>
-          <div class="xp-live">
-            <i></i>
-            <span>LIVE</span>
-          </div>
+        <span class="xp-clock" id="xp-clock">--:--</span>
+        <div class="xp-live">
+          <i></i>
+          <span>LIVE</span>
         </div>
-
-        <div class="xp-nav-divider"></div>
-
-        <div class="xp-actions-group">
-          <button class="xp-keycap-pill" id="xp-save" onclick="act('X')">
-            <span class="xp-keycap xp-keycap-x">X</span>
-            <span id="xp-save-text">SAVE</span>
-          </button>
-          <button class="xp-keycap-pill ahoy-id" id="xp-account" onclick="act('Y')">
-            <span class="xp-keycap xp-keycap-y" id="xp-keycap-account">Y</span>
-            <span id="xp-account-text">PAIR AHOY ID</span>
-          </button>
-        </div>
+        <button class="xp-keycap-pill" id="xp-save" onclick="act('X')">
+          <span class="xp-keycap xp-keycap-x">X</span>
+          <span id="xp-save-text">SAVE</span>
+        </button>
+        <button class="xp-keycap-pill ahoy-id" id="xp-account" onclick="act('Y')">
+          <span class="xp-keycap xp-keycap-y" id="xp-keycap-account">Y</span>
+          <span id="xp-account-text">PAIR AHOY ID</span>
+        </button>
       </div>
     </header>
 
@@ -1568,7 +1497,9 @@
           nextTime: 'Next at 9:05 PM',
           art: 'linear-gradient(135deg,#584335,#bd7952 42%,#201d22 75%)',
           hero: '#bd7952',
-          glyph: 'W'
+          glyph: 'W',
+          url: 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4',
+          poster: 'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg'
         },
         {
           no: '102',
@@ -1584,7 +1515,9 @@
           nextTime: 'Next at 8:58 PM',
           art: 'linear-gradient(135deg,#16384a,#267c91 40%,#161b25 78%)',
           hero: '#267c91',
-          glyph: '♫'
+          glyph: '♫',
+          url: 'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4',
+          poster: 'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/thumbnails/01.webp'
         },
         {
           no: '103',
@@ -1600,7 +1533,9 @@
           nextTime: 'Next at 9:15 PM',
           art: 'linear-gradient(135deg,#4d3e72,#a66f9c 45%,#20202a 78%)',
           hero: '#a66f9c',
-          glyph: '03'
+          glyph: '03',
+          url: 'https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4',
+          poster: 'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg'
         },
         {
           no: '104',
@@ -1616,28 +1551,30 @@
           nextTime: 'Next at 9:02 PM',
           art: 'linear-gradient(135deg,#59522b,#b09a3b 42%,#23221a 78%)',
           hero: '#b09a3b',
-          glyph: '24'
+          glyph: '24',
+          url: 'https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20Road%20Trip%20Series_%20Georgia%20Disc%20Golf%20Trip%20(I%20Drove%2015%20Hours%20to%20Play%20Disc%20Golf!!).mp4',
+          poster: 'https://i.ytimg.com/vi/grB5ydvYWW8/maxresdefault.jpg'
         }
       ];
 
       const mediaSections = {
         1: [
-          {no:'OD-1', name:'Tyler Needs A Break', line:'Episode 4: Sam Carlson', title:'Tyler Needs a Break — Ep 4', sub:'On Demand Video · Series', description:'Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and touring.', art:'linear-gradient(135deg,#244358,#3c7e99 45%,#12161f 78%)', hero:'#3c7e99', glyph:'▶'},
-          {no:'OD-2', name:'Poets & Friends #13', line:'Live at Koffee? on Audubon', title:'Poets & Friends #13 — Highlights', sub:'On Demand Video · Live Poetry', description:'Performances by Paul Wildy, Elena Gerald, Aidan Bauer, and Pat Clendenen.', art:'linear-gradient(135deg,#442a54,#88448b 45%,#1c1322 78%)', hero:'#88448b', glyph:'P'},
-          {no:'OD-3', name:'Tallboyz Obsolete', line:'Full Length Skate Film', title:'Tallboyz — Obsolete (Full Film)', sub:'On Demand Video · Skate Feature', description:'Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.', art:'linear-gradient(135deg,#5c4728,#ab8446 45%,#1e1910 78%)', hero:'#ab8446', glyph:'SK'},
-          {no:'OD-4', name:'G-Dub Disc Golf', line:'Georgia Road Trip Series', title:'Georgia Disc Golf Trip (15hr Drive)', sub:'On Demand Video · Series', description:'Greg Weese takes a 15-hour road trip to Georgia to throw disc golf courses.', art:'linear-gradient(135deg,#264e32,#478a5b 45%,#101c13 78%)', hero:'#478a5b', glyph:'GD'}
+          {no:'OD-1', name:'Tyler Needs A Break', line:'Episode 4: Sam Carlson', title:'Tyler Needs a Break — Ep 4', sub:'On Demand Video · Series', description:'Tyler talks with Sam Carlson about booking shows, naming projects, basement venues, and touring.', art:'linear-gradient(135deg,#244358,#3c7e99 45%,#12161f 78%)', hero:'#3c7e99', glyph:'▶', url:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4', poster:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/thumbnails/01.webp'},
+          {no:'OD-2', name:'Poets & Friends #13', line:'Live at Koffee? on Audubon', title:'Poets & Friends #13 — Highlights', sub:'On Demand Video · Live Poetry', description:'Performances by Paul Wildy, Elena Gerald, Aidan Bauer, and Pat Clendenen.', art:'linear-gradient(135deg,#442a54,#88448b 45%,#1c1322 78%)', hero:'#88448b', glyph:'P', url:'https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/Poets_10_FULL.mp4', poster:'https://storage.googleapis.com/ahoy-videos/live/poets/poets-10/thumbnails/01.webp'},
+          {no:'OD-3', name:'Tallboyz Obsolete', line:'Full Length Skate Film', title:'Tallboyz — Obsolete (Full Film)', sub:'On Demand Video · Skate Feature', description:'Premiered July 20, 2024. Filmed and edited by Andrew Leverton and Dave Gunn.', art:'linear-gradient(135deg,#5c4728,#ab8446 45%,#1e1910 78%)', hero:'#ab8446', glyph:'SK', url:'https://storage.googleapis.com/ahoy-videos/skating/tallboyz/May%202026%20Dump/Dave_UFRWhite.mp4', poster:'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg'},
+          {no:'OD-4', name:'G-Dub Disc Golf', line:'Georgia Road Trip Series', title:'Georgia Disc Golf Trip (15hr Drive)', sub:'On Demand Video · Series', description:'Greg Weese takes a 15-hour road trip to Georgia to throw disc golf courses.', art:'linear-gradient(135deg,#264e32,#478a5b 45%,#101c13 78%)', hero:'#478a5b', glyph:'GD', url:'https://storage.googleapis.com/ahoy-videos/series/G-Dub%20Disc%20Golf/G-Dub%20Disc%20Golf%20-%20Road%20Trip%20Series_%20Georgia%20Disc%20Golf%20Trip%20(I%20Drove%2015%20Hours%20to%20Play%20Disc%20Golf!!).mp4', poster:'https://i.ytimg.com/vi/grB5ydvYWW8/maxresdefault.jpg'}
         ],
         2: [
-          {no:'MU-1', name:'Take It! (Album)', line:'The Problem With Kids Today', title:'The Problem With Kids Today — Take It!', sub:'Music · 10 Tracks · Stereo', description:'High-octane indie rock featuring "The Beginning of the End of the World" and "Speed Demon".', art:'linear-gradient(135deg,#661c32,#b8355b 45%,#220b12 78%)', hero:'#b8355b', glyph:'♪'},
-          {no:'MU-2', name:'Sand (Live EP)', line:'Whatnot · Wintergreen Live', title:'Whatnot — Live at Wintergreen', sub:'Music · 4 Tracks · Studio Master', description:'Live tracking of "Sand", "Running Away", and "Dispatch" recorded direct to tape.', art:'linear-gradient(135deg,#543c1c,#9e7033 45%,#1c140a 78%)', hero:'#9e7033', glyph:'WN'},
-          {no:'MU-3', name:'Stop and Rewind', line:'Samuel Dylan Witch', title:'Samuel Dylan Witch — Stop & Rewind', sub:'Music · Single · Lo-fi Indie', description:'Atmospheric melodies and indie instrumentation recorded in New Haven, CT.', art:'linear-gradient(135deg,#2b295c,#5852a3 45%,#131221 78%)', hero:'#5852a3', glyph:'SW'},
-          {no:'MU-4', name:'Ambient Tapes', line:'Ahoy Sound Collective', title:'Midnight Tape Loops & Drones', sub:'Music · Continuous Soundscape', description:'Relaxing ambient guitar loops and reel-to-reel synthesizer textures.', art:'linear-gradient(135deg,#1b454a,#2b7b85 45%,#0a181c 78%)', hero:'#2b7b85', glyph:'∞'}
+          {no:'MU-1', name:'Take It! (Album)', line:'The Problem With Kids Today', title:'The Problem With Kids Today — Take It!', sub:'Music · 10 Tracks · Stereo', description:'High-octane indie rock featuring "The Beginning of the End of the World" and "Speed Demon".', art:'linear-gradient(135deg,#661c32,#b8355b 45%,#220b12 78%)', hero:'#b8355b', glyph:'♪', url:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4', poster:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/thumbnails/01.webp'},
+          {no:'MU-2', name:'Sand (Live EP)', line:'Whatnot · Wintergreen Live', title:'Whatnot — Live at Wintergreen', sub:'Music · 4 Tracks · Studio Master', description:'Live tracking of "Sand", "Running Away", and "Dispatch" recorded direct to tape.', art:'linear-gradient(135deg,#543c1c,#9e7033 45%,#1c140a 78%)', hero:'#9e7033', glyph:'WN', url:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4', poster:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg'},
+          {no:'MU-3', name:'Stop and Rewind', line:'Samuel Dylan Witch', title:'Samuel Dylan Witch — Stop & Rewind', sub:'Music · Single · Lo-fi Indie', description:'Atmospheric melodies and indie instrumentation recorded in New Haven, CT.', art:'linear-gradient(135deg,#2b295c,#5852a3 45%,#131221 78%)', hero:'#5852a3', glyph:'SW', url:'https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/SDW_2026_Stop%20and%20Rewind.mp4', poster:'https://storage.googleapis.com/ahoy-videos/music-videos/samuel%20dylan%20witch/thumbnails/01.webp'},
+          {no:'MU-4', name:'Ambient Tapes', line:'Ahoy Sound Collective', title:'Midnight Tape Loops & Drones', sub:'Music · Continuous Soundscape', description:'Relaxing ambient guitar loops and reel-to-reel synthesizer textures.', art:'linear-gradient(135deg,#1b454a,#2b7b85 45%,#0a181c 78%)', hero:'#2b7b85', glyph:'∞', url:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4', poster:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/thumbnails/H6iranjvsNI.jpg'}
         ],
         3: [
-          {no:'RA-1', name:'Indie Airwaves', line:'Seen Better Days & Friends', title:'Seen Better Days Radio', sub:'Radio · Live 24/7 Stream', description:'Eclectic independent rock, underground releases, and guest artist takeovers.', art:'linear-gradient(135deg,#592323,#9e3d3d 45%,#1c0c0c 78%)', hero:'#9e3d3d', glyph:'📻'},
-          {no:'RA-2', name:'Wintergreen Radio', line:'Live Studio Mix & Jams', title:'Wintergreen Sessions Radio', sub:'Radio · Studio Master Feed', description:'Uncut jams, acoustic warmups, and live rehearsal tapes from the Wintergreen Studio.', art:'linear-gradient(135deg,#234959,#3d7e9e 45%,#0c161c 78%)', hero:'#3d7e9e', glyph:'🎙'},
-          {no:'RA-3', name:'High-Energy Edits', line:'Skate Punk & Upbeat Beats', title:'High-Energy Indie & Skate Edits', sub:'Radio · Fast Rotation', description:'Upbeat garage rock, punk, and skating soundtrack staples.', art:'linear-gradient(135deg,#594c23,#9e863d 45%,#1c170c 78%)', hero:'#9e863d', glyph:'⚡'},
-          {no:'RA-4', name:'Late Night Radio', line:'Lo-Fi Drones & Ambient Air', title:'Late Night Ambient Soundscapes', sub:'Radio · Nocturnal Transmission', description:'Calm, meditative ambient and tape loop broadcasts through the late hours.', art:'linear-gradient(135deg,#232959,#3d4b9e 45%,#0c0f1c 78%)', hero:'#3d4b9e', glyph:'🌙'}
+          {no:'RA-1', name:'Indie Airwaves', line:'Seen Better Days & Friends', title:'Seen Better Days Radio', sub:'Radio · Live 24/7 Stream', description:'Eclectic independent rock, underground releases, and guest artist takeovers.', art:'linear-gradient(135deg,#592323,#9e3d3d 45%,#1c0c0c 78%)', hero:'#9e3d3d', glyph:'📻', url:'https://storage.googleapis.com/ahoy-videos/wintergreen-sessions/web/H6iranjvsNI.mp4', poster:'https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg'},
+          {no:'RA-2', name:'Wintergreen Radio', line:'Live Studio Mix & Jams', title:'Wintergreen Sessions Radio', sub:'Radio · Studio Master Feed', description:'Uncut jams, acoustic warmups, and live rehearsal tapes from the Wintergreen Studio.', art:'linear-gradient(135deg,#234959,#3d7e9e 45%,#0c161c 78%)', hero:'#3d7e9e', glyph:'🎙', url:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/hFFdntpul3c.mp4', poster:'https://storage.googleapis.com/ahoy-videos/music-videos/the-problem-with-kids-today/thumbnails/01.webp'},
+          {no:'RA-3', name:'High-Energy Edits', line:'Skate Punk & Upbeat Beats', title:'High-Energy Indie & Skate Edits', sub:'Radio · Fast Rotation', description:'Upbeat garage rock, punk, and skating soundtrack staples.', art:'linear-gradient(135deg,#594c23,#9e863d 45%,#1c170c 78%)', hero:'#9e863d', glyph:'⚡', url:'https://storage.googleapis.com/ahoy-videos/skating/flux/Flux%20TB%20Cash%20Contest%20%20-%20shot%20and%20edit%20by%20Alex%20Gonzalez.mp4', poster:'https://storage.googleapis.com/ahoy-videos/skating/flux/Ahoy-FLUX_CashContest.jpg'},
+          {no:'RA-4', name:'Late Night Radio', line:'Lo-Fi Drones & Ambient Air', title:'Late Night Ambient Soundscapes', sub:'Radio · Nocturnal Transmission', description:'Calm, meditative ambient and tape loop broadcasts through the late hours.', art:'linear-gradient(135deg,#232959,#3d4b9e 45%,#0c0f1c 78%)', hero:'#3d4b9e', glyph:'🌙', url:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/Tyler%20Needs%20a%20Break%20-%20Ep4%20-%20Sam%20Carlson%20-%20full%20-%20d1.mp4', poster:'https://storage.googleapis.com/ahoy-videos/series/tyler%20needs%20a%20break/ep4/thumbnails/01.webp'}
         ]
       };
 
@@ -1685,25 +1622,48 @@
 
       function getCurrentItem() {
         if (section === 0) {
-          const ch = liveChannels[selected];
+          const ch = liveChannels[selected] || liveChannels[0];
           return {
             id: `ch-${ch.no}`,
             title: ch.nowTitle || ch.title,
             badge: `CH ${ch.no}`,
             sub: `${ch.name} • Continuous Broadcast`,
             sec: 0,
-            idx: selected
+            idx: selected,
+            url: ch.url,
+            poster: ch.poster
           };
         } else {
-          const m = mediaSections[section][selected];
+          const m = (mediaSections[section] || [])[selected] || {};
           return {
             id: `sec-${section}-${selected}`,
-            title: m.title,
+            title: m.title || m.name,
             badge: m.glyph || m.no,
             sub: `${m.name} • ${sections[section]}`,
             sec: section,
-            idx: selected
+            idx: selected,
+            url: m.url,
+            poster: m.poster
           };
+        }
+      }
+
+      function updateVideoPlayback() {
+        const cur = getCurrentItem();
+        if (!cur) return;
+        const video = root.querySelector('#xp-hero-video');
+        const backdrop = root.querySelector('#xp-video-backdrop');
+        if (backdrop && cur.poster) {
+          backdrop.style.backgroundImage = `url("${cur.poster}")`;
+        }
+        if (video && cur.url) {
+          const targetUrl = cur.url;
+          if (video.getAttribute('data-active-src') !== targetUrl) {
+            video.setAttribute('data-active-src', targetUrl);
+            video.src = targetUrl;
+            video.load();
+            video.play().catch(() => {});
+          }
         }
       }
 
@@ -2008,9 +1968,11 @@
         }
 
         tabs.forEach((t, i) => t.setAttribute('aria-selected', i === section ? 'true' : 'false'));
+        updateVideoPlayback();
       }
 
       function tune(isChannelFlick = true) {
+        updateVideoPlayback();
         const cur = getCurrentItem();
         recentlyPlayed = recentlyPlayed.filter(r => r.title !== cur.title);
         recentlyPlayed.unshift({
@@ -2126,6 +2088,12 @@
           } else {
             openPairModal();
           }
+        } else if (key === 'm' || key === 'M') {
+          const video = root.querySelector('#xp-hero-video');
+          if (video) {
+            video.muted = !video.muted;
+            say(video.muted ? 'Audio Muted' : 'Audio Unmuted');
+          }
         } else if (key === 'b' || key === 'B' || key === 'Escape') {
           if (isSaveModalOpen) {
             closeSaveModal();
@@ -2146,7 +2114,7 @@
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter', ' ', 'Escape'].includes(e.key)) {
           e.preventDefault();
           act(e.key);
-        } else if ('xyabXYAB1234'.includes(e.key)) {
+        } else if ('xyabXYAB1234mM'.includes(e.key)) {
           if ('1234'.includes(e.key)) {
             section = parseInt(e.key, 10) - 1;
             selected = 0;

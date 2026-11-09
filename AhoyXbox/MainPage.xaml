@@ -20,8 +20,8 @@
       </Grid.Background>
     </Grid>
 
-    <!-- Broadcast header with polished obsidian glass and crisp telemetry -->
-    <Border VerticalAlignment="Top" Height="78" Padding="44,0" Background="#CC08090C" BorderBrush="#1FFFFFFF" BorderThickness="0,0,0,1">
+    <!-- Broadcast header with polished obsidian glass and simplified, balanced telemetry -->
+    <Border VerticalAlignment="Top" Height="74" Padding="44,0" Background="#E608090C" BorderBrush="#0FFFFFFF" BorderThickness="0,0,0,1">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
@@ -30,26 +30,26 @@
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
           <Image Source="ms-appx:///Assets/ahoy_official_white.png" Height="26" Stretch="Uniform" VerticalAlignment="Center"/>
-          <TextBlock Text="tv" FontSize="14" FontWeight="Black" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="6,0,0,2"/>
+          <TextBlock Text="tv" FontSize="14" FontWeight="Black" Foreground="#FF0060" VerticalAlignment="Bottom" Margin="5,0,0,3"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
-          <Button x:Name="TabOnDemand" Content="ON DEMAND VIDEO" Click="TabOnDemand_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
-          <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8" Margin="0,0,6,0"/>
-          <Button x:Name="TabRadio" Content="RADIO" Click="TabRadio_Click" Background="#1C1C22" BorderBrush="#2A2A34" BorderThickness="1" Foreground="#96969D" FontWeight="Bold" FontSize="11" CornerRadius="8" Padding="16,8"/>
+          <Button x:Name="TabChannels" Content="LIVE TV" Click="TabChannels_Click" Background="#FF0060" Foreground="#FFFFFF" FontWeight="Bold" FontSize="11" CornerRadius="14" Padding="16,7" Margin="0,0,4,0"/>
+          <Button x:Name="TabOnDemand" Content="ON DEMAND" Click="TabOnDemand_Click" Background="#14151A" BorderBrush="#24262E" BorderThickness="1" Foreground="#A0A0A8" FontWeight="Bold" FontSize="11" CornerRadius="14" Padding="16,7" Margin="0,0,4,0"/>
+          <Button x:Name="TabMusic" Content="MUSIC" Click="TabMusic_Click" Background="#14151A" BorderBrush="#24262E" BorderThickness="1" Foreground="#A0A0A8" FontWeight="Bold" FontSize="11" CornerRadius="14" Padding="16,7" Margin="0,0,4,0"/>
+          <Button x:Name="TabRadio" Content="RADIO" Click="TabRadio_Click" Background="#14151A" BorderBrush="#24262E" BorderThickness="1" Foreground="#A0A0A8" FontWeight="Bold" FontSize="11" CornerRadius="14" Padding="16,7"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-          <Border Background="#26FF0060" BorderBrush="#59FF0060" BorderThickness="1" CornerRadius="12" Padding="8,4" Margin="0,0,12,0">
+          <Border Background="#0DFFFFFF" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="14" Padding="11,6" Margin="0,0,8,0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-              <Ellipse Width="7" Height="7" Fill="#FF0060" Margin="0,0,6,0"/>
-              <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold" Foreground="#FFFFFF" CharacterSpacing="100"/>
+              <Ellipse Width="6" Height="6" Fill="#FF0060" Margin="0,0,6,0"/>
+              <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold" Foreground="#FFFFFF" CharacterSpacing="80"/>
             </StackPanel>
           </Border>
-          <Border Background="#1AFFFFFF" BorderBrush="#2EFFFFFF" BorderThickness="1" CornerRadius="12" Padding="10,4" Margin="0,0,10,0">
-            <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="10" FontWeight="Bold" Foreground="#96969D"/>
+          <Border Background="#0DFFFFFF" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="14" Padding="12,6" Margin="0,0,8,0">
+            <TextBlock x:Name="SaveIndicator" Text="[X] SAVE" FontSize="10" FontWeight="Bold" Foreground="#B0B0B8"/>
           </Border>
-          <Border Background="#22FF0060" BorderBrush="#55FF0060" BorderThickness="1" CornerRadius="12" Padding="10,4">
-            <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="10" FontWeight="Bold" Foreground="#FF4D90"/>
+          <Border Background="#0DFFFFFF" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="14" Padding="12,6">
+            <TextBlock x:Name="AccountIndicator" Text="[Y] PAIR ID" FontSize="10" FontWeight="Bold" Foreground="#B0B0B8"/>
           </Border>
         </StackPanel>
       </Grid>
