@@ -346,14 +346,14 @@
       border-color: rgba(52, 199, 89, 0.18);
       color: rgba(134, 239, 172, 0.75);
     }
-    #xbox-preview #xp-save {
-      width: 66px !important;
-      min-width: 66px !important;
-      justify-content: center !important;
-    }
+    #xbox-preview #xp-save,
     #xbox-preview #xp-account {
       width: 80px !important;
       min-width: 80px !important;
+      max-width: 80px !important;
+      height: 24px !important;
+      padding: 0 8px 0 5px !important;
+      box-sizing: border-box !important;
       justify-content: center !important;
     }
 
@@ -1218,6 +1218,8 @@
       position: relative;
       width: 0%;
       pointer-events: none;
+      transition: width 0.25s linear;
+      will-change: width;
     }
     #xbox-preview .xp-music-scrubber-thumb {
       position: absolute;
@@ -2346,8 +2348,16 @@
       .xp-tab-icon { display: none; }
       .xp-nav-divider { display: none; }
       #xbox-preview .xp-status { gap: 6px; }
-      #xbox-preview #xp-save { width: auto !important; min-width: 68px !important; padding: 0 8px 0 4px !important; }
-      #xbox-preview #xp-account { width: auto !important; min-width: 96px !important; padding: 0 9px 0 5px !important; }
+      #xbox-preview #xp-save,
+      #xbox-preview #xp-account {
+        width: 72px !important;
+        min-width: 72px !important;
+        max-width: 72px !important;
+        height: 24px !important;
+        padding: 0 6px 0 4px !important;
+        box-sizing: border-box !important;
+        justify-content: center !important;
+      }
       #xbox-preview .xp-guide-row { grid-template-columns: 140px 1fr; }
       #xbox-preview .xp-row-slot.next { display: none; }
     }
@@ -2357,6 +2367,15 @@
       #xbox-preview .xp-tab[aria-selected="true"]::after { left: 10px; right: 10px; }
       #xbox-preview .xp-brand { font-size: 16px; }
       #xbox-preview .xp-status .xp-live { display: none; }
+      #xbox-preview #xp-save,
+      #xbox-preview #xp-account {
+        width: 66px !important;
+        min-width: 66px !important;
+        max-width: 66px !important;
+        height: 22px !important;
+        padding: 0 5px 0 4px !important;
+        font-size: 8px !important;
+      }
     }
     @media(prefers-reduced-motion:reduce){
       #xbox-preview * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
@@ -5202,7 +5221,8 @@
       const contentDock = root.querySelector('#xp-content-dock');
       const tabs = [...root.querySelectorAll('.xp-tab[data-tab]')];
       let selected = 0;
-      let section = 0;
+      const urlTab = (new URLSearchParams(window.location.search).get('tab') || '').toLowerCase();
+      let section = (urlTab === 'music' || urlTab === '2') ? 2 : ((urlTab === 'ondemand' || urlTab === '1') ? 1 : ((urlTab === 'radio' || urlTab === '3') ? 3 : 0));
       let activeCategory = 'ALL';
       let activeSort = 'curated';
       let onDemandViewMode = 'rows'; // 'rows' (Netflix multi-row) or 'grid' (vertical thumbnail wall)
@@ -6156,6 +6176,29 @@
             if (musicArtist) musicArtist.textContent = artistName;
             if (musicAlbum) musicAlbum.textContent = albumName;
             if (timeTotal) timeTotal.textContent = track.duration || '3:00';
+            const curSpan = root.querySelector('#xp-music-time-cur');
+            const fill = root.querySelector('#xp-music-scrubber-fill');
+            const heroVid = root.querySelector('#xp-hero-video');
+            if (heroVid && heroVid.src && heroVid.getAttribute('data-active-src') === track.url && Number.isFinite(heroVid.currentTime) && heroVid.currentTime > 0) {
+              const c = heroVid.currentTime;
+              let d = heroVid.duration;
+              if (!Number.isFinite(d) || d <= 0) d = track.durationSec || 180;
+              const p = Math.max(0, Math.min(100, (c / d) * 100));
+              if (fill) fill.style.width = `${p}%`;
+              if (curSpan) {
+                const m = Math.floor(c / 60);
+                const s = Math.floor(c % 60);
+                curSpan.textContent = `${m}:${String(s).padStart(2, '0')}`;
+              }
+            } else {
+              if (fill) {
+                fill.style.transition = 'none';
+                fill.style.width = '0%';
+                void fill.offsetWidth;
+                fill.style.transition = 'width 0.25s linear';
+              }
+              if (curSpan) curSpan.textContent = '0:00';
+            }
 
             // Next Track in Queue preview
             const musicList = getActiveItems();
@@ -6623,11 +6666,21 @@
       if (heroVideo) {
         heroVideo.addEventListener('timeupdate', () => {
           if (section === 2) {
-            const cur = heroVideo.currentTime || 0;
-            const dur = heroVideo.duration || 180;
-            const pct = dur > 0 ? Math.min(100, (cur / dur) * 100) : 0;
+            const cur = heroVideo.currentTime;
+            if (!Number.isFinite(cur) || cur < 0) return;
+
+            let dur = heroVideo.duration;
+            if (!Number.isFinite(dur) || dur <= 0) {
+              const items = getActiveItems();
+              const track = items[selected] || {};
+              dur = track.durationSec || 180;
+            }
+
+            const pct = Math.max(0, Math.min(100, (cur / dur) * 100));
             const fill = root.querySelector('#xp-music-scrubber-fill');
-            if (fill) fill.style.width = `${pct}%`;
+            if (fill && Number.isFinite(pct)) {
+              fill.style.width = `${pct}%`;
+            }
             const curSpan = root.querySelector('#xp-music-time-cur');
             if (curSpan) {
               const m = Math.floor(cur / 60);
@@ -6645,8 +6698,19 @@
           const rect = scrubberBar.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
           const heroVid = root.querySelector('#xp-hero-video');
-          if (heroVid && heroVid.duration) {
-            heroVid.currentTime = pct * heroVid.duration;
+          if (heroVid) {
+            const items = getActiveItems();
+            const track = items[selected] || {};
+            let dur = heroVid.duration;
+            if (!Number.isFinite(dur) || dur <= 0) dur = track.durationSec || 180;
+            heroVid.currentTime = pct * dur;
+            const fill = root.querySelector('#xp-music-scrubber-fill');
+            if (fill) {
+              fill.style.transition = 'none';
+              fill.style.width = `${pct * 100}%`;
+              void fill.offsetWidth;
+              fill.style.transition = 'width 0.25s linear';
+            }
             playXboxSound('tick');
           }
         });
