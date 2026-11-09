@@ -131,9 +131,9 @@
       position: absolute;
       inset: 0 0 auto;
       height: 72px;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
       padding: 0 34px;
       background: linear-gradient(180deg, rgba(6,7,10,0.94) 0%, rgba(6,7,10,0.7) 65%, transparent 100%);
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -142,6 +142,15 @@
       z-index: 10;
       gap: 16px;
       transition: opacity 0.35s ease;
+    }
+    #xbox-preview .xp-brand {
+      justify-self: start;
+    }
+    #xbox-preview .xp-tabs {
+      justify-self: center;
+    }
+    #xbox-preview .xp-status {
+      justify-self: end;
     }
     #xbox-preview .dimmed {
       opacity: 0.15 !important;
@@ -182,7 +191,10 @@
       border: 1px solid transparent;
       background: transparent;
       border-radius: 999px;
-      padding: 7px 16px;
+      padding: 7px 0;
+      width: 104px;
+      min-width: 104px;
+      box-sizing: border-box;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -193,6 +205,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -323,6 +336,14 @@
       background: rgba(52, 199, 89, 0.12);
       border-color: rgba(52, 199, 89, 0.3);
       color: #34C759;
+    }
+    #xbox-preview #xp-save {
+      min-width: 82px;
+      justify-content: center;
+    }
+    #xbox-preview #xp-account {
+      min-width: 122px;
+      justify-content: center;
     }
 
     .xp-keycap {
@@ -1607,29 +1628,30 @@
 
     #xbox-preview .xp-toast {
       position: absolute;
-      top: 22px;
-      right: 36px;
-      left: auto;
-      transform: translateY(-8px);
-      padding: 8px 16px;
-      border: 1px solid var(--xp-pink);
+      bottom: 74px;
+      left: 50%;
+      right: auto;
+      top: auto;
+      transform: translateX(-50%) translateY(10px);
+      padding: 8px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 999px;
-      background: rgba(18, 20, 26, 0.94);
+      background: rgba(14, 16, 22, 0.92);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       color: #FFFFFF;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       white-space: nowrap;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 20px rgba(255,0,96,0.35);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      z-index: 35;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 0, 96, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 50;
     }
     #xbox-preview .xp-toast.on {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
     }
 
     /* AUTHENTIC AHOY ID PAIRING MODAL OVERLAY */
@@ -6467,14 +6489,12 @@
           selected = 0;
           render();
           tune(section === 0);
-          say(`${sections[section]} selected`);
         } else if (key === 'RT') {
           playXboxSound('bumper');
           section = (section + 1) % sections.length;
           selected = 0;
           render();
           tune(section === 0);
-          say(`${sections[section]} selected`);
         } else if (key === 'Enter' || key === ' ' || key === 'a' || key === 'A') {
           playXboxSound('select');
           if (section === 2) {
@@ -6550,7 +6570,6 @@
             selected = 0;
             render();
             tune(section === 0);
-            say(`${sections[section]} selected`);
           } else {
             act(e.key);
           }
@@ -6564,7 +6583,6 @@
         selected = 0;
         render();
         tune(section === 0);
-        say(`${sections[i]} selected`);
       }));
 
 
