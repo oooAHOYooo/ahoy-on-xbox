@@ -331,13 +331,16 @@
     .xp-keycap-check { background: var(--xp-green); }
 
     /* HERO STAGE */
+    #xbox-preview .xp-hero-default {
+      width: min(64%, 740px);
+    }
     #xbox-preview .xp-hero {
       position: absolute;
       left: 4%;
       top: 13%;
       bottom: auto;
       max-height: 48%;
-      width: min(64%, 740px);
+      width: min(92%, 1180px);
       text-shadow: 0 2px 18px #000;
       z-index: 5;
       transition: opacity 0.25s ease;
@@ -774,6 +777,110 @@
       transform: scale(1.18);
     }
 
+    
+    /* CALM LIQUID GLASS MUSIC BUTTONS */
+    #xbox-preview .xp-music-btn-row .xp-action {
+      background: rgba(255, 255, 255, 0.12) !important;
+      border: 1px solid rgba(255, 255, 255, 0.24) !important;
+      color: #FFFFFF !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+      transition: all 0.2s ease !important;
+    }
+    #xbox-preview .xp-music-btn-row .xp-action:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 255, 255, 0.38) !important;
+      transform: translateY(-1px) !important;
+    }
+    #xbox-preview .xp-music-tag-genre {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      color: #D8D8E0 !important;
+    }
+    #xbox-preview .xp-music-hero-meta span {
+      color: #8E8E98 !important;
+      font-weight: 600 !important;
+    }
+
+    /* RIGHT QUEUE CARD */
+    #xbox-preview .xp-music-queue-card {
+      background: rgba(16, 18, 24, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 10px 14px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      width: clamp(230px, 25vw, 295px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    #xbox-preview .xp-queue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #9A9AA6;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 5px;
+    }
+    #xbox-preview .xp-queue-header small {
+      color: #7E7E88;
+    }
+    #xbox-preview .xp-queue-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    #xbox-preview .xp-queue-row:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    #xbox-preview .xp-queue-thumb {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+    #xbox-preview .xp-queue-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    #xbox-preview .xp-queue-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #xbox-preview .xp-queue-artist {
+      font-size: 8.5px;
+      color: #8E8E98;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #xbox-preview .xp-queue-dur {
+      font-size: 8.5px;
+      color: #7E7E88;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
     /* DEDICATED HI-FI MUSIC HERO EXPERIENCE */
     #xbox-preview .xp-hero-music {
       display: flex;
@@ -970,12 +1077,15 @@
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 999px;
-      padding: 3px 10px;
+      padding: 5px 12px;
       font-size: 9.5px;
       color: #C0C0C8;
       cursor: pointer;
       transition: all 0.15s ease;
-      margin-left: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      max-width: 260px;
+      overflow: hidden;
     }
     #xbox-preview .xp-music-up-next:hover {
       background: rgba(255, 255, 255, 0.15);
@@ -1140,10 +1250,10 @@
       color: #FFFFFF;
     }
     #xbox-preview .xp-filter-chip[aria-selected=true] {
-      background: var(--xp-pink);
-      border-color: var(--xp-pink);
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.35);
       color: #FFFFFF;
-      box-shadow: 0 0 12px var(--xp-pink-glow);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
     #xbox-preview .xp-sort-box {
       display: flex;
@@ -2131,11 +2241,20 @@
               <span>★ SAVE TO LIBRARY [X]</span>
             </button>
             <div class="xp-music-up-next" id="xp-music-up-next" onclick="act('ArrowRight')">
-              <span class="xp-up-next-label">UP NEXT:</span>
+              <span class="xp-up-next-label">⏭ UP NEXT:</span>
               <span class="xp-up-next-song" id="xp-up-next-song">Song</span>
               <span class="xp-up-next-artist" id="xp-up-next-artist">Artist</span>
             </div>
           </div>
+        </div>
+
+        <!-- RIGHT SIDE: UPCOMING QUEUE PANEL -->
+        <div class="xp-music-queue-card" id="xp-music-queue-card">
+          <div class="xp-queue-header">
+            <span>UPCOMING QUEUE</span>
+            <small>APP.AHOY.OOO</small>
+          </div>
+          <div class="xp-queue-items" id="xp-queue-items"></div>
         </div>
       </div>
     </main>
@@ -5815,12 +5934,42 @@
             if (upNextSong) upNextSong.textContent = nextSong;
             if (upNextArtist) upNextArtist.textContent = `· ${nextArtist}`;
 
+            // Render upcoming 3 tracks in queue card
+            const queueItemsContainer = root.querySelector('#xp-queue-items');
+            if (queueItemsContainer) {
+              queueItemsContainer.innerHTML = '';
+              for (let q = 1; q <= 3; q++) {
+                const qIdx = (selected + q) % musicList.length;
+                const qTrack = musicList[qIdx];
+                if (!qTrack) continue;
+                const qRow = document.createElement('div');
+                qRow.className = 'xp-queue-row';
+                const qThumb = qTrack.poster || qTrack.thumb || 'https://app.ahoy.ooo/static/img/ahoy_logo.png';
+                const qSong = qTrack.trackTitle || (qTrack.title ? qTrack.title.replace(/^[^—-]+[—-]\s*/, '') : qTrack.name);
+                qRow.innerHTML = `
+                  <div class="xp-queue-thumb" style="background-image: url('${qThumb}')"></div>
+                  <div class="xp-queue-info">
+                    <span class="xp-queue-title">${qSong}</span>
+                    <span class="xp-queue-artist">${qTrack.artist || 'Ahoy'}</span>
+                  </div>
+                  <span class="xp-queue-dur">${qTrack.duration || '3:00'}</span>
+                `;
+                qRow.addEventListener('click', () => {
+                  selected = qIdx;
+                  render();
+                  tune(false);
+                });
+                queueItemsContainer.append(qRow);
+              }
+            }
+
+
             const video = root.querySelector('#xp-hero-video');
             const isPlaying = video && !video.paused;
             if (playLabel) playLabel.textContent = isPlaying ? '❚❚  PAUSE TRACK [A]' : '▶  PLAY TRACK [A]';
             if (vinylDisc) vinylDisc.classList.toggle('playing', isPlaying);
 
-            root.querySelector('#xp-shelf-status').textContent = `MUSIC • ${track.category || 'INDIE'}`;
+            root.querySelector('#xp-shelf-status').textContent = `${track.category ? track.category.toUpperCase() : 'INDIE'} · AHOY CATALOG`;
             root.querySelector('#xp-shelf-label').textContent = `AHOY MUSIC CATALOG (${mediaSections[2].length} TRACKS)`;
           } else {
             // DEFAULT VIDEO HERO (LIVE TV & ON DEMAND & RADIO)
