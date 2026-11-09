@@ -638,22 +638,66 @@
 
     #xbox-preview .xp-hints {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       align-items: center;
       color: #8E8E93;
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 700;
       white-space: nowrap;
-      overflow-x: auto;
-      margin-top: 6px;
+      margin-top: 8px;
+    }
+    #xbox-preview .xp-hints span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     #xbox-preview .xp-hints kbd {
-      font: 900 9px "Segoe UI", sans-serif;
-      background: #2c2c32;
-      color: #fff;
+      font: 900 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 4px;
       padding: 2px 6px;
-      margin-right: 4px;
+      line-height: 1.2;
+    }
+    #xbox-preview .xp-hints kbd.xp-hint-a,
+    #xbox-preview .xp-save-footer-hints kbd.xp-hint-a {
+      background: #107C10;
+      border-color: #159E15;
+      color: #FFF;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    #xbox-preview .xp-hints kbd.xp-hint-b,
+    #xbox-preview .xp-save-footer-hints kbd.xp-hint-b {
+      background: #E81123;
+      border-color: #F03A47;
+      color: #FFF;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    #xbox-preview .xp-hints kbd.xp-hint-x,
+    #xbox-preview .xp-save-footer-hints kbd.xp-hint-x {
+      background: #0078D7;
+      border-color: #2896EB;
+      color: #FFF;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
     }
 
     /* BROADCAST FLICK BANNER HUD */
@@ -1188,45 +1232,84 @@
       .xp-split-lists { grid-template-columns: 1fr; }
     }
 
-    /* CONTROLLER SIMULATOR */
+    /* CONTROLLER SIMULATOR (REFINED GAMEPAD DOCK) */
     #xbox-preview .xp-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin: 12px 3px 0;
+      gap: 16px;
+      margin: 14px 0 0;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
       color: #8E8E93;
       font-size: 11px;
-      font-weight: 600;
+      flex-wrap: wrap;
     }
-    #xbox-preview .xp-controls strong {
-      color: #d9d9de;
-      font-size: 11px;
-      letter-spacing: 0.03em;
+    #xbox-preview .xp-controls-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    #xbox-preview .xp-controls-info strong {
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
     #xbox-preview .xp-remote {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+    }
+    #xbox-preview .xp-remote-cluster {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #xbox-preview .xp-remote-divider {
+      width: 1px;
+      height: 18px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0 4px;
     }
     #xbox-preview .xp-remote button {
-      border: 1px solid #33333c;
-      background: #1c1c22;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
       border-radius: 6px;
-      padding: 6px 11px;
-      font-weight: 900;
-      color: #ddd;
+      padding: 5px 9px;
+      font-weight: 800;
+      color: #C0C0C8;
       font-size: 11px;
+      line-height: 1;
       transition: all 0.15s ease;
     }
     #xbox-preview .xp-remote button:hover {
-      background: #2a2a34;
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
     }
-    #xbox-preview .xp-remote button[data-key="A"] { background: #107C10; border-color: #159E15; color: #FFFFFF; font-weight: 900; }
-    #xbox-preview .xp-remote button[data-key="B"] { background: #E81123; border-color: #F03A47; color: #FFFFFF; font-weight: 900; }
-    #xbox-preview .xp-remote button[data-key="X"] { background: #0078D7; border-color: #2896EB; color: #FFFFFF; font-weight: 900; }
-    #xbox-preview .xp-remote button[data-key="Y"] { background: #FFB900; border-color: #FFC83B; color: #1A1500; font-weight: 900; }
+    #xbox-preview .xp-remote button.xp-round-btn {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    #xbox-preview .xp-remote button.xp-btn-a { background: #107C10; border-color: #159E15; color: #FFFFFF; }
+    #xbox-preview .xp-remote button.xp-btn-b { background: #E81123; border-color: #F03A47; color: #FFFFFF; }
+    #xbox-preview .xp-remote button.xp-btn-x { background: #0078D7; border-color: #2896EB; color: #FFFFFF; }
+    #xbox-preview .xp-remote button.xp-btn-y { background: #FFB900; border-color: #FFC83B; color: #1A1500; }
 
     @media (max-width: 960px) {
       .xp-bumper-cue { display: none; }
@@ -1251,7 +1334,7 @@
     }
   </style>
 
-  <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use D-pad to flick channels and browse guide.">
+  <section class="xp-screen" role="application" aria-label="Xbox TV screen. Use D-pad to change channels and browse guide.">
     <!-- HERO VIDEO BACKGROUND STAGE -->
     <div class="xp-picture" id="xp-picture">
       <div class="xp-video-backdrop" id="xp-video-backdrop"></div>
@@ -1310,21 +1393,17 @@
     <!-- PLUTO TV-STYLE CHANNEL GUIDE SHELF ON BOTTOM OF HERO -->
     <section class="xp-shelf" id="xp-shelf" aria-label="Broadcast TV Guide shelf">
       <div class="xp-shelf-head">
-        <span id="xp-shelf-label">LIVE TV GUIDE • FLICK WITH D-PAD ▲ ▼</span>
+        <span id="xp-shelf-label">LIVE TV GUIDE • CHANGE CHANNELS [▲ ▼]</span>
         <b id="xp-shelf-status">CHANNEL 101 TUNED</b>
       </div>
 
       <!-- CONTAINER SWAPPED BETWEEN PLUTO GUIDE ROWS (LIVE TV) AND HORIZONTAL CARDS (OTHER SECTIONS) -->
       <div id="xp-content-dock"></div>
 
-      <div class="xp-hints">
-        <span><kbd>▲ ▼</kbd> Flick Channels</span>
-        <span><kbd>← →</kbd> Timeline / Cards</span>
-        <span><kbd style="background:#107C10;color:#FFF">A</kbd> Tune / Select</span>
-        <span><kbd style="background:#E81123;color:#FFF">B</kbd> Hide Guide</span>
-        <span><kbd style="background:#0078D7;color:#FFF">X</kbd> Save Show</span>
-        <span><kbd style="background:#FFB900;color:#1A1500">Y</kbd> Ahoy ID</span>
-        <span><kbd>LT / RT</kbd> Section</span>
+      <div class="xp-hints" id="xp-hints">
+        <span><kbd>▲ ▼</kbd> Change Channels</span>
+        <span><kbd class="xp-hint-a">A</kbd> Watch</span>
+        <span><kbd class="xp-hint-b">B</kbd> Close Guide</span>
       </div>
     </section>
 
@@ -1441,9 +1520,8 @@
         <div class="xp-save-footer">
           <div class="xp-save-footer-hints">
             <span><kbd>▲ ▼</kbd> Select Item</span>
-            <span><kbd style="background:#176B28">A</kbd> Tune / Play</span>
-            <span><kbd style="background:#1764A2">X</kbd> Toggle Save</span>
-            <span><kbd style="background:#8C670D">Y</kbd> Ahoy ID Link</span>
+            <span><kbd class="xp-hint-a">A</kbd> Play</span>
+            <span><kbd class="xp-hint-x">X</kbd> Toggle Save</span>
           </div>
           <button class="xp-save-close-btn" id="xp-close-save" onclick="act('B')">DONE [B]</button>
         </div>
@@ -1451,21 +1529,31 @@
     </div>
   </section>
 
-  <!-- CONTROLLER SIMULATOR -->
+  <!-- CONTROLLER SIMULATOR (REFINED GAMEPAD DOCK) -->
   <div class="xp-controls">
-    <strong>Xbox Controller Simulator</strong>
-    <span>Click buttons, use Arrow keys (▲ ▼ flick channels), or press controller shortcuts:</span>
-    <div class="xp-remote">
-      <button data-key="LT" aria-label="Previous section">LT</button>
-      <button data-key="↑" aria-label="Flick channel up">▲</button>
-      <button data-key="↓" aria-label="Flick channel down">▼</button>
-      <button data-key="←" aria-label="Navigate left">◀</button>
-      <button data-key="→" aria-label="Navigate right">▶</button>
-      <button data-key="RT" aria-label="Next section">RT</button>
-      <button data-key="A" aria-label="A select">A</button>
-      <button data-key="B" aria-label="B back">B</button>
-      <button data-key="X" aria-label="X save">X</button>
-      <button data-key="Y" aria-label="Y account">Y</button>
+    <div class="xp-controls-info">
+      <strong>GAMEPAD CONTROLS</strong>
+      <span>Keyboard: Arrow keys (▲ ▼ change channels) • Enter / Space (A) • Esc (B)</span>
+    </div>
+    <div class="xp-remote" role="toolbar" aria-label="Xbox Controller Virtual Buttons">
+      <div class="xp-remote-cluster">
+        <button data-key="LT" aria-label="Previous section">LT</button>
+        <button data-key="RT" aria-label="Next section">RT</button>
+      </div>
+      <div class="xp-remote-divider"></div>
+      <div class="xp-remote-cluster">
+        <button data-key="↑" aria-label="Change channel up">▲</button>
+        <button data-key="↓" aria-label="Change channel down">▼</button>
+        <button data-key="←" aria-label="Navigate left">◀</button>
+        <button data-key="→" aria-label="Navigate right">▶</button>
+      </div>
+      <div class="xp-remote-divider"></div>
+      <div class="xp-remote-cluster xp-remote-actions">
+        <button data-key="A" class="xp-round-btn xp-btn-a" aria-label="A select">A</button>
+        <button data-key="B" class="xp-round-btn xp-btn-b" aria-label="B back">B</button>
+        <button data-key="X" class="xp-round-btn xp-btn-x" aria-label="X save">X</button>
+        <button data-key="Y" class="xp-round-btn xp-btn-y" aria-label="Y account">Y</button>
+      </div>
     </div>
   </div>
 
@@ -1919,7 +2007,15 @@
           root.querySelector('#xp-description').textContent = curCh.description;
           root.querySelector('#xp-shelf-status').textContent = `CH ${curCh.no} • ${curCh.name.toUpperCase()}`;
           root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curCh.hero} 0%, #241f24 38%, #08090c 82%)`;
-          root.querySelector('#xp-shelf-label').textContent = 'PLUTO-STYLE TV GUIDE • FLICK CHANNELS [▲ ▼]';
+          root.querySelector('#xp-shelf-label').textContent = 'LIVE TV GUIDE • CHANGE CHANNELS [▲ ▼]';
+          const hints = root.querySelector('#xp-hints');
+          if (hints) {
+            hints.innerHTML = `
+              <span><kbd>▲ ▼</kbd> Change Channels</span>
+              <span><kbd class="xp-hint-a">A</kbd> Watch</span>
+              <span><kbd class="xp-hint-b">B</kbd> Close Guide</span>
+            `;
+          }
         } else {
           // HORIZONTAL CARD SHELF FOR ON DEMAND, MUSIC, RADIO
           const cardsContainer = document.createElement('div');
@@ -1959,13 +2055,21 @@
           root.querySelector('#xp-shelf-status').textContent = `${curItem.no} SELECTED`;
           root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curItem.hero} 0%, #241f24 38%, #08090c 82%)`;
           root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY`;
+          const hints = root.querySelector('#xp-hints');
+          if (hints) {
+            hints.innerHTML = `
+              <span><kbd>◀ ▶</kbd> Browse</span>
+              <span><kbd class="xp-hint-a">A</kbd> Play</span>
+              <span><kbd class="xp-hint-b">B</kbd> Close Guide</span>
+            `;
+          }
         }
 
         tabs.forEach((t, i) => t.setAttribute('aria-selected', i === section ? 'true' : 'false'));
         updateVideoPlayback();
       }
 
-      function tune(isChannelFlick = true) {
+      function tune(isChannelChange = true) {
         updateVideoPlayback();
         const cur = getCurrentItem();
         recentlyPlayed = recentlyPlayed.filter(r => r.title !== cur.title);
@@ -1988,7 +2092,7 @@
 
         if (section === 0) {
           const ch = liveChannels[selected];
-          if (isChannelFlick) {
+          if (isChannelChange) {
             showFlickHud(ch);
           }
           say(`Tuned to CH ${ch.no} • ${ch.name} ("${ch.nowTitle}")`);
@@ -2104,7 +2208,7 @@
         }
 
         if (section === 0) {
-          // LIVE TV: UP & DOWN FLICK CHANNELS INSTANTLY LIKE PLUTO TV
+          // LIVE TV: UP & DOWN CHANGE CHANNELS
           if (key === 'ArrowDown' || key === '↓') {
             playXboxSound('tick');
             selected = (selected + 1) % liveChannels.length;

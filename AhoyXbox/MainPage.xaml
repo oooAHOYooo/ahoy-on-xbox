@@ -175,12 +175,19 @@
           </ListView.ItemTemplate>
         </ListView>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-          <TextBlock Text="[D-PAD] Browse" FontSize="10" FontWeight="Bold" Foreground="#8E8E93" Margin="0,0,18,0"/>
-          <TextBlock Text="[A] Select / Tune" FontSize="10" FontWeight="Bold" Foreground="#3CD070" Margin="0,0,18,0"/>
-          <TextBlock Text="[B] Guide" FontSize="10" FontWeight="Bold" Foreground="#FF5E6C" Margin="0,0,18,0"/>
-          <TextBlock Text="[X] Save" FontSize="10" FontWeight="Bold" Foreground="#4BA3E3" Margin="0,0,18,0"/>
-          <TextBlock Text="[Y] Account Pairing" FontSize="10" FontWeight="Bold" Foreground="#FFC83B" Margin="0,0,18,0"/>
-          <TextBlock Text="[LT / RT] Switch Section" FontSize="10" FontWeight="Bold" Foreground="#B0B0B8"/>
+          <TextBlock Text="▲ ▼ Change Channels" FontSize="11" FontWeight="SemiBold" Foreground="#8E8E93" Margin="0,0,24,0"/>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0">
+            <Border Width="16" Height="16" CornerRadius="8" Background="#107C10" Margin="0,0,6,0">
+              <TextBlock Text="A" FontSize="9" FontWeight="Black" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+            </Border>
+            <TextBlock Text="Watch" FontSize="11" FontWeight="SemiBold" Foreground="#D0D0D8"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Border Width="16" Height="16" CornerRadius="8" Background="#E81123" Margin="0,0,6,0">
+              <TextBlock Text="B" FontSize="9" FontWeight="Black" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+            </Border>
+            <TextBlock Text="Dismiss Guide" FontSize="11" FontWeight="SemiBold" Foreground="#8E8E93"/>
+          </StackPanel>
         </StackPanel>
       </Grid>
     </Border>
