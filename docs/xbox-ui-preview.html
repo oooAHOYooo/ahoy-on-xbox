@@ -428,22 +428,32 @@
       flex-shrink: 0;
     }
     #xbox-preview .xp-action {
-      margin-top: 10px;
-      border: 1px solid var(--xp-pink);
+      margin-top: 12px;
+      height: 36px;
+      border: 1px solid rgba(255, 0, 96, 0.45);
       border-radius: 8px;
-      background: var(--xp-pink);
-      padding: 7px 16px;
+      background: linear-gradient(135deg, rgba(255, 0, 96, 0.28) 0%, rgba(20, 20, 26, 0.75) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 0 18px;
       font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      box-shadow: 0 4px 14px rgba(255, 0, 96, 0.35);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #FFFFFF;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.18);
       transition: all 0.2s ease;
       align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
       flex-shrink: 0;
     }
     #xbox-preview .xp-action:hover {
-      background: #E00054;
-      transform: scale(1.02);
+      background: linear-gradient(135deg, rgba(255, 0, 96, 0.42) 0%, rgba(30, 30, 40, 0.85) 100%);
+      border-color: rgba(255, 0, 96, 0.7);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 0, 96, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
     /* PLUTO TV STYLE GUIDE SHELF ON BOTTOM OF HERO */
@@ -823,11 +833,14 @@
     
     /* UNIFIED 36PX SLEEK LIQUID GLASS BUTTONS & PINNED TIMESTAMPS */
     #xbox-preview .xp-hero-music {
-      display: flex !important;
+      display: none;
       align-items: center !important;
       justify-content: space-between !important;
       width: min(92%, 1120px) !important;
       gap: 32px !important;
+    }
+    #xbox-preview .xp-hero-music.active {
+      display: flex !important;
     }
     #xbox-preview .xp-music-hero-left {
       flex-shrink: 0 !important;
@@ -1008,11 +1021,14 @@
 
     /* DEDICATED HI-FI MUSIC HERO EXPERIENCE */
     #xbox-preview .xp-hero-music {
-      display: flex;
+      display: none;
       align-items: center;
       gap: clamp(16px, 2.5vw, 32px);
       width: min(90%, 880px);
       z-index: 5;
+    }
+    #xbox-preview .xp-hero-music.active {
+      display: flex !important;
     }
     #xbox-preview .xp-music-hero-left {
       flex-shrink: 0;
@@ -1399,6 +1415,42 @@
       color: #FFF;
       cursor: pointer;
       outline: none;
+    }
+
+    /* RADIO SHELF & CARD POLISH */
+    #xbox-preview .xp-cards.xp-radio-cards {
+      gap: 16px;
+      padding: 6px 4px 12px;
+    }
+    #xbox-preview .xp-card.xp-radio-card {
+      flex: 0 0 clamp(200px, 22vw, 270px);
+      height: clamp(100px, 11vw, 134px);
+      border-radius: 12px;
+    }
+    #xbox-preview .xp-shelf-filters.xp-radio-filters {
+      margin-bottom: 10px;
+    }
+    #xbox-preview .xp-radio-station-badge {
+      color: #00e5ff;
+      font-weight: 800;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.28);
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    #xbox-preview .xp-live-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff0060;
+      margin-right: 6px;
+      box-shadow: 0 0 8px #ff0060;
+      animation: xpPulse 1.6s infinite ease-in-out;
+      vertical-align: middle;
     }
 
     /* MINI EQ SOUNDWAVE */
@@ -5950,29 +6002,31 @@
             }
           } else {
             // RADIO SECTION (LIVE FROM APP.AHOY.OOO)
+            const items = mediaSections[3] || [];
+            if (selected >= items.length) selected = 0;
+
             const filtersBar = document.createElement('div');
-            filtersBar.className = 'xp-shelf-filters';
+            filtersBar.className = 'xp-shelf-filters xp-radio-filters';
             filtersBar.innerHTML = `
               <div class="xp-filter-chips">
-                <span class="xp-filter-chip" aria-selected="true">● 24/7 LIVE BROADCASTS (APP.AHOY.OOO)</span>
+                <span class="xp-filter-chip" aria-selected="true"><i class="xp-live-dot"></i>24/7 BROADCAST</span>
                 <span class="xp-filter-chip" aria-selected="false">86 ROTATING TRACKS</span>
+                <span class="xp-filter-chip" aria-selected="false">SYNCHRONIZED STREAM</span>
               </div>
               <div class="xp-sort-box">
-                <span style="color:#00a2ff;font-weight:900;">AHOY RADIO STATION</span>
+                <span class="xp-radio-station-badge">STATION ${selected + 1} OF ${items.length}</span>
               </div>
             `;
             contentDock.append(filtersBar);
 
             const cardsContainer = document.createElement('div');
-            cardsContainer.className = 'xp-cards';
-            const items = mediaSections[3] || [];
-            if (selected >= items.length) selected = 0;
+            cardsContainer.className = 'xp-cards xp-radio-cards';
 
             items.forEach((c, i) => {
               const isCur = i === selected;
               const b = document.createElement('button');
               b.type = 'button';
-              b.className = 'xp-card';
+              b.className = 'xp-card xp-radio-card';
               b.setAttribute('aria-current', isCur ? 'true' : 'false');
               if (c.art) b.style.setProperty('--art', c.art);
 
@@ -5980,7 +6034,7 @@
               b.innerHTML = `
                 <div class="xp-card-poster" style="background-image: url('${posterUrl}')"></div>
                 <span class="xp-card-copy">
-                  <small>${c.category || 'RADIO'}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
+                  <small>${c.no || 'RA'} · ${c.category || 'RADIO'}${isCur ? '<span class="xp-mini-eq"><i></i><i></i><i></i></span>' : ''}</small>
                   <strong>${c.name}</strong>
                   <span>${c.line || c.title}</span>
                 </span>
@@ -6017,7 +6071,10 @@
           if (section === 2) {
             // MUSIC SECTION HERO
             if (defaultHero) defaultHero.style.display = 'none';
-            if (musicHero) musicHero.style.display = 'flex';
+            if (musicHero) {
+              musicHero.classList.add('active');
+              musicHero.style.display = 'flex';
+            }
 
             const track = curItem || {};
             const heroArt = root.querySelector('#xp-music-hero-art');
@@ -6093,17 +6150,43 @@
             root.querySelector('#xp-shelf-label').textContent = `AHOY MUSIC CATALOG (${mediaSections[2].length} TRACKS)`;
           } else {
             // DEFAULT VIDEO HERO (LIVE TV & ON DEMAND & RADIO)
+            if (musicHero) {
+              musicHero.classList.remove('active');
+              musicHero.style.display = 'none';
+            }
             if (defaultHero) defaultHero.style.display = 'block';
-            if (musicHero) musicHero.style.display = 'none';
 
             if (curItem && curItem.title) {
-              root.querySelector('#xp-eyebrow').textContent = `${curItem.badge || 'AHOY'} · ${(curItem.badge || curItem.title || '').toUpperCase()}`;
-              root.querySelector('#xp-title').textContent = curItem.title;
-              root.querySelector('#xp-subtitle').textContent = curItem.sub || '';
-              root.querySelector('#xp-description').textContent = curItem.description || '';
-              root.querySelector('#xp-shelf-status').textContent = `${curItem.badge || 'OD'} TUNED`;
+              if (section === 3) {
+                // RADIO
+                const curStation = (mediaSections[3] && mediaSections[3][selected]) ? mediaSections[3][selected] : curItem;
+                root.querySelector('#xp-eyebrow').textContent = `${curStation.no || 'RA-01'} · ${(curStation.category || 'LIVE RADIO').toUpperCase()} BROADCAST`;
+                root.querySelector('#xp-title').textContent = curStation.title || curItem.title;
+                root.querySelector('#xp-subtitle').textContent = curStation.sub || 'Live 24/7 Stream · Synchronized Station';
+                root.querySelector('#xp-description').textContent = curStation.description || '';
+                root.querySelector('#xp-shelf-status').textContent = `📻 ${curStation.name.toUpperCase()} TUNED`;
+                root.querySelector('#xp-shelf-label').textContent = 'RADIO • 24/7 LIVE BROADCASTS (APP.AHOY.OOO)';
+              } else {
+                root.querySelector('#xp-eyebrow').textContent = `${curItem.badge || 'AHOY'} · ${(curItem.badge || curItem.title || '').toUpperCase()}`;
+                root.querySelector('#xp-title').textContent = curItem.title;
+                root.querySelector('#xp-subtitle').textContent = curItem.sub || '';
+                root.querySelector('#xp-description').textContent = curItem.description || '';
+                root.querySelector('#xp-shelf-status').textContent = `${curItem.badge || 'OD'} TUNED`;
+                root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY`;
+              }
               root.querySelector('#xp-picture').style.background = `radial-gradient(ellipse at 69% 35%, ${curItem.hero || '#ff0060'} 0%, #241f24 38%, #08090c 82%)`;
-              root.querySelector('#xp-shelf-label').textContent = `${sections[section]} • AHOY LIBRARY`;
+
+              // Action button label & tune control
+              const playBtn = root.querySelector('#xp-play');
+              if (playBtn) {
+                if (section === 3) {
+                  const video = root.querySelector('#xp-hero-video');
+                  const isPlaying = video && !video.paused;
+                  playBtn.textContent = isPlaying ? '❚❚   PAUSE STREAM   [A]' : '▶   TUNE STATION   [A]';
+                } else {
+                  playBtn.textContent = '▶   FULLSCREEN   [A]';
+                }
+              }
             }
           }
         }
@@ -6406,6 +6489,18 @@
               }
               render();
             }
+          } else if (section === 3) {
+            const video = root.querySelector('#xp-hero-video');
+            if (video) {
+              if (video.paused) {
+                video.play().catch(() => {});
+                say('Radio Station Playing [A]');
+              } else {
+                video.pause();
+                say('Radio Stream Paused [A]');
+              }
+              render();
+            }
           } else {
             tune(false);
             say(`Playing fullscreen [A]`);
@@ -6526,7 +6621,21 @@
       root.querySelector('#xp-play').addEventListener('click', () => {
         wakeCinemaMode();
         playXboxSound('select');
-        tune(false);
+        if (section === 3) {
+          const video = root.querySelector('#xp-hero-video');
+          if (video) {
+            if (video.paused) {
+              video.play().catch(() => {});
+              say('Radio Station Playing [A]');
+            } else {
+              video.pause();
+              say('Radio Stream Paused [A]');
+            }
+            render();
+          }
+        } else {
+          tune(false);
+        }
       });
       root.querySelector('#xp-close-pair').addEventListener('click', () => {
         wakeCinemaMode();
