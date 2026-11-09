@@ -852,6 +852,321 @@
     }
     #xbox-preview .xp-pair-btn-secondary:hover { background: #282830; }
 
+    /* DYNAMIC SAVE & STATS OVERLAY */
+    #xbox-preview .xp-save-modal {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(4, 5, 8, 0.92);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      z-index: 45;
+      padding: 16px;
+    }
+    #xbox-preview .xp-save-modal.on {
+      display: flex;
+    }
+    #xbox-preview .xp-save-sheet {
+      width: min(860px, 95%);
+      max-height: 92%;
+      background: #0f1118;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 22px 26px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 0, 96, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+    .xp-save-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .xp-save-head-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .xp-save-title-wrap h3 {
+      font-size: 18px;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
+    .xp-save-title-wrap span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8E8E96;
+      letter-spacing: 0.5px;
+    }
+    .xp-save-sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(52, 199, 89, 0.12);
+      border: 1px solid rgba(52, 199, 89, 0.35);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #34C759;
+      letter-spacing: 0.6px;
+    }
+    .xp-save-sync-pill.unlinked {
+      background: rgba(255, 179, 0, 0.12);
+      border-color: rgba(255, 179, 0, 0.35);
+      color: #FFB300;
+    }
+    .xp-save-cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, rgba(255, 0, 96, 0.15) 0%, rgba(20, 22, 30, 0.9) 100%);
+      border: 1px solid rgba(255, 0, 96, 0.35);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+    .xp-save-cta-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .xp-save-cta-tag {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      color: var(--xp-pink);
+      text-transform: uppercase;
+    }
+    .xp-save-cta-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .xp-save-cta-sub {
+      font-size: 11px;
+      color: #9A9AA2;
+    }
+    .xp-save-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--xp-pink);
+      border: none;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      cursor: pointer;
+      box-shadow: 0 0 16px var(--xp-pink-glow);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .xp-save-toggle-btn.saved {
+      background: #1e222d;
+      border: 1px solid rgba(52, 199, 89, 0.4);
+      color: #34C759;
+      box-shadow: none;
+    }
+    .xp-save-toggle-btn:hover {
+      transform: scale(1.02);
+    }
+
+    /* STATS GRID */
+    .xp-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .xp-stat-card {
+      background: rgba(22, 25, 34, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .xp-stat-value {
+      font-size: 17px;
+      font-weight: 900;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+      letter-spacing: 0.5px;
+    }
+    .xp-stat-label {
+      font-size: 9px;
+      font-weight: 800;
+      color: #8E8E96;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .xp-stat-meta {
+      font-size: 9px;
+      color: var(--xp-pink);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* 2 COLUMNS: RECENTLY PLAYED & SAVED IN LIBRARY */
+    .xp-split-lists {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+    .xp-list-panel {
+      background: rgba(18, 20, 28, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .xp-list-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #D0D0D8;
+      letter-spacing: 0.5px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .xp-list-panel-head span {
+      color: var(--xp-pink);
+      font-size: 10px;
+    }
+    .xp-list-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 175px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .xp-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(28, 30, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .xp-list-item:hover,
+    .xp-list-item.selected {
+      background: rgba(255, 0, 96, 0.15);
+      border-color: var(--xp-pink);
+      transform: scale(1.01);
+    }
+    .xp-list-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .xp-list-badge {
+      background: #101014;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 5px;
+      color: #FFF;
+      flex-shrink: 0;
+    }
+    .xp-list-item-titles {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .xp-list-main-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .xp-list-sub-title {
+      font-size: 9px;
+      color: #8E8E96;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .xp-list-item-action {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--xp-pink);
+      background: rgba(255, 0, 96, 0.12);
+      border: 1px solid rgba(255, 0, 96, 0.3);
+      border-radius: 4px;
+      padding: 3px 7px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .xp-save-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 10px;
+      font-size: 10px;
+      color: #8E8E96;
+      font-weight: 700;
+    }
+    .xp-save-footer-hints {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .xp-save-footer-hints kbd {
+      background: #20222a;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+    }
+    .xp-save-close-btn {
+      background: #20222a;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .xp-save-close-btn:hover {
+      background: #2e303b;
+    }
+    @media (max-width: 760px) {
+      .xp-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .xp-split-lists { grid-template-columns: 1fr; }
+    }
+
     /* CONTROLLER SIMULATOR */
     #xbox-preview .xp-controls {
       display: flex;
@@ -1021,6 +1336,87 @@
         </div>
       </div>
     </div>
+
+    <!-- DYNAMIC SAVE, STATS & RECENTLY PLAYED OVERLAY -->
+    <div class="xp-save-modal" id="xp-save-modal" role="dialog" aria-modal="true" aria-label="Ahoy Library, Stats, and Recently Played">
+      <div class="xp-save-sheet">
+        <div class="xp-save-head">
+          <div class="xp-save-head-left">
+            <div class="xp-save-title-wrap">
+              <h3>AHOY LIBRARY &amp; PULSE</h3>
+              <span>YOUR STREAMING STATS, RECENT HISTORY &amp; BOOKMARKS</span>
+            </div>
+          </div>
+          <div class="xp-save-sync-pill" id="xp-save-sync-pill">
+            <span>●</span>
+            <span id="xp-save-sync-text">SYNCED: @alex (AHOY ID)</span>
+          </div>
+        </div>
+
+        <div class="xp-save-cta-row">
+          <div class="xp-save-cta-info">
+            <span class="xp-save-cta-tag" id="xp-save-cta-tag">NOW TUNED • LIVE SHOWS</span>
+            <div class="xp-save-cta-title" id="xp-save-cta-title">The Wintergreen Sessions</div>
+            <div class="xp-save-cta-sub" id="xp-save-cta-sub">Live Broadcast • Synchronized audio &amp; tape master</div>
+          </div>
+          <button class="xp-save-toggle-btn" id="xp-save-toggle-btn" onclick="toggleSaveFromModal()">
+            <span class="xp-keycap xp-keycap-x" style="width:16px;height:16px;font-size:9px">X</span>
+            <span id="xp-modal-btn-label">★ SAVE TO LIBRARY</span>
+          </button>
+        </div>
+
+        <div class="xp-stats-grid">
+          <div class="xp-stat-card">
+            <div class="xp-stat-value" id="xp-stat-hours">5.4 HRS</div>
+            <div class="xp-stat-label">Watch / Listen Time</div>
+            <div class="xp-stat-meta">↑ 18% this week</div>
+          </div>
+          <div class="xp-stat-card">
+            <div class="xp-stat-value" id="xp-stat-saved-count">4 ITEMS</div>
+            <div class="xp-stat-label">Saved in Library</div>
+            <div class="xp-stat-meta" id="xp-stat-cloud-meta">Synced to Cloud</div>
+          </div>
+          <div class="xp-stat-card">
+            <div class="xp-stat-value" id="xp-stat-channels">4 / 4</div>
+            <div class="xp-stat-label">Pillars Explored</div>
+            <div class="xp-stat-meta">100% catalog coverage</div>
+          </div>
+          <div class="xp-stat-card">
+            <div class="xp-stat-value" id="xp-stat-top-vibe">SKATE &amp; INDIE</div>
+            <div class="xp-stat-label">Top Recommendation</div>
+            <div class="xp-stat-meta">Based on recent plays</div>
+          </div>
+        </div>
+
+        <div class="xp-split-lists">
+          <div class="xp-list-panel">
+            <div class="xp-list-panel-head">
+              <b>RECENTLY PLAYED</b>
+              <span id="xp-recent-count">4 SESSIONS</span>
+            </div>
+            <div class="xp-list-scroll" id="xp-recent-list"></div>
+          </div>
+
+          <div class="xp-list-panel">
+            <div class="xp-list-panel-head">
+              <b>MY SAVED LIBRARY</b>
+              <span id="xp-saved-list-count">4 ITEMS</span>
+            </div>
+            <div class="xp-list-scroll" id="xp-saved-list"></div>
+          </div>
+        </div>
+
+        <div class="xp-save-footer">
+          <div class="xp-save-footer-hints">
+            <span><kbd>▲ ▼</kbd> Select Item</span>
+            <span><kbd style="background:#176B28">A</kbd> Tune / Play</span>
+            <span><kbd style="background:#1764A2">X</kbd> Toggle Save</span>
+            <span><kbd style="background:#8C670D">Y</kbd> Ahoy ID Link</span>
+          </div>
+          <button class="xp-save-close-btn" id="xp-close-save" onclick="act('B')">DONE [B]</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- CONTROLLER SIMULATOR -->
@@ -1142,9 +1538,24 @@
       let section = 0;
       let isShelfVisible = true;
       let isPairModalOpen = false;
+      let isSaveModalOpen = false;
       let pairedUser = localStorage.getItem('ahoy_id_handle') || null;
       let toastTimer;
       let flickTimer;
+
+      let savedLibrary = JSON.parse(localStorage.getItem('ahoy_saved_items') || 'null') || [
+        { id: 'ch-101', title: 'The Wintergreen Sessions', badge: 'CH 101', sub: 'Live Broadcast • Wintergreen Master', sec: 0, idx: 0 },
+        { id: 'od-3', title: 'Tallboyz — Obsolete (Full Film)', badge: 'SKATE', sub: 'On Demand Video • Feature Film', sec: 1, idx: 2 },
+        { id: 'mu-2', title: 'Whatnot — Live at Wintergreen', badge: 'MUSIC', sub: 'Music • Studio Master EP', sec: 2, idx: 1 },
+        { id: 'ra-1', title: 'Seen Better Days Radio', badge: 'RADIO', sub: 'Radio • 24/7 Live Feed', sec: 3, idx: 0 }
+      ];
+
+      let recentlyPlayed = [
+        { id: 'ch-101', title: 'The Wintergreen Sessions', badge: 'CH 101', time: 'Just now', progress: '68% progress', sec: 0, idx: 0 },
+        { id: 'od-3', title: 'Tallboyz — Obsolete (Full Film)', badge: 'SKATE', time: '28m ago', progress: '94% watched', sec: 1, idx: 2 },
+        { id: 'mu-1', title: 'The Problem With Kids Today — Take It!', badge: 'MUSIC', time: '1h ago', progress: 'Finished', sec: 2, idx: 0 },
+        { id: 'ra-2', title: 'Wintergreen Sessions Radio', badge: 'RADIO', time: '3h ago', progress: '45m listened', sec: 3, idx: 1 }
+      ];
 
       const say = (message) => {
         const t = root.querySelector('#xp-toast');
@@ -1161,6 +1572,168 @@
         hud.classList.add('on');
         clearTimeout(flickTimer);
         flickTimer = setTimeout(() => hud.classList.remove('on'), 2200);
+      }
+
+      function getCurrentItem() {
+        if (section === 0) {
+          const ch = liveChannels[selected];
+          return {
+            id: `ch-${ch.no}`,
+            title: ch.nowTitle || ch.title,
+            badge: `CH ${ch.no}`,
+            sub: `${ch.name} • Continuous Broadcast`,
+            sec: 0,
+            idx: selected
+          };
+        } else {
+          const m = mediaSections[section][selected];
+          return {
+            id: `sec-${section}-${selected}`,
+            title: m.title,
+            badge: m.glyph || m.no,
+            sub: `${m.name} • ${sections[section]}`,
+            sec: section,
+            idx: selected
+          };
+        }
+      }
+
+      function isCurrentItemSaved() {
+        const cur = getCurrentItem();
+        return savedLibrary.some(item => item.id === cur.id || item.title === cur.title);
+      }
+
+      function toggleSaveCurrentItem() {
+        const cur = getCurrentItem();
+        const existingIdx = savedLibrary.findIndex(item => item.id === cur.id || item.title === cur.title);
+        const savePill = root.querySelector('#xp-save');
+        const saveText = root.querySelector('#xp-save-text');
+
+        if (existingIdx >= 0) {
+          savedLibrary.splice(existingIdx, 1);
+          say(`Removed "${cur.title}" from Ahoy Library`);
+        } else {
+          savedLibrary.unshift(cur);
+          if (pairedUser) {
+            say(`Saved "${cur.title}" to Ahoy Library (Synced to @${pairedUser})`);
+          } else {
+            say(`Saved "${cur.title}" locally (Pair Ahoy ID with [Y] to sync)`);
+          }
+        }
+        localStorage.setItem('ahoy_saved_items', JSON.stringify(savedLibrary));
+
+        const isSaved = isCurrentItemSaved();
+        savePill.classList.toggle('saved', isSaved);
+        saveText.textContent = isSaved ? 'SAVED' : 'SAVE';
+
+        renderSaveModal();
+      }
+      window.toggleSaveFromModal = toggleSaveCurrentItem;
+
+      function renderSaveModal() {
+        const cur = getCurrentItem();
+        const isSaved = isCurrentItemSaved();
+
+        // CTA Info
+        root.querySelector('#xp-save-cta-tag').textContent = `NOW TUNED • ${cur.badge}`;
+        root.querySelector('#xp-save-cta-title').textContent = cur.title;
+        root.querySelector('#xp-save-cta-sub').textContent = cur.sub;
+
+        // CTA Button
+        const toggleBtn = root.querySelector('#xp-save-toggle-btn');
+        const toggleLabel = root.querySelector('#xp-modal-btn-label');
+        if (isSaved) {
+          toggleBtn.classList.add('saved');
+          toggleLabel.textContent = '✓ SAVED IN AHOY LIBRARY';
+        } else {
+          toggleBtn.classList.remove('saved');
+          toggleLabel.textContent = '★ SAVE TO LIBRARY [X]';
+        }
+
+        // Sync Pill
+        const syncPill = root.querySelector('#xp-save-sync-pill');
+        const syncText = root.querySelector('#xp-save-sync-text');
+        if (pairedUser) {
+          syncPill.className = 'xp-save-sync-pill';
+          syncText.textContent = `SYNCED: @${pairedUser} (AHOY ID)`;
+        } else {
+          syncPill.className = 'xp-save-sync-pill unlinked';
+          syncText.textContent = 'LOCAL ONLY • PRESS [Y] TO PAIR ID';
+        }
+
+        // Stats
+        root.querySelector('#xp-stat-saved-count').textContent = `${savedLibrary.length} ITEMS`;
+        root.querySelector('#xp-stat-cloud-meta').textContent = pairedUser ? `Cloud Synced (@${pairedUser})` : 'Local Storage';
+        root.querySelector('#xp-saved-list-count').textContent = `${savedLibrary.length} ITEMS`;
+        root.querySelector('#xp-recent-count').textContent = `${recentlyPlayed.length} SESSIONS`;
+
+        // Render Recently Played List
+        const recentList = root.querySelector('#xp-recent-list');
+        recentList.innerHTML = '';
+        recentlyPlayed.forEach((r, i) => {
+          const el = document.createElement('div');
+          el.className = 'xp-list-item';
+          el.innerHTML = `
+            <div class="xp-list-item-left">
+              <span class="xp-list-badge">${r.badge}</span>
+              <div class="xp-list-item-titles">
+                <span class="xp-list-main-title">${r.title}</span>
+                <span class="xp-list-sub-title">${r.time} • ${r.progress}</span>
+              </div>
+            </div>
+            <span class="xp-list-item-action">[A] TUNE</span>
+          `;
+          el.onclick = () => {
+            section = r.sec;
+            selected = r.idx;
+            closeSaveModal();
+            render();
+            tune(section === 0);
+          };
+          recentList.appendChild(el);
+        });
+
+        // Render Saved Library List
+        const savedListEl = root.querySelector('#xp-saved-list');
+        savedListEl.innerHTML = '';
+        if (savedLibrary.length === 0) {
+          savedListEl.innerHTML = '<div style="font-size:11px;color:#777;padding:12px;text-align:center">No saved items yet. Press [X] to bookmark shows!</div>';
+        } else {
+          savedLibrary.forEach((s, i) => {
+            const el = document.createElement('div');
+            el.className = 'xp-list-item';
+            el.innerHTML = `
+              <div class="xp-list-item-left">
+                <span class="xp-list-badge">${s.badge || '★'}</span>
+                <div class="xp-list-item-titles">
+                  <span class="xp-list-main-title">${s.title}</span>
+                  <span class="xp-list-sub-title">${s.sub}</span>
+                </div>
+              </div>
+              <span class="xp-list-item-action">[A] PLAY</span>
+            `;
+            el.onclick = () => {
+              section = s.sec;
+              selected = s.idx;
+              closeSaveModal();
+              render();
+              tune(section === 0);
+            };
+            savedListEl.appendChild(el);
+          });
+        }
+      }
+
+      function openSaveModal() {
+        if (isPairModalOpen) closePairModal();
+        isSaveModalOpen = true;
+        renderSaveModal();
+        root.querySelector('#xp-save-modal').classList.add('on');
+      }
+
+      function closeSaveModal() {
+        isSaveModalOpen = false;
+        root.querySelector('#xp-save-modal').classList.remove('on');
       }
 
       function updateAccountUI() {
@@ -1199,6 +1772,7 @@
           simBtn.textContent = 'CONNECT @alex (SIMULATE PAIR)';
           simBtn.style.background = 'var(--xp-pink)';
         }
+        if (isSaveModalOpen) renderSaveModal();
       }
 
       window.toggleSimulatedPair = () => {
@@ -1218,6 +1792,7 @@
       };
 
       function openPairModal() {
+        if (isSaveModalOpen) closeSaveModal();
         isPairModalOpen = true;
         updateAccountUI();
         root.querySelector('#xp-pair').classList.add('on');
@@ -1327,6 +1902,25 @@
       }
 
       function tune(isChannelFlick = true) {
+        const cur = getCurrentItem();
+        recentlyPlayed = recentlyPlayed.filter(r => r.title !== cur.title);
+        recentlyPlayed.unshift({
+          id: cur.id,
+          title: cur.title,
+          badge: cur.badge,
+          time: 'Just now',
+          progress: section === 0 ? 'Live broadcast' : 'Playing now',
+          sec: section,
+          idx: selected
+        });
+        if (recentlyPlayed.length > 8) recentlyPlayed.pop();
+
+        const isSaved = isCurrentItemSaved();
+        const savePill = root.querySelector('#xp-save');
+        const saveText = root.querySelector('#xp-save-text');
+        savePill.classList.toggle('saved', isSaved);
+        saveText.textContent = isSaved ? 'SAVED' : 'SAVE';
+
         if (section === 0) {
           const ch = liveChannels[selected];
           if (isChannelFlick) {
@@ -1340,6 +1934,21 @@
       }
 
       window.act = (key) => {
+        if (isSaveModalOpen) {
+          if (key === 'b' || key === 'B' || key === 'Escape') {
+            closeSaveModal();
+            say('Library closed. Resuming playback');
+            return;
+          } else if (key === 'x' || key === 'X') {
+            toggleSaveCurrentItem();
+            return;
+          } else if (key === 'y' || key === 'Y') {
+            closeSaveModal();
+            openPairModal();
+            return;
+          }
+        }
+
         // Ensure guide is visible when interacting with D-Pad
         if (!isShelfVisible && ['ArrowUp', 'ArrowDown', '↑', '↓', 'ArrowLeft', 'ArrowRight', '←', '→'].includes(key)) {
           isShelfVisible = true;
@@ -1399,32 +2008,20 @@
           tune(false);
           say(`Playing fullscreen [A]`);
         } else if (key === 'x' || key === 'X') {
-          // WHAT DOES SAVE DO?
-          // Saves current playing show/item to user's Ahoy library, syncing with Ahoy ID in the cloud
-          const currentTitle = section === 0 ? liveChannels[selected].nowTitle : mediaSections[section][selected].title;
-          const savePill = root.querySelector('#xp-save');
-          const saveText = root.querySelector('#xp-save-text');
-          const isSaved = savePill.classList.toggle('saved');
-
-          if (isSaved) {
-            saveText.textContent = 'SAVED';
-            if (pairedUser) {
-              say(`Saved "${currentTitle}" to Ahoy Library (Synced to @${pairedUser})`);
-            } else {
-              say(`Saved "${currentTitle}" locally (Pair Ahoy ID with [Y] to sync)`);
-            }
-          } else {
-            saveText.textContent = 'SAVE';
-            say(`Removed "${currentTitle}" from your Ahoy Library`);
-          }
+          openSaveModal();
+          say('AHOY Library & Pulse stats opened');
         } else if (key === 'y' || key === 'Y') {
+          if (isSaveModalOpen) closeSaveModal();
           if (isPairModalOpen) {
             closePairModal();
           } else {
             openPairModal();
           }
         } else if (key === 'b' || key === 'B' || key === 'Escape') {
-          if (isPairModalOpen) {
+          if (isSaveModalOpen) {
+            closeSaveModal();
+            say('Library closed. Resuming playback');
+          } else if (isPairModalOpen) {
             closePairModal();
             say('Pairing dismissed. Guide ready');
           } else {
@@ -1476,6 +2073,7 @@
 
       updateAccountUI();
       render();
+      tune(false);
     })();
   </script>
 </div>

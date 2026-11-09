@@ -767,6 +767,157 @@
       background: rgba(255, 0, 96, 0.15);
     }
 
+    /* SAVE & STATS DRAWER */
+    .save-drawer {
+      position: absolute;
+      inset: 80px 44px 50px 44px;
+      background: rgba(10, 13, 20, 0.96);
+      backdrop-filter: blur(36px);
+      border: 1px solid var(--ahoy-border);
+      border-radius: 14px;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      padding: 24px 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+      overflow-y: auto;
+      gap: 14px;
+    }
+    .save-drawer.open {
+      display: flex;
+    }
+    .save-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .save-stat-tile {
+      background: rgba(22, 25, 34, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .save-stat-num {
+      font-size: 18px;
+      font-weight: 900;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+    }
+    .save-stat-txt {
+      font-size: 10px;
+      font-weight: 800;
+      color: #8E8E96;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .save-stat-sub {
+      font-size: 9px;
+      color: var(--ahoy-accent);
+      font-weight: 700;
+    }
+    .save-split {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+    .save-panel {
+      background: rgba(18, 20, 28, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .save-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #D0D0D8;
+      letter-spacing: 0.5px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .save-panel-head span {
+      color: var(--ahoy-accent);
+      font-size: 10px;
+    }
+    .save-panel-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+    .save-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(28, 30, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .save-list-row:hover {
+      background: rgba(255, 0, 96, 0.15);
+      border-color: var(--ahoy-accent);
+    }
+    .save-row-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .save-row-badge {
+      background: #101014;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 5px;
+      color: #FFF;
+      flex-shrink: 0;
+    }
+    .save-row-titles {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .save-row-main {
+      font-size: 11px;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .save-row-sub {
+      font-size: 9px;
+      color: #8E8E96;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .save-row-btn {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--ahoy-accent);
+      background: rgba(255, 0, 96, 0.12);
+      border: 1px solid rgba(255, 0, 96, 0.3);
+      border-radius: 4px;
+      padding: 3px 7px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     /* FLOATING XBOX CONTROLLER HUD */
     .xbox-hud {
       position: fixed;
@@ -1001,6 +1152,58 @@
         <button class="action-btn" onclick="handleBtn('B')">CLOSE [B]</button>
       </div>
       <div class="drawer-list" id="drawer-list"></div>
+    </div>
+
+    <!-- DYNAMIC SAVE & STATS DRAWER -->
+    <div class="save-drawer" id="save-drawer">
+      <div class="drawer-header">
+        <div>
+          <span class="drawer-title">AHOY LIBRARY &amp; PULSE</span>
+          <div style="font-size:11px;color:#8E8E96;margin-top:2px;">STREAMING STATS, RECENT PLAYS &amp; CLOUD BOOKMARKS</div>
+        </div>
+        <button class="action-btn" onclick="handleBtn('B')">CLOSE [B]</button>
+      </div>
+
+      <div class="save-stats-grid">
+        <div class="save-stat-tile">
+          <div class="save-stat-num" id="save-stat-time">5.4 HRS</div>
+          <div class="save-stat-txt">Watch / Listen Time</div>
+          <div class="save-stat-sub">↑ 18% this week</div>
+        </div>
+        <div class="save-stat-tile">
+          <div class="save-stat-num" id="save-stat-count">0 ITEMS</div>
+          <div class="save-stat-txt">Saved in Library</div>
+          <div class="save-stat-sub" id="save-stat-sync">Local &amp; Cloud</div>
+        </div>
+        <div class="save-stat-tile">
+          <div class="save-stat-num">4 / 4</div>
+          <div class="save-stat-txt">Pillars Explored</div>
+          <div class="save-stat-sub">100% catalog coverage</div>
+        </div>
+        <div class="save-stat-tile">
+          <div class="save-stat-num">SKATE &amp; INDIE</div>
+          <div class="save-stat-txt">Top Vibe</div>
+          <div class="save-stat-sub">Recommended for you</div>
+        </div>
+      </div>
+
+      <div class="save-split">
+        <div class="save-panel">
+          <div class="save-panel-head">
+            <b>RECENTLY PLAYED</b>
+            <span id="save-recent-count">RECENT SESSIONS</span>
+          </div>
+          <div class="save-panel-list" id="save-recent-list"></div>
+        </div>
+
+        <div class="save-panel">
+          <div class="save-panel-head">
+            <b>MY SAVED LIBRARY</b>
+            <span id="save-library-count">SAVED ITEMS</span>
+          </div>
+          <div class="save-panel-list" id="save-library-list"></div>
+        </div>
+      </div>
     </div>
 
     <!-- FLOATING XBOX CONTROLLER HUD -->
@@ -1555,6 +1758,86 @@
       }
     }
 
+    let saveDrawerOpen = false;
+    let webRecentlyPlayed = [
+      { id: 'ch-101', title: 'The Wintergreen Sessions', badge: 'CH 101', time: 'Just now', sub: 'Live Broadcast • Ahoy TV' },
+      { id: 'od-3', title: 'Tallboyz — Obsolete (Full Film)', badge: 'SKATE', time: '28m ago', sub: 'On Demand Video • Feature Film' },
+      { id: 'mu-1', title: 'The Problem With Kids Today — Take It!', badge: 'MUSIC', time: '1h ago', sub: 'Music • Indie Rock' },
+      { id: 'ra-2', title: 'Wintergreen Sessions Radio', badge: 'RADIO', time: '3h ago', sub: 'Radio • Live Feed' }
+    ];
+
+    function toggleSaveDrawer() {
+      const drawer = document.getElementById('save-drawer');
+      if (!drawer) return;
+      saveDrawerOpen = !saveDrawerOpen;
+      drawer.classList.toggle('open', saveDrawerOpen);
+      if (saveDrawerOpen) {
+        if (scheduleOpen) toggleSchedule();
+        if (isPairingOpen) closePairingOverlay();
+        renderSaveDrawer();
+      }
+    }
+
+    function renderSaveDrawer() {
+      const countEl = document.getElementById('save-stat-count');
+      const syncEl = document.getElementById('save-stat-sync');
+      const libCountEl = document.getElementById('save-library-count');
+      const recentListEl = document.getElementById('save-recent-list');
+      const libraryListEl = document.getElementById('save-library-list');
+
+      if (countEl) countEl.innerText = `${savedIds.size} ITEMS`;
+      if (libCountEl) libCountEl.innerText = `${savedIds.size} ITEMS`;
+      if (syncEl) syncEl.innerText = currentAccountHandle ? `Cloud Synced (@${currentAccountHandle})` : 'Local Storage';
+
+      if (recentListEl) {
+        recentListEl.innerHTML = '';
+        webRecentlyPlayed.forEach(r => {
+          const row = document.createElement('div');
+          row.className = 'save-list-row';
+          row.innerHTML = `
+            <div class="save-row-left">
+              <span class="save-row-badge">${r.badge}</span>
+              <div class="save-row-titles">
+                <span class="save-row-main">${r.title}</span>
+                <span class="save-row-sub">${r.time} • ${r.sub}</span>
+              </div>
+            </div>
+            <span class="save-row-btn">[A] TUNE</span>
+          `;
+          row.onclick = () => {
+            toggleSaveDrawer();
+            if (r.badge.startsWith('CH')) {
+              setSection('channels');
+            }
+          };
+          recentListEl.appendChild(row);
+        });
+      }
+
+      if (libraryListEl) {
+        libraryListEl.innerHTML = '';
+        if (savedIds.size === 0) {
+          libraryListEl.innerHTML = '<div style="font-size:11px;color:#777;padding:12px;text-align:center">No saved items yet. Press [X] to bookmark shows!</div>';
+        } else {
+          savedIds.forEach(id => {
+            const row = document.createElement('div');
+            row.className = 'save-list-row';
+            row.innerHTML = `
+              <div class="save-row-left">
+                <span class="save-row-badge">★</span>
+                <div class="save-row-titles">
+                  <span class="save-row-main">${id}</span>
+                  <span class="save-row-sub">Bookmarked in Ahoy Library</span>
+                </div>
+              </div>
+              <span class="save-row-btn">[A] PLAY</span>
+            `;
+            libraryListEl.appendChild(row);
+          });
+        }
+      }
+    }
+
     function toggleSave() {
       if (!playingItem) return;
       const id = playingItem.id || playingItem.title;
@@ -1565,6 +1848,7 @@
       }
       localStorage.setItem('Ahoy_Saved_Ids', JSON.stringify(Array.from(savedIds)));
       updateSaveStatus();
+      if (saveDrawerOpen) renderSaveDrawer();
     }
 
     function updateSaveStatus() {
@@ -1608,7 +1892,10 @@
           showToast(`[A] PLAY / PAUSE TOGGLED`);
           break;
         case 'B':
-          if (isPairingOpen) {
+          if (saveDrawerOpen) {
+            toggleSaveDrawer();
+            showToast(`[B] Library closed. (App stays open!)`);
+          } else if (isPairingOpen) {
             closePairingOverlay();
             showToast(`[B] Pairing overlay dismissed. (App stays open!)`);
           } else if (scheduleOpen) {
@@ -1621,8 +1908,14 @@
           }
           break;
         case 'X':
-          toggleSave();
-          showToast(`[X] Bookmark / Library updated`);
+          if (saveDrawerOpen) {
+            toggleSave();
+            showToast(`[X] Library updated`);
+          } else {
+            toggleSave();
+            toggleSaveDrawer();
+            showToast(`[X] AHOY Library & Pulse opened`);
+          }
           break;
         case 'Y':
           if (isPairingOpen) {
