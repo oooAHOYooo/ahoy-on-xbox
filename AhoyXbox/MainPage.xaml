@@ -177,14 +177,14 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
           <TextBlock Text="▲ ▼ Change Channels" FontSize="11" FontWeight="SemiBold" Foreground="#8E8E93" Margin="0,0,24,0"/>
           <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0">
-            <Border Width="16" Height="16" CornerRadius="8" Background="#107C10" Margin="0,0,6,0">
-              <TextBlock Text="A" FontSize="9" FontWeight="Black" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+            <Border Width="16" Height="16" CornerRadius="8" Background="#44107C10" BorderBrush="#8822C55E" BorderThickness="1" Margin="0,0,6,0">
+              <TextBlock Text="A" FontSize="9" FontWeight="Black" Foreground="#86EFAC" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
             </Border>
             <TextBlock Text="Watch" FontSize="11" FontWeight="SemiBold" Foreground="#D0D0D8"/>
           </StackPanel>
           <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <Border Width="16" Height="16" CornerRadius="8" Background="#E81123" Margin="0,0,6,0">
-              <TextBlock Text="B" FontSize="9" FontWeight="Black" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+            <Border Width="16" Height="16" CornerRadius="8" Background="#44E81123" BorderBrush="#88F87171" BorderThickness="1" Margin="0,0,6,0">
+              <TextBlock Text="B" FontSize="9" FontWeight="Black" Foreground="#FCA5A5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
             </Border>
             <TextBlock Text="Dismiss Guide" FontSize="11" FontWeight="SemiBold" Foreground="#8E8E93"/>
           </StackPanel>
