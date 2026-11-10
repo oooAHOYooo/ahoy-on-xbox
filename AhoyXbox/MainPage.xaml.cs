@@ -190,6 +190,11 @@ namespace AhoyXbox
         private readonly DispatcherTimer pairingPollTimer = new DispatcherTimer();
         private string currentDeviceCode = null;
 
+        private double radioEpochMs = 1767225600000;
+        private bool hasRadioManifest;
+        private string radioStationName = "Ahoy Radio";
+        private double pendingSeekSeconds;
+
         private AppSection currentSection = AppSection.Channels;
         private readonly List<Channel> allChannels = new List<Channel>();
         private readonly List<Video> onDemandVideos = new List<Video>();
@@ -217,6 +222,7 @@ namespace AhoyXbox
             catch { }
 
             Player.SetMediaPlayer(media);
+            media.MediaOpened += MediaOpened;
             media.MediaEnded += Ended;
             media.MediaFailed += Failed;
             Loaded += LoadCatalog;
@@ -432,7 +438,7 @@ namespace AhoyXbox
                     Channels.ItemsSource = allChannels;
                     if (playingChannel == null && allChannels.Count > 0)
                     {
-                        playingChannel = allChannels[0];
+                        playingChannel = allChannels.FirstOrDefault();
                     }
                     if (playingChannel != null)
                     {
@@ -467,11 +473,11 @@ namespace AhoyXbox
                 case AppSection.Radio:
                     Channels.Visibility = Visibility.Collapsed;
                     Programs.Visibility = Visibility.Visible;
-                    GuideHeader.Text = $"RADIO • {radioTracks.Count} LIVE STATIONS & BROADCASTS";
+                    GuideHeader.Text = $"{radioStationName.ToUpperInvariant()} • {radioTracks.Count} TRACKS IN ROTATION";
                     Programs.ItemsSource = radioTracks;
                     if (radioTracks.Count > 0)
                     {
-                        PlayVideo(radioTracks[0]);
+                        PlayRadio();
                     }
                     break;
             }
@@ -481,34 +487,21 @@ namespace AhoyXbox
 
         private async void LoadCatalog(object sender, RoutedEventArgs e)
         {
-            string json = null;
             try
             {
-                using (var client = new Windows.Web.Http.HttpClient())
-                {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("AhoyTV/1.0");
-                    json = await client.GetStringAsync(new Uri("https://raw.githubusercontent.com/oooAHOYooo/ahoy-on-xbox/main/AhoyXbox/Data/catalog.json"));
-                }
-            }
-            catch { }
-
-            if (string.IsNullOrEmpty(json))
-            {
-                try
-                {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/catalog.json"));
-                    json = await FileIO.ReadTextAsync(file);
-                }
-                catch (Exception)
-                {
-                    Status.Text = "The catalog could not load. Close and reopen Ahoy to retry.";
-                    return;
-                }
-            }
-
-            try
-            {
-                var root = JsonObject.Parse(json);
+                // Fetch independent public feeds concurrently; retain cached or bundled data on failure.
+                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/catalog.json"));
+                var root = JsonObject.Parse(await FileIO.ReadTextAsync(file));
+                var videoTask = PublishedVideoCatalog.LoadAsync();
+                var musicTask = PublishedMediaCatalog.LoadAsync("/api/music", "music-api-v1.json",
+                    data => PublishedMediaCatalog.Audio(data.GetNamedArray("tracks"), false));
+                var radioTask = PublishedMediaCatalog.LoadAsync("/api/radio/live", "radio-api-v1.json",
+                    data => { PublishedMediaCatalog.Audio(data.GetNamedArray("items"), true); data.GetNamedObject("station").GetNamedNumber("epoch_ms"); });
+                var channelsTask = PublishedMediaCatalog.LoadAsync("/api/live-tv/channels", "channels-api-v1.json",
+                    data => PublishedMediaCatalog.Channels(data));
+                await System.Threading.Tasks.Task.WhenAll(videoTask, musicTask, radioTask, channelsTask);
+                var publishedVideos = await videoTask;
+                if (publishedVideos != null) root["videos"] = publishedVideos;
 
                 // 1. Parse On Demand Videos
                 var rawVideos = root.GetNamedArray("videos").Select(value => {
@@ -555,116 +548,43 @@ namespace AhoyXbox
                 allChannels.Add(new Channel { Number = "103", Name = "Films & Skate", Tagline = "Skate Tapes & Documentaries", Videos = filmVids, Artwork = ChannelArtwork(filmVids) });
                 allChannels.Add(new Channel { Number = "104", Name = "The Mix 24/7", Tagline = "24/7 Round-Robin Eclectic Stream", Videos = miscVids, Artwork = ChannelArtwork(miscVids) });
 
-                // 3. Parse Music Tracks
+                var publishedChannels = await channelsTask;
+                if (publishedChannels != null)
+                {
+                    allChannels.Clear();
+                    allChannels.AddRange(PublishedMediaCatalog.Channels(publishedChannels));
+                    allChannels.Sort((left, right) => string.CompareOrdinal(left.Number, right.Number));
+                    foreach (var channel in allChannels) channel.Artwork = ChannelArtwork(channel.Videos);
+                }
+
                 musicTracks.Clear();
-                if (root.ContainsKey("music"))
-                {
-                    var musicArray = root.GetNamedArray("music");
-                    foreach (var val in musicArray)
-                    {
-                        var row = val.GetObject();
-                        var thumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
-                        string artist = row.ContainsKey("artist") ? row.GetNamedString("artist", "Ahoy Music") : "Ahoy Music";
-                        string album = row.ContainsKey("album") ? row.GetNamedString("album", "") : "";
-                        int durSec = row.ContainsKey("duration_seconds") ? (int)row.GetNamedNumber("duration_seconds", 0) : 0;
-                        string durStr = durSec > 0 ? $"{durSec / 60}:{durSec % 60:D2}" : "";
+                var publishedMusic = await musicTask;
+                musicTracks.AddRange(PublishedMediaCatalog.Audio(publishedMusic != null
+                    ? publishedMusic.GetNamedArray("tracks") : root.GetNamedArray("music", new JsonArray()), false));
 
-                        musicTracks.Add(new Video {
-                            Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
-                            Title = row.GetNamedString("title", "Untitled Track"),
-                            Host = artist,
-                            Description = !string.IsNullOrEmpty(album) ? $"Album: {album}" : "Ahoy Music Airplay",
-                            Duration = durStr,
-                            Url = row.GetNamedString("stream_url", ""),
-                            Thumbnail = thumb,
-                            Category = "music",
-                            Tags = new List<string> { "music", "audio" }
-                        });
-                    }
-                }
-
-                // 4. Parse Radio Stations
                 radioTracks.Clear();
-                if (root.ContainsKey("radio"))
+                var publishedRadio = await radioTask;
+                hasRadioManifest = publishedRadio != null;
+                if (hasRadioManifest)
                 {
-                    var radioArray = root.GetNamedArray("radio");
-                    foreach (var val in radioArray)
-                    {
-                        var row = val.GetObject();
-                        var thumb = row.ContainsKey("thumbnail") ? row.GetNamedString("thumbnail", "") : "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg";
-                        string artist = row.ContainsKey("artist") ? row.GetNamedString("artist", "Ahoy Radio") : "Ahoy Radio";
-                        radioTracks.Add(new Video {
-                            Id = row.GetNamedString("id", Guid.NewGuid().ToString()),
-                            Title = row.GetNamedString("title", "Ahoy Indie Radio"),
-                            Host = artist,
-                            Description = row.ContainsKey("description") ? row.GetNamedString("description", "Live Synchronized 24/7 Broadcast") : "Live Synchronized 24/7 Broadcast",
-                            Duration = "LIVE",
-                            Url = row.GetNamedString("stream_url", ""),
-                            Thumbnail = thumb,
-                            Category = "radio",
-                            Tags = new List<string> { "radio", "audio", "live" }
-                        });
-                    }
+                    radioEpochMs = publishedRadio.GetNamedObject("station").GetNamedNumber("epoch_ms");
+                    radioStationName = PublishedVideoCatalog.Text(publishedRadio.GetNamedObject("station"), "name", "Ahoy Radio");
+                    radioTracks.AddRange(PublishedMediaCatalog.Audio(publishedRadio.GetNamedArray("items"), true));
                 }
-                if (radioTracks.Count == 0)
-                {
-                    radioTracks.Add(new Video {
-                        Id = "radio-indie-1",
-                        Title = "Ahoy Indie Radio 1 · Live Airwaves",
-                        Host = "Ahoy Radio Network",
-                        Description = "Live 24/7 synchronized indie broadcast featuring premier indie artists, b-sides, and studio cuts.",
-                        Duration = "LIVE",
-                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/01%20I%27ve%20Seen%20Better%20Days.mp3",
-                        Thumbnail = "https://i.ytimg.com/vi/XDH0X-dF4GM/maxresdefault.jpg",
-                        Category = "radio",
-                        Tags = new List<string> { "radio", "audio", "live" }
-                    });
-                    radioTracks.Add(new Video {
-                        Id = "radio-wintergreen-2",
-                        Title = "Wintergreen Sessions Radio",
-                        Host = "Wintergreen Studio",
-                        Description = "Acoustic sets, live studio recordings, and intimate performances.",
-                        Duration = "LIVE",
-                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Beneath+the+Willow+Tree.mp3",
-                        Thumbnail = "https://i.ytimg.com/vi/koPyEhqksBk/maxresdefault.jpg",
-                        Category = "radio",
-                        Tags = new List<string> { "radio", "audio", "live" }
-                    });
-                    radioTracks.Add(new Video {
-                        Id = "radio-reasons-3",
-                        Title = "High-Energy Indie & Radio Edits",
-                        Host = "Ahoy Upbeat",
-                        Description = "Upbeat indie rock, fast tempo releases, and modern radio edits.",
-                        Duration = "LIVE",
-                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Fella%20Gazelle%20-%20Reasons%20-%20Radio%20Edit.mp3",
-                        Thumbnail = "https://storage.googleapis.com/ahoy-dynamic-content/_2026/whats-new-thumbnails/FELLA%20GAZELLE.jpg",
-                        Category = "radio",
-                        Tags = new List<string> { "radio", "audio", "live" }
-                    });
-                    radioTracks.Add(new Video {
-                        Id = "radio-ambient-4",
-                        Title = "Late Night Ambient Soundscapes",
-                        Host = "Ahoy Soundscapes",
-                        Description = "Ambient, lo-fi, and instrumental soundscapes for late night sessions.",
-                        Duration = "LIVE",
-                        Url = "https://ahoycollection.s3.us-east-2.amazonaws.com/Put+Me+on+the+Run-+Draft+1mp3.mp3",
-                        Thumbnail = "https://i.ytimg.com/vi/uEqMlBsKYpQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLABNZs86_3-knu6Zq78I43Am1eLWA",
-                        Category = "radio",
-                        Tags = new List<string> { "radio", "audio", "live" }
-                    });
-                }
+                else
+                    radioTracks.AddRange(PublishedMediaCatalog.Audio(root.GetNamedArray("radio", new JsonArray()), true));
 
                 // Initialize Channels view
                 Channels.ItemsSource = allChannels;
-                Channels.SelectedIndex = 0;
+                Channels.SelectedIndex = allChannels.Count > 0 ? 0 : -1;
                 Channels.Focus(FocusState.Programmatic);
                 _ = SavedStore.SyncLibraryAsync();
 
                 // Auto-Play Channel 101 immediately (Pluto TV live clock sync)
-                playingChannel = allChannels[0];
+                playingChannel = allChannels.FirstOrDefault();
                 var (initIdx, initOffset) = GetLiveSyncPosition(playingChannel);
                 playingIndex = initIdx;
-                Programs.ItemsSource = playingChannel.Videos;
+                Programs.ItemsSource = playingChannel?.Videos;
                 PlayCurrent(initOffset);
             }
             catch (Exception)
@@ -779,11 +699,8 @@ namespace AhoyXbox
                 {
                     Player.PosterSource = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(video.Thumbnail));
                 }
+                pendingSeekSeconds = seekSeconds;
                 media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
-                if (seekSeconds > 5)
-                {
-                    media.PlaybackSession.Position = TimeSpan.FromSeconds(seekSeconds);
-                }
                 media.Play();
                 WakeGuide();
             }
@@ -793,7 +710,33 @@ namespace AhoyXbox
             }
         }
 
-        private void PlayVideo(Video video)
+        private void MediaOpened(MediaPlayer sender, object args)
+        {
+            var seek = pendingSeekSeconds;
+            pendingSeekSeconds = 0;
+            if (seek > 0 && sender.PlaybackSession.CanSeek)
+                sender.PlaybackSession.Position = TimeSpan.FromSeconds(seek);
+        }
+
+        private void PlayRadio()
+        {
+            if (radioTracks.Count == 0) return;
+            var total = radioTracks.Sum(video => ParseDurationSeconds(video.Duration));
+            var elapsed = (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - radioEpochMs) / 1000.0;
+            var position = total > 0 ? ((elapsed % total) + total) % total : 0;
+            foreach (var video in radioTracks)
+            {
+                var duration = ParseDurationSeconds(video.Duration);
+                if (position < duration)
+                {
+                    PlayVideo(video, hasRadioManifest ? position : 0);
+                    return;
+                }
+                position -= duration;
+            }
+        }
+
+        private void PlayVideo(Video video, double seekSeconds = 0)
         {
             if (video == null) return;
             currentPlayingVideo = video;
@@ -827,6 +770,7 @@ namespace AhoyXbox
                 {
                     Player.PosterSource = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(video.Thumbnail));
                 }
+                pendingSeekSeconds = seekSeconds;
                 media.Source = MediaSource.CreateFromUri(new Uri(video.Url));
                 media.Play();
                 WakeGuide();
@@ -1052,6 +996,7 @@ namespace AhoyXbox
         private void Cleanup(object sender, RoutedEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().BackRequested -= Back;
+            media.MediaOpened -= MediaOpened;
             media.MediaEnded -= Ended;
             media.MediaFailed -= Failed;
             media.Dispose();

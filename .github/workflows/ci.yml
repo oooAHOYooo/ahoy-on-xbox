@@ -36,6 +36,11 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
 
+      - name: Check published catalog adapters
+        run: |
+          dotnet build tests/CatalogContracts/CatalogContracts.csproj --configuration Release
+          & tests/CatalogContracts/bin/Release/net48/CatalogContracts.exe
+
       - name: Restore NuGet packages
         run: nuget restore AhoyXbox/AhoyXbox.csproj
 
@@ -57,7 +62,7 @@ jobs:
             AhoyXbox/AppPackages/**/*.appxupload
             AhoyXbox/AppPackages/**/*.appxbundle
             AhoyXbox/AppPackages/**/*.msixbundle
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Upload Debug Build Artifacts
         uses: actions/upload-artifact@v4

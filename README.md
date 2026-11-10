@@ -90,3 +90,18 @@ To eliminate flashing SD cards every time you update channels or UI, see the com
 5. Prepare Store artwork, privacy/support URLs, content ratings, certification notes, and the signed package.
 
 Do not add advertising or claim FAST/live television until the relevant rights, infrastructure, and product decisions are in place.
+
+## Automatic content feeds (0.4.1)
+
+The native app fetches the following public feeds concurrently when it opens:
+
+| Content | Endpoint |
+| --- | --- |
+| Published on-demand videos and metadata | `https://app.ahoy.ooo/api/shows` |
+| Music tracks, albums and cover art | `https://app.ahoy.ooo/api/music` |
+| Radio playlist, station name and broadcast epoch | `https://app.ahoy.ooo/api/radio/live` |
+| TV channel names, items and rotation order | `https://app.ahoy.ooo/api/live-tv/channels` |
+
+Published additions appear without another Store update once users install this version. Reopen the app to refresh; feeds do not refresh during playback. On-demand videos use the public server's release filtering. Radio entry calculates the current item and offset from the manifest epoch and ordered durations, seeking after media opens. The TV endpoint supplies rotations but no start/end timestamps: TV timing remains a local calculation, not a verified match to the website's EPG.
+
+Each request times out after 10 seconds and independently falls back to its last valid device cache. On first use without a cache, bundled video/music/radio data and locally grouped video channels remain available. Empty valid feeds are respected. Offline data can contain older listings; streaming still needs connectivity. Navigation, branding, controller mappings and layout remain part of the installed app. Account pairing and library synchronization use the existing ID APIs. 4K playback and broadcast timing still require Windows/Xbox verification.
