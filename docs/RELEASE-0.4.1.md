@@ -16,7 +16,7 @@ The older images generated from `docs/xbox-ui-preview.html` are browser prototyp
 
 Capture the native release on Xbox. Required scenes for this handoff: TV guide, On Demand (including DUO 4K if desired), Music, and Radio. Do not add simulated pairing screens or claim features absent from the native app. Existing icon, poster and hero artwork can be reused after visual review.
 
-Screenshots must be captured from the native app on an Xbox console. A Windows screenshot or the HTML prototype is not an Xbox capture. No console is available in this session, so actual Xbox screenshots and controller acceptance remain pending. Existing preview files are reference material only.
+Screenshots must be captured from the native app on an Xbox console. Xbox Device Portal provides a Media capture page with Capture Screenshot: https://learn.microsoft.com/en-us/windows/uwp/xbox-apps/device-portal-xbox . A Windows screenshot or the HTML prototype is not an Xbox capture. No console is available in this session, so actual Xbox screenshots and controller acceptance remain pending. Existing preview files are reference material only.
 
 ## Before submitting
 

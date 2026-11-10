@@ -56,7 +56,7 @@ From a Visual Studio Developer PowerShell:
 msbuild AhoyXbox/AhoyXbox.csproj /restore /p:Configuration=Debug /p:Platform=x64
 ```
 
-Package identity is a development placeholder. Associate with the real Store product before generating a submission package. See [the release checklist](docs/STORE-RELEASE.md).
+The package uses the assigned AHOY TV Store identity. See [the current Xbox release handoff](docs/RELEASE-0.4.1.md) for package and screenshot status.
 
 ## Source checks on this Mac
 

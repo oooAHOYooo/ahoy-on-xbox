@@ -1,10 +1,8 @@
 # Microsoft Store release handoff
 
-Status: **PROCESSED FOR PUBLICATION (Live in Store within ~2 hours)** as of November 3, 2026. Official package targeting Windows 10/11 Desktop and Xbox passed Microsoft certification and is replicating across global Store CDNs.
+Current release preparation: **0.4.1.0, Xbox only**. See [the current handoff](RELEASE-0.4.1.md). The package is built by CI on a Windows runner, but its device family is explicitly `Windows.Xbox`.
 
-## Distribution route
-
-Native UWP media app targeting Windows.Universal, verified and submitted for **Windows 10/11 Desktop** and **Windows 10/11 Xbox**. Packaged and uploaded via automated CI pipeline to Partner Center.
+Historical submission/approval notes below are not verification of the current Partner Center state. No submission was made during this release preparation.
 
 ## Account and identity
 
