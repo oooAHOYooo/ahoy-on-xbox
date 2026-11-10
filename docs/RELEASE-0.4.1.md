@@ -1,6 +1,6 @@
 # AHOY TV 0.4.1 — Microsoft Store handoff
 
-Version 0.4.1.0 targets x64 Windows and Xbox with Store identity `AhoyIndieMedia.AHOYTV` and publisher `CN=A431E267-D7FE-4CF0-84A6-865308AC997C`.
+Version 0.4.1.0 targets x64 Xbox only with Store identity `AhoyIndieMedia.AHOYTV` and publisher `CN=A431E267-D7FE-4CF0-84A6-865308AC997C`.
 
 ## What changed
 
@@ -14,13 +14,13 @@ Use the `.msixupload` from the successful GitHub Actions run for the release com
 
 The older images generated from `docs/xbox-ui-preview.html` are browser prototype captures. They do not represent verified native application screenshots and should not be uploaded as such. The old Music and Pairing files show the wrong scene.
 
-Capture the native release on Windows or Xbox. Required scenes for this handoff: TV guide, On Demand (including DUO 4K if desired), Music, and Radio. Do not add simulated pairing screens or claim features absent from the native app. Existing icon, poster and hero artwork can be reused after visual review.
+Capture the native release on Xbox. Required scenes for this handoff: TV guide, On Demand (including DUO 4K if desired), Music, and Radio. Do not add simulated pairing screens or claim features absent from the native app. Existing icon, poster and hero artwork can be reused after visual review.
 
-On a Windows PC with the native app installed, run `scripts/Capture-StoreScreenshots.ps1` in Windows PowerShell. Follow its prompts to select each scene and switch to the app. It captures the actual foreground AHOY TV client area, rejecting browser previews. Use a 1080p or higher display, review dimensions/framing/content, and inspect every image before upload. Running this helper is not proof of Xbox rendering.
+Screenshots must be captured from the native app on an Xbox console. A Windows screenshot or the HTML prototype is not an Xbox capture. No console is available in this session, so actual Xbox screenshots and controller acceptance remain pending. Existing preview files are reference material only.
 
 ## Before submitting
 
-- Install and launch this release on the intended devices. Test controller navigation, playback, music, radio, fullscreen/back, suspend/resume, pairing/save and network recovery.
+- Install and launch this release on the Xbox. Test controller navigation, playback, music, radio, fullscreen/back, suspend/resume, pairing/save and network recovery.
 - Confirm newly published videos appear after reopening and that DUO 4K plays correctly. The upload title alone does not prove 4K decoding on Xbox.
 - Run Windows App Certification Kit and resolve failures.
 - Complete real screenshots and review listing copy, support/privacy links, ratings and device targeting.
