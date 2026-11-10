@@ -1,47 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Data.Json;
-using Windows.Storage;
 
 namespace AhoyXbox
 {
-    internal static class PublishedMediaCatalog
+    internal static partial class PublishedMediaCatalog
     {
-        internal static async Task<JsonObject> LoadAsync(string path, string cacheName, Action<JsonObject> validate)
-        {
-            try
-            {
-                using (var client = new Windows.Web.Http.HttpClient())
-                using (var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
-                {
-                    client.DefaultRequestHeaders.CacheControl.TryParseAdd("no-cache");
-                    var json = await client.GetStringAsync(new Uri("https://app.ahoy.ooo" + path)).AsTask(timeout.Token);
-                    var root = JsonObject.Parse(json);
-                    validate(root);
-                    try
-                    {
-                        var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(cacheName, CreationCollisionOption.ReplaceExisting);
-                        await FileIO.WriteTextAsync(file, json);
-                    }
-                    catch { }
-                    return root;
-                }
-            }
-            catch
-            {
-                try
-                {
-                    var file = await ApplicationData.Current.LocalFolder.GetFileAsync(cacheName);
-                    var root = JsonObject.Parse(await FileIO.ReadTextAsync(file));
-                    validate(root);
-                    return root;
-                }
-                catch { return null; }
-            }
-        }
-
         internal static List<Video> Audio(JsonArray rows, bool radio)
         {
             var result = new List<Video>();

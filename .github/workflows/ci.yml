@@ -39,7 +39,8 @@ jobs:
       - name: Check published catalog adapters
         run: |
           dotnet build tests/CatalogContracts/CatalogContracts.csproj --configuration Release
-          & tests/CatalogContracts/bin/Release/net48/CatalogContracts.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & ./tests/CatalogContracts/bin/Release/net48/CatalogContracts.exe
 
       - name: Restore NuGet packages
         run: nuget restore AhoyXbox/AhoyXbox.csproj

@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Data.Json;
-using Windows.Storage;
 
 namespace AhoyXbox
 {
-    internal static class PublishedVideoCatalog
+    internal static partial class PublishedVideoCatalog
     {
         private const string CacheFile = "published-videos-v1.json";
 
@@ -72,35 +69,6 @@ namespace AhoyXbox
             return videos;
         }
 
-        internal static async Task<JsonArray> LoadAsync()
-        {
-            try
-            {
-                using (var client = new Windows.Web.Http.HttpClient())
-                using (var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
-                {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("AhoyTV/0.4.1");
-                    client.DefaultRequestHeaders.CacheControl.TryParseAdd("no-cache");
-                    var json = await client.GetStringAsync(new Uri("https://app.ahoy.ooo/api/shows")).AsTask(timeout.Token);
-                    var videos = Normalize(json);
-                    try
-                    {
-                        var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync(CacheFile, CreationCollisionOption.ReplaceExisting);
-                        await FileIO.WriteTextAsync(cache, json);
-                    }
-                    catch { /* A full disk must not prevent using the current feed. */ }
-                    return videos;
-                }
-            }
-            catch
-            {
-                try
-                {
-                    var cache = await ApplicationData.Current.LocalFolder.GetFileAsync(CacheFile);
-                    return Normalize(await FileIO.ReadTextAsync(cache));
-                }
-                catch { return null; } // Caller retains the packaged fallback.
-            }
-        }
+
     }
 }

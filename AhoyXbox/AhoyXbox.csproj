@@ -16,6 +16,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'"><Optimize>true</Optimize><DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants><UseDotNetNativeToolchain>true</UseDotNetNativeToolchain></PropertyGroup>
   <PropertyGroup><PlatformTarget>x64</PlatformTarget><OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath></PropertyGroup>
   <ItemGroup>
+    <Compile Include="CatalogFeedLoader.cs" />
     <Compile Include="PublishedVideoCatalog.cs" />
     <Compile Include="PublishedMediaCatalog.cs" />
     <Compile Include="App.xaml.cs"><DependentUpon>App.xaml</DependentUpon></Compile>
