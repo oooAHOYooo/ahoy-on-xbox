@@ -1,0 +1,33 @@
+name: Capture native Windows app
+on:
+  workflow_dispatch:
+jobs:
+  capture:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - uses: NuGet/setup-nuget@v2
+      - name: Build temporary signed test package
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $cert = New-SelfSignedCertificate -Type Custom -Subject 'CN=A431E267-D7FE-4CF0-84A6-865308AC997C' -KeyUsage DigitalSignature -FriendlyName 'AHOY CI Screenshot Test Only' -CertStoreLocation Cert:\CurrentUser\My -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
+          $publicCert = Join-Path $env:RUNNER_TEMP 'ahoy-screenshot-test.cer'
+          Export-Certificate -Cert $cert -FilePath $publicCert | Out-Null
+          Import-Certificate -FilePath $publicCert -CertStoreLocation Cert:\LocalMachine\TrustedPeople | Out-Null
+          nuget restore AhoyXbox/AhoyXbox.csproj
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          msbuild AhoyXbox/AhoyXbox.csproj /p:Configuration=Release /p:Platform=x64 /p:AppxBundle=Always /p:AppxBundlePlatforms=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageDir="CapturePackages\" /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint=$($cert.Thumbprint)
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Install and capture the native application
+        shell: powershell
+        run: scripts/Capture-NativeCI.ps1
+      - name: Upload native captures and diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: AHOY-TV-Native-Captures
+          path: dist/native-captures/
+          if-no-files-found: warn
