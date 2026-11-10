@@ -209,6 +209,13 @@ namespace AhoyXbox
         public MainPage()
         {
             InitializeComponent();
+            try
+            {
+                // Draw edge-to-edge across TV display (disables OS overscan black letterboxing)
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+            }
+            catch { }
+
             Player.SetMediaPlayer(media);
             media.MediaEnded += Ended;
             media.MediaFailed += Failed;
